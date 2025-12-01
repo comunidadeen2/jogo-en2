@@ -15,25 +15,29 @@
         text-align: center;
     }
 
-    #tabuleiro {
+    img {
         width: 90%;
-        max-width: 1000px;
+        max-width: 1200px;
         margin-top: 20px;
+        border-radius: 10px;
     }
 
-    .botao {
-        background: gold;
-        color: black;
-        padding: 15px 35px;
-        border-radius: 10px;
-        font-size: 22px;
-        cursor: pointer;
+    button {
+        background: #ffcc00;
         border: none;
+        padding: 15px 40px;
+        font-size: 22px;
+        border-radius: 10px;
+        cursor: pointer;
         margin-top: 20px;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #e6b800;
     }
 
     #resultado {
-        margin-top: 20px;
+        margin-top: 25px;
         font-size: 26px;
     }
 </style>
@@ -43,18 +47,17 @@
 
 <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
 
-<img id="tabuleiro" src="https://raw.githubusercontent.com/comunidadeen2/jogo-en2/main/tabuleiro.png" alt="Tabuleiro do Jogo EN2">
+<!-- IMAGEM VIA IMGUR -->
+<img src="https://i.imgur.com/UP5YxMb.png" alt="Tabuleiro da EN2">
 
-<br>
-
-<button class="botao" onclick="jogar()">JOGAR</button>
+<button onclick="lançar()">JOGAR</button>
 
 <div id="resultado"></div>
 
 <script>
-function jogar() {
+function lançar() {
     let numero = Math.floor(Math.random() * 6) + 1;
-    document.getElementById("resultado").innerHTML = "🎲 Saiu: <b>" + numero + "</b>";
+    document.getElementById("resultado").innerHTML = "🎲 Saiu: " + numero;
 }
 </script>
 
