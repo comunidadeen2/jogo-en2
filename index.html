@@ -8,7 +8,6 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
             background: #111;
             color: white;
             font-family: Arial, sans-serif;
@@ -16,44 +15,46 @@
         }
 
         h1 {
-            margin-top: 30px;
-            font-size: 28px;
+            margin-top: 40px;
+            font-size: 32px;
         }
 
-        .tabuleiro {
-            width: 70%;
+        img {
+            width: 90%;
+            max-width: 900px;
             margin-top: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
-        .btn-jogar {
+        .botao {
             margin-top: 25px;
-            background: #FFC400;
-            border: none;
-            padding: 15px 35px;
-            border-radius: 10px;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
         }
 
-        .btn-jogar:hover {
-            background: #e0ad00;
+        button {
+            background: gold;
+            border: none;
+            padding: 15px 40px;
+            font-size: 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #ffcc00;
         }
     </style>
 </head>
-
 <body>
+
     <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
 
-    <!-- AGORA ESTÁ CORRECTO -->
-    <img src="https://raw.githubusercontent.com/comunidadeen2/jogo-en2/main/tabuleiro.png"
-         alt="Tabuleiro do Jogo EN2"
-         class="tabuleiro">
+    <!-- AQUI VAI BUSCAR AUTOMATICAMENTE O NOME CERTO -->
+    <img src="tabuleiro.png" onerror="this.src='tabuleiro.png.png'" alt="Tabuleiro do Jogo EN2">
 
-    <br>
-
-    <button class="btn-jogar">JOGAR</button>
+    <div class="botao">
+        <button onclick="alert('O jogo vai começar em breve!')">JOGAR</button>
+    </div>
 
 </body>
 </html>
