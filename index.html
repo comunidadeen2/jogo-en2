@@ -1,66 +1,62 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo da EN2 — A Grande Travessia de Portugal</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JOGO DA EN2 — A Grande Travessia de Portugal</title>
 
-    <style>
-        body {
-            margin: 0;
-            background: #111;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
 
-        #tabuleiro {
-            width: 90%;
-            max-width: 1200px;
-            margin-top: 20px;
-            border-radius: 10px;
-        }
+    #tabuleiro {
+        width: 90%;
+        max-width: 1000px;
+        margin-top: 20px;
+    }
 
-        #jogar {
-            background: #ffcc00;
-            color: black;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 10px;
-            font-size: 22px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 20px;
-        }
+    .botao {
+        background: gold;
+        color: black;
+        padding: 15px 35px;
+        border-radius: 10px;
+        font-size: 22px;
+        cursor: pointer;
+        border: none;
+        margin-top: 20px;
+    }
 
-        #resultado {
-            margin-top: 20px;
-            font-size: 32px;
-        }
-    </style>
+    #resultado {
+        margin-top: 20px;
+        font-size: 26px;
+    }
+</style>
+
 </head>
-
 <body>
 
-    <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
+<h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
 
-    <!-- IMAGEM FUNCIONAL 100% -->
-    <img id="tabuleiro"
-         src="https://raw.githubusercontent.com/comunidadadeen2/jogo-en2/main/tabuleiro.png"
-         alt="Tabuleiro do jogo EN2">
+<img id="tabuleiro" src="https://raw.githubusercontent.com/comunidadeen2/jogo-en2/main/tabuleiro.png" alt="Tabuleiro do Jogo EN2">
 
-    <br>
+<br>
 
-    <button id="jogar" onclick="rolarDado()">JOGAR</button>
+<button class="botao" onclick="jogar()">JOGAR</button>
 
-    <div id="resultado"></div>
+<div id="resultado"></div>
 
-    <script>
-        function rolarDado() {
-            let numero = Math.floor(Math.random() * 6) + 1;
-            document.getElementById("resultado").innerText = número;
-        }
-    </script>
+<script>
+function jogar() {
+    let numero = Math.floor(Math.random() * 6) + 1;
+    document.getElementById("resultado").innerHTML = "🎲 Saiu: <b>" + numero + "</b>";
+}
+</script>
 
 </body>
 </html>
