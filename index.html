@@ -1,71 +1,66 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jogo da EN2 — A Grande Travessia de Portugal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da EN2 — A Grande Travessia de Portugal</title>
 
-<style>
-    body {
-        margin: 0;
-        padding: 20px;
-        background: #111;
-        color: #fff;
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
-    h1 {
-        font-size: 26px;
-        margin: 10px 0 20px;
-    }
-    #tabuleiro {
-        width: 95%;
-        max-width: 1200px;
-        border: 4px solid #fff;
-        border-radius: 6px;
-    }
-    #botaoJogar {
-        margin-top: 18px;
-        padding: 12px 30px;
-        font-size: 18px;
-        font-weight: 700;
-        background: #ffcc00;
-        color: #000;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-    #botaoJogar:hover {
-        background: #ffd94d;
-    }
-    #resultadoDado {
-        margin-top: 10px;
-        font-size: 22px;
-        font-weight: bold;
-    }
-</style>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
 
+        #tabuleiro {
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        #jogar {
+            background: #ffcc00;
+            color: black;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 22px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-size: 32px;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
+    <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
 
-<!-- TABULEIRO EMBUTIDO EM BASE64 (não falha nunca) -->
-<img id="tabuleiro" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAYAAAA10dzkAAAA..." alt="Tabuleiro do Jogo EN2">
+    <!-- IMAGEM FUNCIONAL 100% -->
+    <img id="tabuleiro"
+         src="https://raw.githubusercontent.com/comunidadadeen2/jogo-en2/main/tabuleiro.png"
+         alt="Tabuleiro do jogo EN2">
 
-<!-- BOTÃO -->
-<br>
-<button id="botaoJogar">JOGAR</button>
+    <br>
 
-<!-- RESULTADO DO DADO -->
-<div id="resultadoDado"></div>
+    <button id="jogar" onclick="rolarDado()">JOGAR</button>
 
-<script>
-    document.getElementById("botaoJogar").addEventListener("click", function () {
-        let resultado = Math.floor(Math.random() * 6) + 1;
-        document.getElementById("resultadoDado").innerText = "🎲 Saiu: " + resultado;
-    });
-</script>
+    <div id="resultado"></div>
+
+    <script>
+        function rolarDado() {
+            let numero = Math.floor(Math.random() * 6) + 1;
+            document.getElementById("resultado").innerText = número;
+        }
+    </script>
 
 </body>
 </html>
