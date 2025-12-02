@@ -1,117 +1,235 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jogo da EN2 — Peão em Movimento</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jogo da EN2 — A Grande Travessia de Portugal</title>
 <style>
-    body {
-        margin: 0;
-        background: #000;
-        color: white;
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
+  :root{
+    --bg:#111;
+    --accent:#ffd100;
+    --card-bg: rgba(255,255,255,0.06);
+  }
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, Arial, sans-serif;background:var(--bg);color:#fff}
+  .wrap{max-width:1200px;margin:20px auto;padding:20px;text-align:center}
+  h1{font-size:26px;margin:6px 0 18px}
+  .board-container{position:relative;margin:0 auto;width:100%;max-width:1000px;height:0;padding-bottom:87%; /* aspect ratio */ background:#000;border-radius:6px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+  .board-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  /* peões */
+  .pawn{
+    position:absolute;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    transform:translate(-50%,-50%);transition:transform 700ms cubic-bezier(.2,.9,.2,1), left 700ms, top 700ms;
+    box-shadow:0 6px 14px rgba(0,0,0,.5);border:4px solid #fff;
+    z-index:20;font-weight:700;color:#111;
+  }
+  .pawn.car{background:#ffcc00}    /* carro - amarelo */
+  .pawn.moto{background:#f05a24}   /* mota - laranja */
+  .pawn.bike{background:#2ab7ca}   /* bicicleta - turquesa */
+  .pawn.person{background:#9b59b6} /* pessoa - roxo */
 
-    #board-container {
-        position: relative;
-        width: 100%;
-        max-width: 1200px;
-        margin: auto;
-    }
+  .controls{margin-top:18px;display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .select-pawns{display:flex;gap:10px;align-items:center}
+  .pawn-btn{display:inline-flex;align-items:center;gap:8px;border:0;padding:8px 12px;border-radius:8px;background:var(--card-bg);cursor:pointer;color:#fff}
+  .pawn-btn input{display:none}
+  .btn{background:var(--accent);border:0;padding:14px 28px;border-radius:10px;font-weight:700;cursor:pointer;color:#111;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+  .info{margin-top:10px;font-size:18px}
+  .die{display:inline-block;width:46px;height:46px;border-radius:8px;background:#222;color:#fff;line-height:46px;font-size:20px}
+  footer.note{margin-top:20px;font-size:13px;color:#ddd}
 
-    #tabuleiro {
-        width: 100%;
-        display: block;
-    }
-
-    /* Peão */
-    #peao {
-        position: absolute;
-        width: 28px;
-        height: 28px;
-        background: yellow;
-        border: 3px solid black;
-        border-radius: 50%;
-        transition: all 0.5s ease;
-        pointer-events: none;
-    }
-
-    /* Botão */
-    #jogarBtn {
-        margin-top: 20px;
-        padding: 15px 40px;
-        border: none;
-        font-size: 22px;
-        background: #FFC800;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    #resultado {
-        margin-top: 20px;
-        font-size: 24px;
-    }
+  /* responsive */
+  @media (max-width:640px){
+    .pawn{width:34px;height:34px}
+    .btn{padding:12px 20px}
+  }
 </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
 
-<h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
+    <div class="board-container" id="board">
+      <!-- imagem final do tabuleiro (usa a versão que confirmaste) -->
+      <img class="board-img" id="boardImg" src="https://i.imgur.com/SgYhoY8.png" alt="Tabuleiro do Jogo EN2">
+      <!-- peões (criados dinamicamente) -->
+      <div id="pawnsContainer"></div>
+    </div>
 
-<div id="board-container">
-    <img id="tabuleiro" src="https://i.imgur.com/SgYhoY8.png" alt="Tabuleiro EN2">
-    <div id="peao"></div>
-</div>
+    <div class="controls">
+      <div class="select-pawns" id="pawnSelectors">
+        <!-- botões de selecção criados dinamicamente -->
+      </div>
 
-<button id="jogarBtn">JOGAR</button>
-<div id="resultado">Sairá o número do dado…</div>
+      <button class="btn" id="rollBtn">JOGAR</button>
+      <div style="width:8px"></div>
+      <div class="die" id="dieDisplay">-</div>
+    </div>
+
+    <div class="info" id="info">Escolhe um peão e clica em "JOGAR" para lançar o dado.</div>
+
+    <footer class="note">Começam todos na primeira casa (logo "Comunidade EN2"). Coordenadas de casas são percentuais e podem ser ajustadas.</footer>
+  </div>
 
 <script>
-    // Coordenadas iniciais do peão (Casa 0 — Chaves)
-    const casas = [
-        { x: 850, y: 650 }, // Casa 0 (Chaves)
-        { x: 820, y: 610 }, // Casa 1
-        { x: 790, y: 580 }, // Casa 2
-        { x: 760, y: 550 }  // Casa 3 (exemplo)
-    ];
+/*
+  JOGO SIMPLIFICADO:
+  - array "spots" = pontos (x%, y%) para cada casa do tabuleiro (começa na posição do logótipo)
+  - 4 peões: car, moto, bike, person
+  - seleccionar peão -> click "JOGAR" -> roula 1..6 -> move peão esse nº de casas com animação
+  - podes editar os spots para afinar posições
+*/
 
-    let posicaoAtual = 0;
+/* === CONFIGURAÇÃO - ajustar se necessário === */
+const spots = [
+  /* 0 = start (logo/bola amarela). Depois seguem o percurso aproximado em % (x,y). */
+  {x:6,  y:8},   // 0 inicio
+  {x:14, y:10},  //1
+  {x:22, y:8},   //2
+  {x:30, y:10},  //3
+  {x:36, y:14},  //4
+  {x:32, y:20},  //5
+  {x:26, y:24},  //6
+  {x:20, y:28},  //7
+  {x:14, y:32},  //8
+  {x:18, y:38},  //9
+  {x:26, y:42},  //10
+  {x:36, y:44},  //11
+  {x:46, y:42},  //12
+  {x:54, y:40},  //13
+  {x:62, y:42},  //14
+  {x:56, y:50},  //15
+  {x:50, y:54},  //16
+  {x:44, y:58},  //17
+  {x:36, y:62},  //18
+  {x:28, y:66},  //19
+  {x:20, y:68},  //20
+  {x:14, y:72},  //21
+  {x:18, y:76},  //22
+  {x:26, y:78},  //23
+  {x:36, y:76},  //24
+  {x:46, y:74},  //25
+  {x:54, y:70},  //26
+  {x:62, y:66},  //27
+  {x:70, y:62},  //28
+  {x:78, y:58},  //29
+  {x:72, y:52},  //30
+  {x:66, y:48},  //31
+  {x:60, y:44},  //32
+  {x:52, y:40},  //33
+  {x:44, y:34},  //34
+  {x:36, y:30},  //35
+  {x:28, y:26},  //36
+  {x:20, y:22},  //37
+  {x:12, y:18}   //38 (pode encerrar aqui; tens ~39 pontos)
+];
 
-    function atualizarPeao() {
-        const peao = document.getElementById("peao");
+/* peões definidos */
+const pawnsDef = [
+  {id:'car',   label:'Carro',  cls:'car'},
+  {id:'moto',  label:'Mota',   cls:'moto'},
+  {id:'bike',  label:'Bicicleta', cls:'bike'},
+  {id:'person',label:'Pessoa', cls:'person'}
+];
 
-        const tabuleiro = document.getElementById("tabuleiro");
-        const rect = tabuleiro.getBoundingClientRect();
-        const proporcaoX = rect.width / tabuleiro.naturalWidth;
-        const proporcaoY = rect.height / tabuleiro.naturalHeight;
+/* --- estado do jogo --- */
+const state = {
+  selectedPawn: pawnsDef[0].id,
+  pawns: {}, // id -> {pos:0}
+  isRolling:false
+};
 
-        const cx = casas[posicaoAtual].x * proporcaoX;
-        const cy = casas[posicaoAtual].y * proporcaoY;
+/* === inicialização UI === */
+const pawnsContainer = document.getElementById('pawnsContainer');
+const pawnSelectors = document.getElementById('pawnSelectors');
+const rollBtn = document.getElementById('rollBtn');
+const dieDisplay = document.getElementById('dieDisplay');
+const info = document.getElementById('info');
+const board = document.getElementById('board');
+const boardImg = document.getElementById('boardImg');
 
-        peao.style.left = (rect.left + cx - 14) + "px";
-        peao.style.top = (rect.top + cy - 14) + "px";
+function init(){
+  // criar peões no DOM
+  pawnsDef.forEach(p=>{
+    state.pawns[p.id] = {pos:0}; // começa na casa 0
+    const el = document.createElement('div');
+    el.className = `pawn ${p.cls}`;
+    el.id = `pawn-${p.id}`;
+    el.title = p.label;
+    el.innerHTML = p.label.charAt(0).toUpperCase();
+    pawnsContainer.appendChild(el);
+    // posicionar no start
+    placePawnAt(p.id, 0, false);
+  });
+
+  // criar selectors
+  pawnsDef.forEach(p=>{
+    const btn = document.createElement('label');
+    btn.className = 'pawn-btn';
+    btn.innerHTML = `<input type="radio" name="pawnSel" value="${p.id}" ${p.id===state.selectedPawn?'checked':''}> ${p.label}`;
+    pawnSelectors.appendChild(btn);
+    btn.querySelector('input').addEventListener('change', (e)=>{
+      state.selectedPawn = e.target.value;
+      setInfo(`Peão seleccionado: ${p.label}`);
+    });
+  });
+
+  // botao roll
+  rollBtn.addEventListener('click', onRoll);
+
+  setInfo('Escolhe um peão e clica em "JOGAR" para lançar o dado.');
+}
+
+/* posiciona o peão id na casa index (com animação se anim true) */
+function placePawnAt(pawnId, index, anim=true){
+  const el = document.getElementById(`pawn-${pawnId}`);
+  if(!el) return;
+  const max = spots.length - 1;
+  const i = Math.max(0, Math.min(index, max));
+  const spot = spots[i];
+  // usar percentagens
+  el.style.left = spot.x + '%';
+  el.style.top  = spot.y + '%';
+  if(!anim) el.style.transition = 'none';
+  // forçar reflow para reset transition
+  void el.offsetWidth;
+  if(!anim) el.style.transition = '';
+  state.pawns[pawnId].pos = i;
+}
+
+/* rolar dado e mover */
+function onRoll(){
+  if(state.isRolling) return;
+  state.isRolling = true;
+  const roll = Math.floor(Math.random()*6)+1;
+  dieDisplay.textContent = roll;
+  setInfo(`Saiu: ${roll} — movendo ${state.selectedPawn}...`);
+  animateMove(state.selectedPawn, roll).then(()=>{
+    state.isRolling = false;
+    setInfo(`Movimento terminado. ${state.selectedPawn} está na casa ${state.pawns[state.selectedPawn].pos}.`);
+  });
+}
+
+/* anima mover: avança passo a passo (1 casa de cada vez) */
+function animateMove(pawnId, steps){
+  return new Promise(resolve=>{
+    let step = 0;
+    const start = state.pawns[pawnId].pos;
+    function next(){
+      step++;
+      const targetIndex = Math.min(spots.length-1, start + step);
+      placePawnAt(pawnId, targetIndex, true);
+      if(step < steps && targetIndex < spots.length-1){
+        setTimeout(next, 550); // tempo entre casas
+      } else {
+        resolve();
+      }
     }
+    next();
+  });
+}
 
-    window.onload = () => {
-        atualizarPeao();
-    }
+function setInfo(txt){ info.textContent = txt; }
 
-    window.onresize = () => {
-        atualizarPeao();
-    }
-
-    document.getElementById("jogarBtn").onclick = () => {
-        const dado = Math.floor(Math.random() * 6) + 1;
-        document.getElementById("resultado").innerText = "Saiu: " + dado;
-
-        posicaoAtual += dado;
-        if (posicaoAtual >= casas.length) posicaoAtual = casas.length - 1;
-
-        atualizarPeao();
-    };
+init();
 </script>
-
 </body>
 </html>
