@@ -3,69 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jogo da EN2 — A Grande Travessia</title>
+<title>Jogo da EN2 — Peão em Movimento</title>
 
 <style>
     body {
         margin: 0;
-        padding: 0;
-        background: #111;
+        background: #000;
         color: white;
         font-family: Arial, sans-serif;
         text-align: center;
     }
 
-    h1 {
-        margin-top: 30px;
-        font-size: 32px;
-        font-weight: bold;
+    #board-container {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: auto;
     }
 
     #tabuleiro {
-        width: 90%;
-        max-width: 900px;
-        margin-top: 20px;
-        border-radius: 10px;
+        width: 100%;
+        display: block;
     }
 
+    /* Peão */
+    #peao {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        background: yellow;
+        border: 3px solid black;
+        border-radius: 50%;
+        transition: all 0.5s ease;
+        pointer-events: none;
+    }
+
+    /* Botão */
     #jogarBtn {
-        background: gold;
+        margin-top: 20px;
         padding: 15px 40px;
-        font-size: 24px;
-        color: black;
         border: none;
+        font-size: 22px;
+        background: #FFC800;
         border-radius: 10px;
         cursor: pointer;
-        margin-top: 25px;
         font-weight: bold;
     }
 
     #resultado {
         margin-top: 20px;
-        font-size: 26px;
+        font-size: 24px;
     }
 </style>
 </head>
-
 <body>
 
 <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
 
-<!-- IMAGEM DO TABULEIRO (Imgur estável) -->
-<img id="tabuleiro" src="https://i.imgur.com/SgYhoY8.png" alt="Tabuleiro do Jogo EN2">
+<div id="board-container">
+    <img id="tabuleiro" src="https://i.imgur.com/SgYhoY8.png" alt="Tabuleiro EN2">
+    <div id="peao"></div>
+</div>
 
-<!-- BOTÃO JOGAR -->
-<br>
 <button id="jogarBtn">JOGAR</button>
-
-<!-- RESULTADO DO DADO -->
-<div id="resultado"></div>
+<div id="resultado">Sairá o número do dado…</div>
 
 <script>
-    document.getElementById("jogarBtn").addEventListener("click", function () {
+    // Coordenadas iniciais do peão (Casa 0 — Chaves)
+    const casas = [
+        { x: 850, y: 650 }, // Casa 0 (Chaves)
+        { x: 820, y: 610 }, // Casa 1
+        { x: 790, y: 580 }, // Casa 2
+        { x: 760, y: 550 }  // Casa 3 (exemplo)
+    ];
+
+    let posicaoAtual = 0;
+
+    function atualizarPeao() {
+        const peao = document.getElementById("peao");
+
+        const tabuleiro = document.getElementById("tabuleiro");
+        const rect = tabuleiro.getBoundingClientRect();
+        const proporcaoX = rect.width / tabuleiro.naturalWidth;
+        const proporcaoY = rect.height / tabuleiro.naturalHeight;
+
+        const cx = casas[posicaoAtual].x * proporcaoX;
+        const cy = casas[posicaoAtual].y * proporcaoY;
+
+        peao.style.left = (rect.left + cx - 14) + "px";
+        peao.style.top = (rect.top + cy - 14) + "px";
+    }
+
+    window.onload = () => {
+        atualizarPeao();
+    }
+
+    window.onresize = () => {
+        atualizarPeao();
+    }
+
+    document.getElementById("jogarBtn").onclick = () => {
         const dado = Math.floor(Math.random() * 6) + 1;
-        document.getElementById("resultado").innerHTML = "🎲 Saiu: <b>" + dado + "</b>";
-    });
+        document.getElementById("resultado").innerText = "Saiu: " + dado;
+
+        posicaoAtual += dado;
+        if (posicaoAtual >= casas.length) posicaoAtual = casas.length - 1;
+
+        atualizarPeao();
+    };
 </script>
 
 </body>
