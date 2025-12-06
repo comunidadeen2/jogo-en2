@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8" />
+<title>Picker de Coordenadas - Tabuleiro EN2</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;background:#222;color:#eee;padding:18px}
+  #canvasWrap{position:relative;display:inline-block;border:6px solid #111;background:#000}
+  canvas{display:block;max-width:100%;height:auto;}
+  .controls{margin-top:12px}
+  button, input[type=file]{padding:8px 12px;margin-right:8px}
+  textarea{width:100%;height:120px;margin-top:12px;font-family:monospace}
+  .hint{color:#bbb;font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+<h2>Picker de coordenadas — Tabuleiro EN2</h2>
+<div class="controls">
+  <input id="file" type="file" accept="image/*">
+  <button id="clear">Limpar</button>
+  <button id="export">Export JSON</button>
+  <button id="undo">Undo</button>
+</div>
+<div id="canvasWrap">
+  <canvas id="c"></canvas>
+</div>
+<div class="hint">Clique na imagem para adicionar uma coordenada. Guarda a ordem do percurso. O export dá coordenadas <strong>normalizadas</strong> (0..1).</div>
+<textarea id="out" placeholder="JSON aparecerá aqui depois do export..."></textarea>
+
+<script>
+const file = document.getElementById('file');
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let img = new Image();
+let points = [];
+
+function setCanvasSize(w,h){
+  canvas.width = w; canvas.height = h;
+  canvas.style.width = Math.min(window.innerWidth-40, w) + 'px';
+  canvas.style.height = (canvas.style.width.replace('px','')/w*h) + 'px';
+}
+
+file.addEventListener('change', (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const url = URL.createObjectURL(f);
+  img = new Image();
+  img.onload = ()=>{
+    setCanvasSize(img.width,img.height);
+    draw();
+  };
+  img.src = url;
+});
+
+function draw(){
+  if(!img.width) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  // draw points
+  ctx.fillStyle = 'rgba(255, 196, 0, 0.95)';
+  ctx.strokeStyle = '#111';
+  ctx.lineWidth = 2;
+  points.forEach((p,i)=>{
+    const x = p.x*canvas.width;
+    const y = p.y*canvas.height;
+    ctx.beginPath();
+    ctx.arc(x,y,12,0,Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+    // order number
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold 12px Arial';
+    ctx.fillText(String(i+1), x-4, y+4);
+    ctx.fillStyle = 'rgba(255, 196, 0, 0.95)';
+  });
+}
+
+canvas.addEventListener('click', (ev)=>{
+  if(!img.width) return;
+  const rect = canvas.getBoundingClientRect();
+  const cx = ev.clientX - rect.left;
+  const cy = ev.clientY - rect.top;
+  const nx = cx / canvas.clientWidth;
+  const ny = cy / canvas.clientHeight;
+  // store normalized relative to original image scale:
+  // compute ratio between displayed canvas css size and internal pixel size
+  const scaleX = canvas.width / canvas.clientWidth;
+  const scaleY = canvas.height / canvas.clientHeight;
+  const realX = (cx * scaleX) / canvas.width;
+  const realY = (cy * scaleY) / canvas.height;
+  points.push({x: realX, y: realY});
+  draw();
+});
+
+document.getElementById('clear').addEventListener('click', ()=>{ points=[]; draw(); document.getElementById('out').value=''; });
+document.getElementById('undo').addEventListener('click', ()=>{ points.pop(); draw(); });
+
+document.getElementById('export').addEventListener('click', ()=>{
+  const json = JSON.stringify(points, null, 2);
+  document.getElementById('out').value = json;
+  // try copy to clipboard
+  navigator.clipboard && navigator.clipboard.writeText(json).then(()=>{ alert('JSON copiado para a área de transferência.'); }, ()=>{});
+});
+</script>
+</body>
+</html>
