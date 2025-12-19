@@ -75,7 +75,7 @@ button{
 
 <body>
 <div class="wrap">
-  <h1>Jogo da EN2 - A Grande Travessia de Portugal</h1>
+  <h1>Jogo da EN2 - A Travessia de Portugal</h1>
 
   <div class="board-frame" id="boardFrame">
     <div class="zoom">
@@ -91,11 +91,12 @@ button{
     <div id="setupPlayers">
       Jogadores:
       <select id="playerCount">
-        <option>1</option>
-        <option selected>2</option>
-        <option>3</option>
-        <option>4</option>
-      </select>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+</select>
+
       <button id="startBtn">COMEÇAR</button>
     </div>
 
@@ -350,5 +351,3 @@ rollBtn.onclick = async ()=>{
 </script>
 </body>
 </html>
-
-
