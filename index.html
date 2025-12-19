@@ -22,11 +22,15 @@ body{
   max-width:1400px;
   margin:20px auto;
 }
+h1{text-align:center}
+
 .main{
   display:flex;
   gap:20px;
   align-items:flex-start;
 }
+
+/* TABULEIRO */
 .board-frame{
   flex:0 0 1000px;
   aspect-ratio:4/3;
@@ -70,6 +74,7 @@ body{
   display:flex;
   gap:10px;
   align-items:center;
+  justify-content:center;
 }
 .btn{
   padding:10px 18px;
@@ -79,7 +84,19 @@ body{
   background:var(--accent);
   cursor:pointer;
 }
-.help{color:#ccc;font-size:14px}
+.help{color:#ccc;font-size:14px;text-align:center}
+
+/* ESCOLHA PEÕES */
+#pawnChoice{
+  text-align:center;
+  margin:15px 0;
+}
+#pawnButtons{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
 
 /* OBJETIVO */
 .objective-panel{
@@ -87,21 +104,15 @@ body{
   background:#1a1a1a;
   border-radius:8px;
   padding:14px;
-  min-height:200px;
 }
-.objective-panel h3{
-  margin:0 0 10px;
-  font-size:18px;
-}
+.objective-panel h3{margin-top:0}
+
 .milestone{
   display:flex;
   align-items:center;
   gap:10px;
   margin-bottom:6px;
   color:var(--inactive);
-}
-.milestone.active{
-  color:var(--accent);
 }
 .milestone svg{
   width:20px;
@@ -121,6 +132,7 @@ body{
 
 <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
 
+<!-- CONTROLOS INICIAIS -->
 <div class="controls">
   <span id="playersLabel">Jogadores:</span>
   <select id="playerCount">
@@ -129,12 +141,16 @@ body{
     <option value="3">3</option>
     <option value="4" selected>4</option>
   </select>
-
   <button class="btn" id="startBtn">COMEÇAR</button>
   <button class="btn" id="rollBtn" style="display:none">JOGAR</button>
-
   🎲 <strong id="diceVal">—</strong>
   <span id="turnInfo"></span>
+</div>
+
+<!-- ESCOLHA DE PEÕES -->
+<div id="pawnChoice" style="display:none">
+  <p id="pawnQuestion"></p>
+  <div id="pawnButtons"></div>
 </div>
 
 <div class="main">
@@ -150,7 +166,7 @@ body{
   </div>
 
   <!-- OBJETIVO -->
-  <div class="objective-panel" id="objectivePanel">
+  <div class="objective-panel">
     <h3>Objetivo</h3>
     <div id="objectiveContent">—</div>
   </div>
@@ -164,18 +180,18 @@ body{
 
 <script>
 // ===============================
-// SPACES (USAR A TUA LISTA COMPLETA)
+// SPACES (usa a tua lista completa)
 // ===============================
 const SPACES = [
   {"x":0.0916530278,"y":0.1137939783},
   {"x":0.0867430441,"y":0.1625084573},
   {"x":0.0867430441,"y":0.2152824763},
   {"x":0.0916530278,"y":0.2700862652}
-  // ⚠️ mantém aqui a tua lista completa
+  // mantém aqui a tua lista completa
 ];
 
 // ===============================
-// OBJETIVOS (TODOS OS TEUS)
+// OBJETIVOS (exemplo base)
 // ===============================
 const OBJECTIVES = [
   {
@@ -196,26 +212,28 @@ const OBJECTIVES = [
       {label:"Faro",km:"738"}
     ]
   }
-  // ⚠️ os restantes objetivos seguem o mesmo formato
 ];
 
 // ===============================
 // ELEMENTOS
 // ===============================
 const boardFrame = document.getElementById("boardFrame");
-const zoomWrap   = document.getElementById("zoomWrap");
-const pawns      = [
+const pawns = [
   document.getElementById("pawn0"),
   document.getElementById("pawn1"),
   document.getElementById("pawn2"),
   document.getElementById("pawn3")
 ];
-const rollBtn    = document.getElementById("rollBtn");
-const startBtn   = document.getElementById("startBtn");
-const diceVal    = document.getElementById("diceVal");
-const turnInfo   = document.getElementById("turnInfo");
-const playerSel  = document.getElementById("playerCount");
+const startBtn = document.getElementById("startBtn");
+const rollBtn  = document.getElementById("rollBtn");
+const diceVal  = document.getElementById("diceVal");
+const turnInfo = document.getElementById("turnInfo");
+const playerSel = document.getElementById("playerCount");
 const playersLabel = document.getElementById("playersLabel");
+
+const pawnChoice = document.getElementById("pawnChoice");
+const pawnQuestion = document.getElementById("pawnQuestion");
+const pawnButtons = document.getElementById("pawnButtons");
 const objectiveContent = document.getElementById("objectiveContent");
 
 // ===============================
@@ -224,40 +242,70 @@ const objectiveContent = document.getElementById("objectiveContent");
 let totalPlayers = 0;
 let players = [];
 let currentPlayer = 0;
+let usedPawns = [];
 
 // ===============================
-// FUNÇÕES
+// FUNÇÕES BASE
 // ===============================
 function placePawn(pawn,i){
   pawn.style.left = SPACES[i].x * boardFrame.clientWidth+"px";
   pawn.style.top  = SPACES[i].y * boardFrame.clientHeight+"px";
 }
+function shuffle(a){ return a.sort(()=>Math.random()-0.5); }
 
-async function movePawn(playerIndex,steps){
-  for(let i=0;i<steps;i++){
-    players[playerIndex].pos =
-      Math.min(players[playerIndex].pos+1, SPACES.length-1);
-    placePawn(
-      pawns[players[playerIndex].pawn],
-      players[playerIndex].pos
-    );
-    await new Promise(r=>setTimeout(r,400));
-  }
-}
+// ===============================
+// ESCOLHA DE PEÕES
+// ===============================
+function showPawnChoice(){
+  pawnChoice.style.display = "block";
+  pawnButtons.innerHTML = "";
+  pawnQuestion.textContent =
+    `Jogador ${players.length+1}, como quer viajar?`;
 
-function shuffle(a){
-  return a.sort(()=>Math.random()-0.5);
+  const icons = ["🚗","🚴","🏍️","🚶"];
+
+  icons.forEach((icon,i)=>{
+    if(usedPawns.includes(i)) return;
+
+    const b = document.createElement("button");
+    b.className = "btn";
+    b.textContent = icon;
+
+    b.onclick = ()=>{
+      usedPawns.push(i);
+      players.push({
+        pawn:i,
+        pos:0,
+        objective:null
+      });
+      pawns[i].style.display="flex";
+      placePawn(pawns[i],0);
+
+      if(players.length < totalPlayers){
+        showPawnChoice();
+      }else{
+        pawnChoice.style.display="none";
+        assignObjectives();
+      }
+    };
+    pawnButtons.appendChild(b);
+  });
 }
 
 // ===============================
-// OBJETIVO VISUAL
+// OBJETIVOS
 // ===============================
+function assignObjectives(){
+  const deck = shuffle([...OBJECTIVES]);
+  players.forEach(p=>p.objective = deck.pop());
+  rollBtn.style.display="inline-block";
+  turnInfo.textContent = "Vez do Jogador 1";
+  renderObjective();
+}
+
 function renderObjective(){
   const obj = players[currentPlayer].objective;
   let html = `<p><strong>${obj.text}</strong></p>`;
-
-  let done = 0;
-
   obj.items.forEach(it=>{
     html += `
       <div class="milestone">
@@ -267,8 +315,7 @@ function renderObjective(){
         ${it.label} — Km ${it.km}
       </div>`;
   });
-
-  html += `<div class="progress">Progresso: ${done} / ${obj.items.length}</div>`;
+  html += `<div class="progress">Progresso: 0 / ${obj.items.length}</div>`;
   objectiveContent.innerHTML = html;
 }
 
@@ -278,6 +325,7 @@ function renderObjective(){
 startBtn.onclick = ()=>{
   totalPlayers = Number(playerSel.value);
   players = [];
+  usedPawns = [];
   currentPlayer = 0;
 
   playersLabel.style.display="none";
@@ -286,22 +334,7 @@ startBtn.onclick = ()=>{
 
   pawns.forEach(p=>p.style.display="none");
 
-  for(let i=0;i<totalPlayers;i++){
-    players.push({
-      pawn:i,
-      pos:0,
-      objective:null
-    });
-    pawns[i].style.display="flex";
-    placePawn(pawns[i],0);
-  }
-
-  const deck = shuffle([...OBJECTIVES]);
-  players.forEach(p=>p.objective = deck.pop());
-
-  rollBtn.style.display="inline-block";
-  turnInfo.textContent="Vez do Jogador 1";
-  renderObjective();
+  showPawnChoice();
 };
 
 // ===============================
@@ -311,10 +344,18 @@ rollBtn.onclick = async ()=>{
   const r = Math.floor(Math.random()*6)+1;
   diceVal.textContent = r;
 
-  await movePawn(currentPlayer,r);
+  for(let i=0;i<r;i++){
+    players[currentPlayer].pos =
+      Math.min(players[currentPlayer].pos+1, SPACES.length-1);
+    placePawn(
+      pawns[players[currentPlayer].pawn],
+      players[currentPlayer].pos
+    );
+    await new Promise(res=>setTimeout(res,400));
+  }
 
   currentPlayer = (currentPlayer+1)%players.length;
-  turnInfo.textContent="Vez do Jogador "+(currentPlayer+1);
+  turnInfo.textContent = "Vez do Jogador "+(currentPlayer+1);
   renderObjective();
 };
 </script>
