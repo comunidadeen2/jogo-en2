@@ -1,537 +1,9 @@
-// POSIÇÕES DAS CASAS (geradas pelo picker)
-// coordenadas normalizadas (0..1) relativas à imagem
-const SPACES = [
-  {
-    "x": 0.09165302782324058,
-    "y": 0.11379397834912044
-  },
-  {
-    "x": 0.0867430441898527,
-    "y": 0.16250845737483086
-  },
-  {
-    "x": 0.0867430441898527,
-    "y": 0.2152824763193505
-  },
-  {
-    "x": 0.09165302782324058,
-    "y": 0.2700862652232747
-  },
-  {
-    "x": 0.127114020731042,
-    "y": 0.23558017591339647
-  },
-  {
-    "x": 0.15057283142389524,
-    "y": 0.18957205683355888
-  },
-  {
-    "x": 0.17621385706492088,
-    "y": 0.14356393775372125
-  },
-  {
-    "x": 0.21876704855428258,
-    "y": 0.11311738836265224
-  },
-  {
-    "x": 0.26513911620294595,
-    "y": 0.09417286874154264
-  },
-  {
-    "x": 0.30551009274413526,
-    "y": 0.10229194857916103
-  },
-  {
-    "x": 0.3458810692853246,
-    "y": 0.13003213802435723
-  },
-  {
-    "x": 0.35951991271140205,
-    "y": 0.17671684709066307
-  },
-  {
-    "x": 0.3246044735406437,
-    "y": 0.21595906630581868
-  },
-  {
-    "x": 0.287506819421713,
-    "y": 0.19227841677943167
-  },
-  {
-    "x": 0.24277141298417892,
-    "y": 0.17198071718538568
-  },
-  {
-    "x": 0.2198581560283688,
-    "y": 0.21798883626522328
-  },
-  {
-    "x": 0.23840698308783415,
-    "y": 0.2700862652232747
-  },
-  {
-    "x": 0.22804146208401527,
-    "y": 0.31880074424898514
-  },
-  {
-    "x": 0.18112384069830878,
-    "y": 0.3269198240866035
-  },
-  {
-    "x": 0.13911620294599017,
-    "y": 0.33571549391069017
-  },
-  {
-    "x": 0.11292962356792144,
-    "y": 0.38713633288227334
-  },
-  {
-    "x": 0.11947626841243862,
-    "y": 0.4372039918809202
-  },
-  {
-    "x": 0.15711947626841244,
-    "y": 0.4690037212449256
-  },
-  {
-    "x": 0.20021822149481724,
-    "y": 0.45005920162381596
-  },
-  {
-    "x": 0.23404255319148934,
-    "y": 0.41217016238159676
-  },
-  {
-    "x": 0.2613202400436443,
-    "y": 0.368868403247632
-  },
-  {
-    "x": 0.2940534642662302,
-    "y": 0.3275964140730717
-  },
-  {
-    "x": 0.3333333333333333,
-    "y": 0.2998562246278755
-  },
-  {
-    "x": 0.37861429350791054,
-    "y": 0.3181241542625169
-  },
-  {
-    "x": 0.4026186579378069,
-    "y": 0.3600727334235454
-  },
-  {
-    "x": 0.40698308783415166,
-    "y": 0.41961265223274696
-  },
-  {
-    "x": 0.3824331696672122,
-    "y": 0.4554719215155616
-  },
-  {
-    "x": 0.3376977632296781,
-    "y": 0.4893014208389716
-  },
-  {
-    "x": 0.2967812329514457,
-    "y": 0.5048629905277402
-  },
-  {
-    "x": 0.2509547190398254,
-    "y": 0.5190713802435725
-  },
-  {
-    "x": 0.20403709765411893,
-    "y": 0.5501945196211097
-  },
-  {
-    "x": 0.1756683033278778,
-    "y": 0.5887601488497971
-  },
-  {
-    "x": 0.18876159301691217,
-    "y": 0.6455937077131259
-  },
-  {
-    "x": 0.23349699945444624,
-    "y": 0.6652148173207038
-  },
-  {
-    "x": 0.27714129841789414,
-    "y": 0.6516830175913396
-  },
-  {
-    "x": 0.3175122749590834,
-    "y": 0.6313853179972937
-  },
-  {
-    "x": 0.35951991271140205,
-    "y": 0.6070280784844384
-  },
-  {
-    "x": 0.4004364429896345,
-    "y": 0.5725219891745602
-  },
-  {
-    "x": 0.42825968357883254,
-    "y": 0.5420754397834913
-  },
-  {
-    "x": 0.4653573376977632,
-    "y": 0.5014800405953992
-  },
-  {
-    "x": 0.4915439170758319,
-    "y": 0.46765054127198924
-  },
-  {
-    "x": 0.5237315875613747,
-    "y": 0.4290849120433018
-  },
-  {
-    "x": 0.5613747954173486,
-    "y": 0.40269790257104193
-  },
-  {
-    "x": 0.5990180032733223,
-    "y": 0.36345568335588635
-  },
-  {
-    "x": 0.6377523186033823,
-    "y": 0.34045162381596755
-  },
-  {
-    "x": 0.6824877250409165,
-    "y": 0.32489005412719896
-  },
-  {
-    "x": 0.7255864702673214,
-    "y": 0.33639208389715836
-  },
-  {
-    "x": 0.7408619749045281,
-    "y": 0.385783152909337
-  },
-  {
-    "x": 0.7097654118930714,
-    "y": 0.433144451962111
-  },
-  {
-    "x": 0.6715766503000545,
-    "y": 0.46359100135318
-  },
-  {
-    "x": 0.629569012547736,
-    "y": 0.4865950608930988
-  },
-  {
-    "x": 0.5881069285324604,
-    "y": 0.5116288903924222
-  },
-  {
-    "x": 0.552645935624659,
-    "y": 0.5434286197564276
-  },
-  {
-    "x": 0.5280960174577196,
-    "y": 0.5806410690121786
-  },
-  {
-    "x": 0.5302782324058919,
-    "y": 0.642210757780785
-  },
-  {
-    "x": 0.5575559192580469,
-    "y": 0.6861891069012179
-  },
-  {
-    "x": 0.5995635570103655,
-    "y": 0.6949847767253045
-  },
-  {
-    "x": 0.6415711947626841,
-    "y": 0.6713041271989174
-  },
-  {
-    "x": 0.668848881614839,
-    "y": 0.6246194181326117
-  },
-  {
-    "x": 0.6972176759410802,
-    "y": 0.5779347090663058
-  },
-  {
-    "x": 0.729950900163666,
-    "y": 0.5319265899864682
-  },
-  {
-    "x": 0.7665030005455538,
-    "y": 0.5068927604871448
-  },
-  {
-    "x": 0.8090561920349154,
-    "y": 0.534632949932341
-  },
-  {
-    "x": 0.8199672667757774,
-    "y": 0.5860537889039242
-  },
-  {
-    "x": 0.7948717948717948,
-    "y": 0.6408575778078485
-  },
-  {
-    "x": 0.7495908346972177,
-    "y": 0.6516830175913396
-  },
-  {
-    "x": 0.7054009819967266,
-    "y": 0.66656799729364
-  },
-  {
-    "x": 0.7092198581560283,
-    "y": 0.7132527063599459
-  },
-  {
-    "x": 0.7277686852154936,
-    "y": 0.7667033152909337
-  },
-  {
-    "x": 0.7026732133115112,
-    "y": 0.8194773342354534
-  },
-  {
-    "x": 0.6623022367703219,
-    "y": 0.801209404600812
-  },
-  {
-    "x": 0.6126568466993999,
-    "y": 0.7768521650879567
-  },
-  {
-    "x": 0.5859247135842881,
-    "y": 0.8194773342354534
-  },
-  {
-    "x": 0.6099290780141844,
-    "y": 0.8688684032476319
-  },
-  {
-    "x": 0.6486633933442444,
-    "y": 0.8898426928281462
-  },
-  {
-    "x": 0.6912165848336062,
-    "y": 0.8918724627875507
-  },
-  {
-    "x": 0.7424986361156574,
-    "y": 0.8715747631935048
-  },
-  {
-    "x": 0.7801418439716311,
-    "y": 0.8330091339648173
-  },
-  {
-    "x": 0.7997817785051827,
-    "y": 0.7863244248985116
-  },
-  {
-    "x": 0.8145117294053463,
-    "y": 0.7396397158322058
-  },
-  {
-    "x": 0.8521549372613202,
-    "y": 0.6902486468200271
-  },
-  {
-    "x": 0.8696126568466993,
-    "y": 0.7477587956698242
-  },
-  {
-    "x": 0.8908892525913802,
-    "y": 0.7897073748308525
-  },
-  {
-    "x": 0.9078014184397163,
-    "y": 0.8478941136671179
-  },
-  {
-    "x": 0.8979814511729405,
-    "y": 0.902697902571042
-  }
-]
-  ];<!doctype html>
-<html lang="pt">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Jogo da EN2 — Demo</title>
-<style>
-  :root{
-    --bg:#111;
-    --accent:#f5c400;
-    --text:#fff;
-  }
-  html,body{height:100%;margin:0;font-family:Inter, system-ui, Arial, sans-serif;background:var(--bg);color:var(--text)}
-  .wrap{
-    max-width:1200px;
-    margin:20px auto;
-    text-align:center;
-  }
-  h1{font-size:28px;margin:8px 0 18px}
-  .board-frame{
-    width:100%;
-    max-width:1000px;
-    height:0;
-    padding-bottom:75%; /* keep aspect ratio ~ 4:3 - ajusta se precisares */
-    margin:0 auto;
-    position:relative;
-    overflow:hidden;
-    border-radius:6px;
-    box-shadow:0 8px 30px rgba(0,0,0,.6);
-    background:#111;
-  }
-
-  /* imagem do tabuleiro */
-  .board-img{
-    position:absolute; inset:0; width:100%; height:100%;
-    background-image:url('https://i.imgur.com/SgYhoY8.png');
-    background-size:cover; background-position:center center;
-  }
-
-  /* svg overlay: vai ocupar todo o mesmo espaço e usa viewBox para coordenadas */
-  .overlay{
-    position:absolute; inset:0;
-    pointer-events:none; /* para clicarmos apenas nos elementos de controlo */
-  }
-
-  /* peões: elementos posicionados por JS */
-  .pawn{
-    position:absolute;
-    width:44px; height:44px;
-    border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    transform: translate(-50%,-50%);
-    box-shadow:0 6px 18px rgba(0,0,0,.5);
-    font-size:22px;
-    pointer-events:auto;
-    cursor:pointer;
-  }
-  .pawn small{font-size:12px; display:block;}
-  .pawn.car{background:linear-gradient(180deg,#ffd54f,#f4b400); color:#111}
-  .pawn.bike{background:linear-gradient(180deg,#8dd3c7,#4bb39a); color:#06231a}
-  .pawn.motor{background:linear-gradient(180deg,#f7a3c6,#ef4a8a); color:#2a001a}
-  .pawn.person{background:linear-gradient(180deg,#b3c5ff,#4267ff); color:#04204a}
-
-  /* marker to highlight selected pawn */
-  .pawn.selected{outline:3px solid #fff; box-shadow:0 8px 26px rgba(255,255,255,.08)}
-
-  /* bottom controls */
-  .controls{
-    margin-top:18px; display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap;
-  }
-  .btn{
-    background:var(--accent); color:#111; padding:12px 22px; border-radius:10px; font-weight:700;
-    border:none; cursor:pointer; font-size:16px;
-  }
-  .info{
-    color:#fff; font-size:18px; display:flex; gap:8px; align-items:center;
-  }
-
-  /* zoom container: we will translate/scale this to center the pawn */
-  .zoom{
-    position:absolute; inset:0; transform-origin:center center; transition:transform .45s cubic-bezier(.2,.9,.2,1);
-    pointer-events:none;
-  }
-
-  /* small help */
-  .help{margin-top:10px;color:#ddd;font-size:14px}
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
-
-    <div class="board-frame" id="boardFrame">
-      <!-- zoom wrapper -->
-      <div class="zoom" id="zoomWrap">
-        <!-- background image -->
-        <div class="board-img" id="boardImg"></div>
-
-        <!-- SVG overlay with a path that roughly follows the track.
-             IMPORTANTE: podes ajustar o atributo 'd' do <path> para alinhar melhor com as casas. -->
-        <svg class="overlay" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" id="svgOverlay" >
-          <!-- path is a smooth line roughly following the route.
-               Se quiseres ajustar, altera os valores do d="" abaixo. -->
-          <path id="routePath" fill="none" stroke="rgba(255,0,0,0.0)" stroke-width="4"
-            d="M120 70
-               C130 60, 140 60, 200 60
-               C240 60, 280 90, 300 130
-               C340 220, 320 300, 260 340
-               C220 370, 200 380, 180 420
-               C170 460, 210 490, 280 510
-               C350 530, 420 540, 520 520
-               C620 500, 680 470, 760 440
-               C820 420, 860 400, 880 360
-               C900 320, 900 280, 860 250
-               C820 220, 760 210, 700 200
-               C640 190, 580 185, 520 190
-               C480 195, 420 210, 360 230
-               C300 250, 260 270, 240 300
-               C220 340, 220 380, 240 420
-               C260 460, 310 490, 360 500
-               C420 515, 460 520, 520 520
-               C580 520, 640 520, 700 500
-               C760 480, 820 460, 860 440
-               C900 420, 930 400, 960 360
-               C980 330, 1000 300, 1040 270
-               "
-          />
-          <!-- optional: draw small circles on the path for debugging (comment out if não queres ver) -->
-          <!-- we'll generate visible markers by JS instead of fixed circles -->
-        </svg>
-
-        <!-- pawns (4) -->
-        <div class="pawn car" id="pawn0" data-index="0" title="Carro">🚗</div>
-        <div class="pawn bike" id="pawn1" data-index="1" title="Bicicleta">🚴</div>
-        <div class="pawn motor" id="pawn2" data-index="2" title="Mota">🏍️</div>
-        <div class="pawn person" id="pawn3" data-index="3" title="Pessoa">🚶</div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <div style="display:flex; gap:10px; align-items:center;">
-        <label style="color:#ddd">Selecionar peão:</label>
-        <select id="selectPawn">
-          <option value="0">Carro 🚗</option>
-          <option value="1">Bicicleta 🚴</option>
-          <option value="2">Mota 🏍️</option>
-          <option value="3">Pessoa 🚶</option>
-        </select>
-      </div>
-
-      <button class="btn" id="rollBtn">JOGAR (Lançar dado)</button>
-
-      <div class="info" id="diceInfo">🎲 Saiu: <strong id="diceVal">—</strong></div>
-    </div>
-
-    <div class="help">
-      Escolhe o peão, clica em "JOGAR" para lançar o dado. O peão seleccionado desloca-se esse número de casas. O zoom foca automaticamente a jogada.
-    </div>
-  </div>
-
 <script>
-/* ========= Configuração =========
-   path = o elemento SVG path que define o trajecto.
-   steps = número de casas / posições discretas que vamos usar no path.
-   startOffset = deslocamento inicial (para que a primeira casa seja exatamente onde está o logotipo)
-   Podes ajustar steps/startOffset e o próprio 'd' do path no HTML.
-*/
+// POSIÇÕES DAS CASAS (geradas pelo picker)
+const SPACES = [
+  /* JSON DO PICKER AQUI */
+];
 
-const pathEl = document.getElementById('routePath');
-const svg = document.getElementById('svgOverlay');
 const zoomWrap = document.getElementById('zoomWrap');
 const boardFrame = document.getElementById('boardFrame');
 
@@ -547,159 +19,68 @@ const rollBtn = document.getElementById('rollBtn');
 const diceVal = document.getElementById('diceVal');
 
 let selectedPawnIndex = 0;
-let totalSteps = SPACES.length;   // número aproximado de casas; ajusta conforme necessário (mais = movimentos mais finos)
-let pathLen = 0;
-let positions = [];    // array de {x,y} em coordenadas SVG para cada passo/posição
-let pawnPosIndex = [0,0,0,0]; // índice atual (0 = start) para cada peão
+let pawnPosIndex = [0,0,0,0];
 
-// queres que a "primeira casa" (logo Comunidade EN2) seja a posição 0 do path.
-// se for preciso um deslocamento inicial, muda startT (0..1)
-let startT = 0.02;
-
-/* ======= utilitários ======= */
-function svgPointToPixels(pt){
-  // pt: DOMPoint from getPointAtLength (x,y) in SVG coordinates
-  // precisamos de converter para posição em CSS pixels dentro do elemento boardFrame
-  // obter bounding box do svg overlay
-  const bbox = svg.getBoundingClientRect();
-  // a viewBox do SVG é 1200x900 conforme definido no HTML.
-  const viewBox = svg.viewBox.baseVal; // {width, height, x, y}
-  const scaleX = bbox.width / viewBox.width;
-  const scaleY = bbox.height / viewBox.height;
-  const px = bbox.left + (pt.x - viewBox.x) * scaleX;
-  const py = bbox.top + (pt.y - viewBox.y) * scaleY;
-  // mas precisamos de coordenadas relativas à board frame (container) para posicionar elementos absolutely inside it
-  const containerRect = boardFrame.getBoundingClientRect();
-  return { left: (px - containerRect.left), top: (py - containerRect.top), absLeft: px, absTop: py };
-}
-
-// cria as posições ao longo do path
-function computePositions(){
-  pathLen = pathEl.getTotalLength();
-  positions = [];
-  // distribuir totalSteps posições igualmente ao longo do comprimento do path
-  for(let i=0;i<totalSteps;i++){
-    // t from 0..1
-    let t = (i / (totalSteps - 1));
-    // shift by startT
-    let t2 = Math.min(1, Math.max(0, startT + (1 - startT) * t));
-    let lenAt = pathLen * t2;
-    let p = pathEl.getPointAtLength(lenAt);
-    positions.push({svgX: p.x, svgY: p.y, ratio: t2});
-  }
-}
-
-// posiciona visualmente um pawn num índice de posição 'posIndex' (usa CSS translate)
 function placePawn(pawnEl, posIndex){
-  if(!SPACES[posIndex]) return;
-
   const s = SPACES[posIndex];
-
-  const frameRect = boardFrame.getBoundingClientRect();
-
-  const x = s.x * frameRect.width;
-  const y = s.y * frameRect.height;
-
-  pawnEl.style.left = x + 'px';
-  pawnEl.style.top  = y + 'px';
-}
+  if(!s) return;
+  pawnEl.style.left = (s.x * boardFrame.clientWidth) + 'px';
+  pawnEl.style.top  = (s.y * boardFrame.clientHeight) + 'px';
 }
 
-// recenter & zoom to given pawn
 function zoomTo(px, py, scale=1.6){
-  // px,py são coordenadas em pixels relativas ao boardFrame (left/top)
-  // queremos transformar zoomWrap para que (px,py) fique centrado na view
   const frameRect = boardFrame.getBoundingClientRect();
   const centerX = frameRect.width / 2;
   const centerY = frameRect.height / 2;
-  // translate so that point px,py moves to center after scaling
   const tx = (centerX - px) * (scale - 1);
   const ty = (centerY - py) * (scale - 1);
-  // apply transform
   zoomWrap.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-  // note: pointer-events are none on zoomWrap; pawns still have pointer-events enabled so clicks work
 }
-// move pawn over N steps with animation (USANDO SPACES DO PICKER)
+
 async function movePawnAnimated(pawnIndex, steps){
-  if(steps <= 0) return;
-
-  const pawnEl = pawns[pawnIndex];
   let current = pawnPosIndex[pawnIndex];
-
-  for(let s = 1; s <= steps; s++){
-    const next = Math.min(SPACES.length - 1, current + 1);
-    current = next;
+  for(let i=0;i<steps;i++){
+    current = Math.min(SPACES.length - 1, current + 1);
     pawnPosIndex[pawnIndex] = current;
-
-    // posicionar peão na casa atual
-    placePawn(pawnEl, current);
-
-    // coordenadas da casa (normalizadas)
-    const space = SPACES[current];
-
-    // aplicar zoom centrado na casa
+    placePawn(pawns[pawnIndex], current);
+    const s = SPACES[current];
     zoomTo(
-      space.x * boardFrame.clientWidth,
-      space.y * boardFrame.clientHeight,
+      s.x * boardFrame.clientWidth,
+      s.y * boardFrame.clientHeight,
       1.6
     );
-
-    // pequena pausa para animação
     await new Promise(r => setTimeout(r, 280));
   }
-
-  // ajuste final de zoom
-  const finalSpace = SPACES[pawnPosIndex[pawnIndex]];
+  const s = SPACES[pawnPosIndex[pawnIndex]];
   zoomTo(
-    finalSpace.x * boardFrame.clientWidth,
-    finalSpace.y * boardFrame.clientHeight,
+    s.x * boardFrame.clientWidth,
+    s.y * boardFrame.clientHeight,
     1.15
   );
 }
-}
 
-/* ======= inicia tudo ======= */
-function init(){
-  computePositions();
-  // posiciona todos os pawns na posição inicial (0)
-  for(let i=0;i<pawns.length;i++){
-    pawnPosIndex[i] = 0;
-    placePawn(pawns[i], 0);
-    pawns[i].addEventListener('click', () => {
-      selectPawn.value = i;
-      setSelectedPawn(i);
-    });
-  }
-  setSelectedPawn(0);
-  // recompute positions on resize
-  window.addEventListener('resize', () => { computePositions(); for(let i=0;i<pawns.length;i++){ placePawn(pawns[i], pawnPosIndex[i]); }});
-}
-
-/* handle selection UI */
 function setSelectedPawn(i){
-  selectedPawnIndex = Number(i);
-  selectPawn.value = i;
-  pawns.forEach((p,idx)=> p.classList.toggle('selected', idx==i));
+  selectedPawnIndex = i;
+  pawns.forEach((p,idx)=>p.classList.toggle('selected', idx===i));
 }
 
-/* roll dice handler */
-rollBtn.addEventListener('click', async () => {
+rollBtn.addEventListener('click', async ()=>{
   rollBtn.disabled = true;
-  const r = Math.floor(Math.random()*6) + 1;
+  const r = Math.floor(Math.random()*6)+1;
   diceVal.textContent = r;
-  // move selected pawn
   await movePawnAnimated(selectedPawnIndex, r);
   rollBtn.disabled = false;
 });
 
-/* change select */
-selectPawn.addEventListener('change', (e) => setSelectedPawn(Number(e.target.value)));
+selectPawn.addEventListener('change', e=>setSelectedPawn(Number(e.target.value)));
 
-/* start */
+function init(){
+  pawns.forEach((p,i)=>{
+    placePawn(p,0);
+    p.addEventListener('click', ()=>setSelectedPawn(i));
+  });
+  setSelectedPawn(0);
+}
+
 init();
-
 </script>
-</body>
-</html>
-
-
