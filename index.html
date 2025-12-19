@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Jogo da EN2</title>
+<title>Jogo da EN2 - A Travessia de Portugal</title>
 
 <style>
 :root{
@@ -75,7 +75,7 @@ button{
 
 <body>
 <div class="wrap">
-  <h1>Jogo da EN2</h1>
+  <h1>Jogo da EN2 - A Travessia de Portugal</h1>
 
   <div class="board-frame" id="boardFrame">
     <div class="zoom">
@@ -100,15 +100,16 @@ button{
     </div>
 
     <div id="pawnSelect" class="hidden">
-      <p id="pawnQuestion"></p>
-      <div class="pawn-buttons" id="pawnButtons"></div>
-    </div>
+  <p id="pawnQuestion"></p>
+  <div id="pawnButtons"></div>
+</div>
 
-    <div id="gameControls" class="hidden">
-      <button id="rollBtn">JOGAR</button>
-      🎲 <span id="diceVal">—</span>
-      <p id="turnInfo"></p>
-    </div>
+<div id="gameControls" class="hidden">
+  <button id="rollBtn">JOGAR</button>
+  🎲 <span id="diceVal">—</span>
+  <p id="turnInfo"></p>
+</div>
+
   </div>
 </div>
 
@@ -278,25 +279,25 @@ function renderPawnButtons(maxPlayers){
     b.onclick = ()=>{
       players.push(p.id);
 
-      // esconder peão do tabuleiro se não for usado
-      const pawnIndex = pawnTypes.findIndex(x=>x.id===p.id);
-      pawns[pawnIndex].style.display = "block";
-
       if(players.length === maxPlayers){
         startGame();
       }else{
-        renderPawnButtons(maxPlayers);
         updatePawnQuestion();
+        renderPawnButtons(maxPlayers);
       }
     };
 
     wrap.appendChild(b);
   });
 }
-
 // ===============================
 // INICIAR JOGO
 // ===============================
+function updateTurnLabel(){
+  document.getElementById("turnInfo").textContent =
+    "Vez do Jogador " + (currentPlayer + 1);
+}
+
 function startGame(){
   document.getElementById("pawnSelect").classList.add("hidden");
   document.getElementById("gameControls").classList.remove("hidden");
