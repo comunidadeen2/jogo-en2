@@ -183,13 +183,18 @@ function renderPawnButtons(maxPlayers){
     b.onclick = ()=>{
       players.push(p.id);
       if(players.length === maxPlayers){
-        document.getElementById("pawnSelect").classList.add("hidden");
-        document.getElementById("gameControls").classList.remove("hidden");
-        turnInfo.textContent = "Vez do Jogador 1";
-      }else{
-        updatePawnQuestion();
-        renderPawnButtons(maxPlayers);
-      }
+
+  // esconder peões não usados
+  pawns.forEach((pawn, index) => {
+    if (!players.includes(index)) {
+      pawn.style.display = "none";
+    }
+  });
+
+  document.getElementById("pawnSelect").classList.add("hidden");
+  document.getElementById("gameControls").classList.remove("hidden");
+  turnInfo.textContent = "Vez do Jogador 1";
+}
     };
     wrap.appendChild(b);
   });
