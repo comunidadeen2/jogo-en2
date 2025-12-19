@@ -41,7 +41,7 @@
     position:absolute;
     inset:0;
     transform-origin:center center;
-    transition:transform .45s cubic-bezier(.2,.9,.2,1);
+    transition:transform .10s ease-in-out;
     pointer-events:none;
   }
 
@@ -55,15 +55,15 @@
 
   .pawn{
     position:absolute;
-    width:28px;
-    height:28px;
+    width:24px;
+    height:24px;
     border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
     transform:translate(-50%,-50%);
     box-shadow:0 6px 18px rgba(0,0,0,.5);
-    font-size:14px;
+    font-size:12px;
     cursor:pointer;
     pointer-events:auto;
   }
@@ -554,7 +554,7 @@ async function movePawn(pawnIndex, steps){
       s.y * boardFrame.clientHeight,
       1.6
     );
-    await new Promise(r=>setTimeout(r,280));
+    await new Promise(r=>setTimeout(r,500));
   }
   const s = SPACES[pawnPos[pawnIndex]];
   zoomTo(
@@ -593,5 +593,6 @@ setSelected(0);
 </script>
 </body>
 </html>
+
 
 
