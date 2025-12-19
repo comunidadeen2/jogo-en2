@@ -1,6 +1,147 @@
-// POSIÇÕES DAS CASAS (geradas pelo picker)
-// coordenadas normalizadas (0..1) relativas à imagem
-const SPACES = [ 
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jogo da EN2 — A Grande Travessia de Portugal</title>
+
+<style>
+  :root{
+    --bg:#111;
+    --accent:#f5c400;
+    --text:#fff;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:Inter, system-ui, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text)
+  }
+  .wrap{
+    max-width:1200px;
+    margin:20px auto;
+    text-align:center;
+  }
+  h1{font-size:28px;margin:8px 0 18px}
+
+  .board-frame{
+    width:100%;
+    max-width:1000px;
+    aspect-ratio:4/3;
+    margin:0 auto;
+    position:relative;
+    overflow:hidden;
+    border-radius:6px;
+    box-shadow:0 8px 30px rgba(0,0,0,.6);
+    background:#111;
+  }
+
+  .zoom{
+    position:absolute;
+    inset:0;
+    transform-origin:center center;
+    transition:transform .45s cubic-bezier(.2,.9,.2,1);
+    pointer-events:none;
+  }
+
+  .board-img{
+    position:absolute;
+    inset:0;
+    background-image:url('https://i.imgur.com/SgYhoY8.png');
+    background-size:cover;
+    background-position:center;
+  }
+
+  .pawn{
+    position:absolute;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform:translate(-50%,-50%);
+    box-shadow:0 6px 18px rgba(0,0,0,.5);
+    font-size:22px;
+    cursor:pointer;
+    pointer-events:auto;
+  }
+  .pawn.selected{
+    outline:3px solid #fff;
+  }
+  .pawn.car{background:#f5c400;color:#111}
+  .pawn.bike{background:#4bb39a;color:#06231a}
+  .pawn.motor{background:#ef4a8a;color:#2a001a}
+  .pawn.person{background:#4267ff;color:#04204a}
+
+  .controls{
+    margin-top:18px;
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .btn{
+    background:var(--accent);
+    color:#111;
+    padding:12px 22px;
+    border-radius:10px;
+    font-weight:700;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
+  }
+  .info{font-size:18px}
+
+  .help{
+    margin-top:10px;
+    color:#ddd;
+    font-size:14px
+  }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
+
+  <div class="board-frame" id="boardFrame">
+    <div class="zoom" id="zoomWrap">
+      <div class="board-img"></div>
+
+      <div class="pawn car" id="pawn0">🚗</div>
+      <div class="pawn bike" id="pawn1">🚴</div>
+      <div class="pawn motor" id="pawn2">🏍️</div>
+      <div class="pawn person" id="pawn3">🚶</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <label>Peão:</label>
+    <select id="selectPawn">
+      <option value="0">Carro 🚗</option>
+      <option value="1">Bicicleta 🚴</option>
+      <option value="2">Mota 🏍️</option>
+      <option value="3">Pessoa 🚶</option>
+    </select>
+
+    <button class="btn" id="rollBtn">JOGAR</button>
+    <div class="info">🎲 <strong id="diceVal">—</strong></div>
+  </div>
+
+  <div class="help">
+    Clica em JOGAR para lançar o dado. O peão move-se pelas casas reais do tabuleiro.
+  </div>
+</div>
+
+<script>
+// ===============================
+// POSIÇÕES DAS CASAS (DO PICKER)
+// ===============================
+const SPACES = [
+  [
   {
     "x": 0.09165302782324058,
     "y": 0.11379397834912044
@@ -362,343 +503,95 @@ const SPACES = [
     "y": 0.902697902571042
   }
 ]
-  ];<!doctype html>
-<html lang="pt">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Jogo da EN2 — Demo</title>
-<style>
-  :root{
-    --bg:#111;
-    --accent:#f5c400;
-    --text:#fff;
-  }
-  html,body{height:100%;margin:0;font-family:Inter, system-ui, Arial, sans-serif;background:var(--bg);color:var(--text)}
-  .wrap{
-    max-width:1200px;
-    margin:20px auto;
-    text-align:center;
-  }
-  h1{font-size:28px;margin:8px 0 18px}
-  .board-frame{
-    width:100%;
-    max-width:1000px;
-    height:0;
-    padding-bottom:75%; /* keep aspect ratio ~ 4:3 - ajusta se precisares */
-    margin:0 auto;
-    position:relative;
-    overflow:hidden;
-    border-radius:6px;
-    box-shadow:0 8px 30px rgba(0,0,0,.6);
-    background:#111;
-  }
+];
 
-  /* imagem do tabuleiro */
-  .board-img{
-    position:absolute; inset:0; width:100%; height:100%;
-    background-image:url('https://i.imgur.com/SgYhoY8.png');
-    background-size:cover; background-position:center center;
-  }
-
-  /* svg overlay: vai ocupar todo o mesmo espaço e usa viewBox para coordenadas */
-  .overlay{
-    position:absolute; inset:0;
-    pointer-events:none; /* para clicarmos apenas nos elementos de controlo */
-  }
-
-  /* peões: elementos posicionados por JS */
-  .pawn{
-    position:absolute;
-    width:44px; height:44px;
-    border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    transform: translate(-50%,-50%);
-    box-shadow:0 6px 18px rgba(0,0,0,.5);
-    font-size:22px;
-    pointer-events:auto;
-    cursor:pointer;
-  }
-  .pawn small{font-size:12px; display:block;}
-  .pawn.car{background:linear-gradient(180deg,#ffd54f,#f4b400); color:#111}
-  .pawn.bike{background:linear-gradient(180deg,#8dd3c7,#4bb39a); color:#06231a}
-  .pawn.motor{background:linear-gradient(180deg,#f7a3c6,#ef4a8a); color:#2a001a}
-  .pawn.person{background:linear-gradient(180deg,#b3c5ff,#4267ff); color:#04204a}
-
-  /* marker to highlight selected pawn */
-  .pawn.selected{outline:3px solid #fff; box-shadow:0 8px 26px rgba(255,255,255,.08)}
-
-  /* bottom controls */
-  .controls{
-    margin-top:18px; display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap;
-  }
-  .btn{
-    background:var(--accent); color:#111; padding:12px 22px; border-radius:10px; font-weight:700;
-    border:none; cursor:pointer; font-size:16px;
-  }
-  .info{
-    color:#fff; font-size:18px; display:flex; gap:8px; align-items:center;
-  }
-
-  /* zoom container: we will translate/scale this to center the pawn */
-  .zoom{
-    position:absolute; inset:0; transform-origin:center center; transition:transform .45s cubic-bezier(.2,.9,.2,1);
-    pointer-events:none;
-  }
-
-  /* small help */
-  .help{margin-top:10px;color:#ddd;font-size:14px}
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
-
-    <div class="board-frame" id="boardFrame">
-      <!-- zoom wrapper -->
-      <div class="zoom" id="zoomWrap">
-        <!-- background image -->
-        <div class="board-img" id="boardImg"></div>
-
-        <!-- SVG overlay with a path that roughly follows the track.
-             IMPORTANTE: podes ajustar o atributo 'd' do <path> para alinhar melhor com as casas. -->
-        <svg class="overlay" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice" id="svgOverlay" >
-          <!-- path is a smooth line roughly following the route.
-               Se quiseres ajustar, altera os valores do d="" abaixo. -->
-          <path id="routePath" fill="none" stroke="rgba(255,0,0,0.0)" stroke-width="4"
-            d="M120 70
-               C130 60, 140 60, 200 60
-               C240 60, 280 90, 300 130
-               C340 220, 320 300, 260 340
-               C220 370, 200 380, 180 420
-               C170 460, 210 490, 280 510
-               C350 530, 420 540, 520 520
-               C620 500, 680 470, 760 440
-               C820 420, 860 400, 880 360
-               C900 320, 900 280, 860 250
-               C820 220, 760 210, 700 200
-               C640 190, 580 185, 520 190
-               C480 195, 420 210, 360 230
-               C300 250, 260 270, 240 300
-               C220 340, 220 380, 240 420
-               C260 460, 310 490, 360 500
-               C420 515, 460 520, 520 520
-               C580 520, 640 520, 700 500
-               C760 480, 820 460, 860 440
-               C900 420, 930 400, 960 360
-               C980 330, 1000 300, 1040 270
-               "
-          />
-          <!-- optional: draw small circles on the path for debugging (comment out if não queres ver) -->
-          <!-- we'll generate visible markers by JS instead of fixed circles -->
-        </svg>
-
-        <!-- pawns (4) -->
-        <div class="pawn car" id="pawn0" data-index="0" title="Carro">🚗</div>
-        <div class="pawn bike" id="pawn1" data-index="1" title="Bicicleta">🚴</div>
-        <div class="pawn motor" id="pawn2" data-index="2" title="Mota">🏍️</div>
-        <div class="pawn person" id="pawn3" data-index="3" title="Pessoa">🚶</div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <div style="display:flex; gap:10px; align-items:center;">
-        <label style="color:#ddd">Selecionar peão:</label>
-        <select id="selectPawn">
-          <option value="0">Carro 🚗</option>
-          <option value="1">Bicicleta 🚴</option>
-          <option value="2">Mota 🏍️</option>
-          <option value="3">Pessoa 🚶</option>
-        </select>
-      </div>
-
-      <button class="btn" id="rollBtn">JOGAR (Lançar dado)</button>
-
-      <div class="info" id="diceInfo">🎲 Saiu: <strong id="diceVal">—</strong></div>
-    </div>
-
-    <div class="help">
-      Escolhe o peão, clica em "JOGAR" para lançar o dado. O peão seleccionado desloca-se esse número de casas. O zoom foca automaticamente a jogada.
-    </div>
-  </div>
-
-<script>
-/* ========= Configuração =========
-   path = o elemento SVG path que define o trajecto.
-   steps = número de casas / posições discretas que vamos usar no path.
-   startOffset = deslocamento inicial (para que a primeira casa seja exatamente onde está o logotipo)
-   Podes ajustar steps/startOffset e o próprio 'd' do path no HTML.
-*/
-
-const pathEl = document.getElementById('routePath');
-const svg = document.getElementById('svgOverlay');
-const zoomWrap = document.getElementById('zoomWrap');
+// ===============================
+// ELEMENTOS
+// ===============================
 const boardFrame = document.getElementById('boardFrame');
+const zoomWrap   = document.getElementById('zoomWrap');
 
 const pawns = [
   document.getElementById('pawn0'),
   document.getElementById('pawn1'),
   document.getElementById('pawn2'),
-  document.getElementById('pawn3'),
+  document.getElementById('pawn3')
 ];
 
 const selectPawn = document.getElementById('selectPawn');
-const rollBtn = document.getElementById('rollBtn');
-const diceVal = document.getElementById('diceVal');
+const rollBtn    = document.getElementById('rollBtn');
+const diceVal    = document.getElementById('diceVal');
 
-let selectedPawnIndex = 0;
-let totalSteps = SPACES.length;   // número aproximado de casas; ajusta conforme necessário (mais = movimentos mais finos)
-let pathLen = 0;
-let positions = [];    // array de {x,y} em coordenadas SVG para cada passo/posição
-let pawnPosIndex = [0,0,0,0]; // índice atual (0 = start) para cada peão
+// ===============================
+// ESTADO
+// ===============================
+let selectedPawn = 0;
+let pawnPos = [0,0,0,0];
 
-// queres que a "primeira casa" (logo Comunidade EN2) seja a posição 0 do path.
-// se for preciso um deslocamento inicial, muda startT (0..1)
-let startT = 0.02;
-
-/* ======= utilitários ======= */
-function svgPointToPixels(pt){
-  // pt: DOMPoint from getPointAtLength (x,y) in SVG coordinates
-  // precisamos de converter para posição em CSS pixels dentro do elemento boardFrame
-  // obter bounding box do svg overlay
-  const bbox = svg.getBoundingClientRect();
-  // a viewBox do SVG é 1200x900 conforme definido no HTML.
-  const viewBox = svg.viewBox.baseVal; // {width, height, x, y}
-  const scaleX = bbox.width / viewBox.width;
-  const scaleY = bbox.height / viewBox.height;
-  const px = bbox.left + (pt.x - viewBox.x) * scaleX;
-  const py = bbox.top + (pt.y - viewBox.y) * scaleY;
-  // mas precisamos de coordenadas relativas à board frame (container) para posicionar elementos absolutely inside it
-  const containerRect = boardFrame.getBoundingClientRect();
-  return { left: (px - containerRect.left), top: (py - containerRect.top), absLeft: px, absTop: py };
+// ===============================
+// FUNÇÕES
+// ===============================
+function placePawn(pawn, index){
+  const s = SPACES[index];
+  if(!s) return;
+  pawn.style.left = (s.x * boardFrame.clientWidth) + 'px';
+  pawn.style.top  = (s.y * boardFrame.clientHeight) + 'px';
 }
 
-// cria as posições ao longo do path
-function computePositions(){
-  pathLen = pathEl.getTotalLength();
-  positions = [];
-  // distribuir totalSteps posições igualmente ao longo do comprimento do path
-  for(let i=0;i<totalSteps;i++){
-    // t from 0..1
-    let t = (i / (totalSteps - 1));
-    // shift by startT
-    let t2 = Math.min(1, Math.max(0, startT + (1 - startT) * t));
-    let lenAt = pathLen * t2;
-    let p = pathEl.getPointAtLength(lenAt);
-    positions.push({svgX: p.x, svgY: p.y, ratio: t2});
-  }
-}
-
-// posiciona visualmente um pawn num índice de posição 'posIndex' (usa CSS translate)
-function placePawn(pawnEl, posIndex){
-  if(!SPACES[posIndex]) return;
-
-  const s = SPACES[posIndex];
-
-  const frameRect = boardFrame.getBoundingClientRect();
-
-  const x = s.x * frameRect.width;
-  const y = s.y * frameRect.height;
-
-  pawnEl.style.left = x + 'px';
-  pawnEl.style.top  = y + 'px';
-}
-}
-
-// recenter & zoom to given pawn
-function zoomTo(px, py, scale=1.6){
-  // px,py são coordenadas em pixels relativas ao boardFrame (left/top)
-  // queremos transformar zoomWrap para que (px,py) fique centrado na view
-  const frameRect = boardFrame.getBoundingClientRect();
-  const centerX = frameRect.width / 2;
-  const centerY = frameRect.height / 2;
-  // translate so that point px,py moves to center after scaling
-  const tx = (centerX - px) * (scale - 1);
-  const ty = (centerY - py) * (scale - 1);
-  // apply transform
+function zoomTo(x, y, scale=1.6){
+  const cx = boardFrame.clientWidth / 2;
+  const cy = boardFrame.clientHeight / 2;
+  const tx = (cx - x) * (scale - 1);
+  const ty = (cy - y) * (scale - 1);
   zoomWrap.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-  // note: pointer-events are none on zoomWrap; pawns still have pointer-events enabled so clicks work
 }
-// move pawn over N steps with animation (USANDO SPACES DO PICKER)
-async function movePawnAnimated(pawnIndex, steps){
-  if(steps <= 0) return;
 
-  const pawnEl = pawns[pawnIndex];
-  let current = pawnPosIndex[pawnIndex];
-
-  for(let s = 1; s <= steps; s++){
-    const next = Math.min(SPACES.length - 1, current + 1);
-    current = next;
-    pawnPosIndex[pawnIndex] = current;
-
-    // posicionar peão na casa atual
-    placePawn(pawnEl, current);
-
-    // coordenadas da casa (normalizadas)
-    const space = SPACES[current];
-
-    // aplicar zoom centrado na casa
+async function movePawn(pawnIndex, steps){
+  for(let i=0;i<steps;i++){
+    pawnPos[pawnIndex] = Math.min(SPACES.length-1, pawnPos[pawnIndex]+1);
+    placePawn(pawns[pawnIndex], pawnPos[pawnIndex]);
+    const s = SPACES[pawnPos[pawnIndex]];
     zoomTo(
-      space.x * boardFrame.clientWidth,
-      space.y * boardFrame.clientHeight,
+      s.x * boardFrame.clientWidth,
+      s.y * boardFrame.clientHeight,
       1.6
     );
-
-    // pequena pausa para animação
-    await new Promise(r => setTimeout(r, 280));
+    await new Promise(r=>setTimeout(r,280));
   }
-
-  // ajuste final de zoom
-  const finalSpace = SPACES[pawnPosIndex[pawnIndex]];
+  const s = SPACES[pawnPos[pawnIndex]];
   zoomTo(
-    finalSpace.x * boardFrame.clientWidth,
-    finalSpace.y * boardFrame.clientHeight,
+    s.x * boardFrame.clientWidth,
+    s.y * boardFrame.clientHeight,
     1.15
   );
 }
-}
 
-/* ======= inicia tudo ======= */
-function init(){
-  computePositions();
-  // posiciona todos os pawns na posição inicial (0)
-  for(let i=0;i<pawns.length;i++){
-    pawnPosIndex[i] = 0;
-    placePawn(pawns[i], 0);
-    pawns[i].addEventListener('click', () => {
-      selectPawn.value = i;
-      setSelectedPawn(i);
-    });
-  }
-  setSelectedPawn(0);
-  // recompute positions on resize
-  window.addEventListener('resize', () => { computePositions(); for(let i=0;i<pawns.length;i++){ placePawn(pawns[i], pawnPosIndex[i]); }});
-}
-
-/* handle selection UI */
-function setSelectedPawn(i){
-  selectedPawnIndex = Number(i);
+function setSelected(i){
+  selectedPawn = i;
+  pawns.forEach((p,idx)=>p.classList.toggle('selected', idx===i));
   selectPawn.value = i;
-  pawns.forEach((p,idx)=> p.classList.toggle('selected', idx==i));
 }
 
-/* roll dice handler */
-rollBtn.addEventListener('click', async () => {
+// ===============================
+// EVENTOS
+// ===============================
+rollBtn.onclick = async ()=>{
   rollBtn.disabled = true;
-  const r = Math.floor(Math.random()*6) + 1;
+  const r = Math.floor(Math.random()*6)+1;
   diceVal.textContent = r;
-  // move selected pawn
-  await movePawnAnimated(selectedPawnIndex, r);
+  await movePawn(selectedPawn, r);
   rollBtn.disabled = false;
-});
+};
 
-/* change select */
-selectPawn.addEventListener('change', (e) => setSelectedPawn(Number(e.target.value)));
+selectPawn.onchange = e => setSelected(Number(e.target.value));
 
-/* start */
-init();
+pawns.forEach((p,i)=>p.onclick = ()=>setSelected(i));
 
+// ===============================
+// INIT
+// ===============================
+pawns.forEach(p=>placePawn(p,0));
+setSelected(0);
 </script>
 </body>
 </html>
-
