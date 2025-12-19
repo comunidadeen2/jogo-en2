@@ -591,8 +591,120 @@ pawns.forEach((p,i)=>p.onclick = ()=>setSelected(i));
 pawns.forEach(p=>placePawn(p,0));
 setSelected(0);
 </script>
+  // 1️⃣ DADOS FIXOS (peões, objetivos)
+// ===============================
+// DADOS FIXOS DO JOGO
+// ===============================
+
+// Peões disponíveis
+const AVAILABLE_PAWNS = [
+  { id: "car",    label: "Carro 🚗" },
+  { id: "bike",   label: "Bicicleta 🚴" },
+  { id: "motor",  label: "Mota 🏍️" },
+  { id: "person", label: "Pessoa 🚶" }
+];
+
+// Objetivos (exemplo – depois substituímos pelos teus)
+const OBJECTIVES_DECK = [
+  {
+    id: "OBJ_01",
+    text: "Ser o primeiro a chegar a Faro",
+    municipios: ["Faro"]
+  },
+  {
+    id: "OBJ_02",
+    text: "Chaves, Tondela, Abrantes, Faro",
+    municipios: ["Chaves","Tondela","Abrantes","Faro"]
+  }
+];
+
+// 2️⃣ GAME (estado do jogo)
+// ===============================
+// ESTADO DO JOGO
+// ===============================
+
+const Game = {
+  players: [],
+  playerCount: 0,
+  currentPlayerIndex: 0,
+  phase: "setup_players" // setup_players | setup_pawns | playing
+};
+
+// 3️⃣ FUNÇÕES DE SETUP (início do jogo)
+// ===============================
+// JOGADORES
+// ===============================
+
+function createPlayer(id, pawn){
+  return {
+    id: id,
+    pawn: pawn,
+    position: 0,
+    objectives: [],
+    fichas: []
+  };
+}
+
+// 4️⃣ FUNÇÕES DE JOGO (movimento, dado)
+// ===============================
+// SETUP DO JOGO
+// ===============================
+
+// Escolher nº de jogadores
+function setupPlayers(count){
+  Game.players = [];
+  Game.playerCount = count;
+  Game.phase = "setup_pawns";
+
+  alert("Escolhe agora os peões (" + count + " jogadores)");
+}
+
+// Escolher peão
+function selectPawn(pawnId){
+  if(Game.phase !== "setup_pawns") return;
+
+  const used = Game.players.map(p => p.pawn);
+  if(used.includes(pawnId)) return;
+
+  const playerId = Game.players.length + 1;
+  const player = createPlayer(playerId, pawnId);
+  Game.players.push(player);
+
+  if(Game.players.length === Game.playerCount){
+    assignObjectives();
+  }
+}
+
+// Baralhar
+function shuffle(array){
+  return array.sort(() => Math.random() - 0.5);
+}
+
+// Atribuir objetivos
+function assignObjectives(){
+  const deck = shuffle([...OBJECTIVES_DECK]);
+
+  Game.players.forEach(player => {
+    const obj = deck.pop();
+    player.objectives.push(obj);
+  });
+
+  Game.phase = "playing";
+  startGame();
+}
+
+// Começar jogo
+function startGame(){
+  Game.players.forEach(p => p.position = 0);
+  Game.currentPlayerIndex = 0;
+
+  alert("Jogo iniciado!");
+  console.log(Game.players);
+}
+
 </body>
 </html>
+
 
 
 
