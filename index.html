@@ -23,7 +23,7 @@ html,body{
   margin:20px auto;
   text-align:center;
 }
-h1{margin-bottom:16px}
+h1{margin-bottom:10px}
 
 .board-frame{
   width:100%;
@@ -68,6 +68,7 @@ h1{margin-bottom:16px}
   box-shadow:0 4px 10px rgba(0,0,0,.6);
 }
 .pawn.selected{outline:2px solid #fff}
+.pawn.disabled{opacity:.3; pointer-events:none}
 
 .pawn.car{background:#f5c400;color:#111}
 .pawn.bike{background:#4bb39a;color:#06231a}
@@ -75,7 +76,7 @@ h1{margin-bottom:16px}
 .pawn.person{background:#4267ff;color:#04204a}
 
 .controls{
-  margin-top:16px;
+  margin-top:14px;
   display:flex;
   gap:12px;
   justify-content:center;
@@ -93,9 +94,9 @@ h1{margin-bottom:16px}
 }
 
 .help{
-  margin-top:10px;
-  font-size:14px;
-  color:#ccc;
+  margin-top:8px;
+  font-size:15px;
+  color:#ddd;
 }
 </style>
 </head>
@@ -125,25 +126,17 @@ h1{margin-bottom:16px}
       <option value="3">3</option>
       <option value="4">4</option>
     </select>
-    <button class="btn" id="startGame">Começar jogo</button>
+    <button class="btn" id="startGame">Continuar</button>
   </div>
 
-  <!-- CONTROLOS DO JOGO -->
+  <!-- CONTROLOS -->
   <div class="controls">
-    <label>Peão:</label>
-    <select id="selectPawn">
-      <option value="0">Carro 🚗</option>
-      <option value="1">Bicicleta 🚴</option>
-      <option value="2">Mota 🏍️</option>
-      <option value="3">Pessoa 🚶</option>
-    </select>
-
     <button class="btn" id="rollBtn">JOGAR</button>
     🎲 <strong id="diceVal">—</strong>
   </div>
 
-  <div class="help">
-    Escolhe o nº de jogadores, depois lança o dado.
+  <div class="help" id="statusText">
+    Escolhe o nº de jogadores.
   </div>
 </div>
 
@@ -190,19 +183,21 @@ const SPACES = [
 const boardFrame = document.getElementById("boardFrame");
 const zoomWrap   = document.getElementById("zoomWrap");
 const pawns      = [...document.querySelectorAll(".pawn")];
-const selectPawn = document.getElementById("selectPawn");
 const rollBtn    = document.getElementById("rollBtn");
 const diceVal    = document.getElementById("diceVal");
 const setupDiv   = document.getElementById("setupPlayers");
 const playerSel  = document.getElementById("playerCount");
 const startBtn   = document.getElementById("startGame");
+const statusText = document.getElementById("statusText");
 
 // ===============================
-// ESTADO
+// ESTADO DO JOGO
 // ===============================
-let pos = [0,0,0,0];
-let selected = 0;
 let playerCount = 0;
+let currentPlayer = 0;
+let phase = "setupPlayers"; // setupPlayers | choosePawn | playing
+let players = [];
+let pos = [0,0,0,0];
 
 // ===============================
 // FUNÇÕES
@@ -234,40 +229,65 @@ async function movePawn(i,steps){
   zoomTo(i,1.1);
 }
 
-function setSelected(i){
-  selected=i;
-  pawns.forEach((p,idx)=>p.classList.toggle("selected",idx===i));
-  selectPawn.value=i;
-}
+// ===============================
+// SETUP
+// ===============================
+startBtn.onclick = ()=>{
+  playerCount = Number(playerSel.value);
+  if(!playerCount){ alert("Escolhe o número de jogadores"); return; }
 
-// ===============================
-// EVENTOS
-// ===============================
-startBtn.onclick=()=>{
-  playerCount=Number(playerSel.value);
-  if(!playerCount){alert("Escolhe jogadores");return;}
-  pawns.forEach((p,i)=>p.style.display=i<playerCount?"block":"none");
-  for(let i=0;i<playerCount;i++){pos[i]=0;placePawn(i);}
-  setSelected(0);
   setupDiv.style.display="none";
-  rollBtn.disabled=false;
+  phase="choosePawn";
+  currentPlayer=0;
+  players=[];
+  pawns.forEach(p=>p.classList.remove("disabled","selected"));
+  statusText.textContent = `Jogador 1, como quer viajar?`;
 };
 
-rollBtn.onclick=async()=>{
+// ===============================
+// ESCOLHA DE PEÕES
+// ===============================
+pawns.forEach((pawn,i)=>{
+  pawn.onclick = ()=>{
+    if(phase!=="choosePawn") return;
+
+    players.push({player:currentPlayer,pawn:i});
+    pawn.classList.add("disabled","selected");
+
+    currentPlayer++;
+
+    if(currentPlayer < playerCount){
+      statusText.textContent = `Jogador ${currentPlayer+1}, como quer viajar?`;
+    }else{
+      phase="playing";
+      currentPlayer=0;
+      statusText.textContent = `Jogador 1, lança o dado.`;
+      rollBtn.disabled=false;
+    }
+  };
+});
+
+// ===============================
+// JOGO
+// ===============================
+rollBtn.onclick = async ()=>{
+  if(phase!=="playing") return;
+
   rollBtn.disabled=true;
   const r=Math.floor(Math.random()*6)+1;
   diceVal.textContent=r;
-  await movePawn(selected,r);
+
+  const pawnIndex = players[currentPlayer].pawn;
+  await movePawn(pawnIndex,r);
+
+  currentPlayer = (currentPlayer+1) % players.length;
+  statusText.textContent = `Jogador ${currentPlayer+1}, lança o dado.`;
   rollBtn.disabled=false;
 };
-
-selectPawn.onchange=e=>setSelected(Number(e.target.value));
-pawns.forEach((p,i)=>p.onclick=()=>setSelected(i));
 
 // INIT
 rollBtn.disabled=true;
 pawns.forEach((p,i)=>placePawn(i));
-setSelected(0);
 </script>
 </body>
 </html>
