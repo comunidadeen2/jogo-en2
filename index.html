@@ -12,282 +12,304 @@
   --text:#fff;
 }
 html,body{
-  height:100%;
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family:Arial,Helvetica,sans-serif;
   background:var(--bg);
   color:var(--text);
 }
-.wrap{
-  max-width:1200px;
-  margin:20px auto;
-  text-align:center;
-}
+.wrap{max-width:1200px;margin:20px auto;text-align:center}
 h1{margin-bottom:10px}
 
 .board-frame{
-  width:100%;
   max-width:1000px;
   aspect-ratio:4/3;
   margin:0 auto;
   position:relative;
   overflow:hidden;
-  border-radius:8px;
-  background:#000;
+  border-radius:6px;
   box-shadow:0 8px 30px rgba(0,0,0,.6);
 }
-
 .zoom{
   position:absolute;
   inset:0;
   transform-origin:center center;
-  transition:transform .6s ease;
+  transition:transform .4s ease;
   pointer-events:none;
 }
-
 .board-img{
   position:absolute;
   inset:0;
-  background-image:url("https://i.imgur.com/SgYhoY8.png");
-  background-size:cover;
-  background-position:center;
+  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
 }
 
 .pawn{
   position:absolute;
-  width:18px;
-  height:18px;
+  width:22px;height:22px;
   border-radius:50%;
   transform:translate(-50%,-50%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:10px;
-  cursor:pointer;
-  pointer-events:auto;
-  box-shadow:0 4px 10px rgba(0,0,0,.6);
+  font-size:12px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(0,0,0,.5);
 }
-.pawn.selected{outline:2px solid #fff}
-.pawn.disabled{opacity:.3; pointer-events:none}
+.car{background:#f5c400;color:#111}
+.bike{background:#4bb39a}
+.motor{background:#ef4a8a}
+.person{background:#4267ff}
+.selected{outline:2px solid #fff}
 
-.pawn.car{background:#f5c400;color:#111}
-.pawn.bike{background:#4bb39a;color:#06231a}
-.pawn.motor{background:#ef4a8a;color:#2a001a}
-.pawn.person{background:#4267ff;color:#04204a}
-
-.controls{
-  margin-top:14px;
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
+.controls{margin-top:15px;display:flex;gap:10px;justify-content:center;align-items:center}
 .btn{
-  padding:10px 20px;
-  border-radius:8px;
-  border:none;
   background:var(--accent);
+  color:#111;
+  padding:10px 18px;
+  border:none;
+  border-radius:8px;
   font-weight:bold;
   cursor:pointer;
 }
+.help{margin-top:8px;color:#ccc;font-size:14px}
 
-.help{
-  margin-top:8px;
-  font-size:15px;
-  color:#ddd;
-}
+#pawnChoice{margin-top:16px}
+#pawnButtons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 </style>
 </head>
 
 <body>
 <div class="wrap">
-  <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
+<h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
 
-  <div class="board-frame" id="boardFrame">
-    <div class="zoom" id="zoomWrap">
-      <div class="board-img"></div>
-
-      <div class="pawn car" id="pawn0">🚗</div>
-      <div class="pawn bike" id="pawn1">🚴</div>
-      <div class="pawn motor" id="pawn2">🏍️</div>
-      <div class="pawn person" id="pawn3">🚶</div>
-    </div>
+<div class="board-frame" id="boardFrame">
+  <div class="zoom" id="zoomWrap">
+    <div class="board-img"></div>
+    <div class="pawn car"    id="pawn0">🚗</div>
+    <div class="pawn bike"   id="pawn1">🚴</div>
+    <div class="pawn motor"  id="pawn2">🏍️</div>
+    <div class="pawn person" id="pawn3">🚶</div>
   </div>
+</div>
 
-  <!-- SETUP JOGADORES -->
-  <div class="controls" id="setupPlayers">
-    <label>Nº de jogadores:</label>
-    <select id="playerCount">
-      <option value="">—</option>
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-    </select>
-    <button class="btn" id="startGame">Continuar</button>
-  </div>
+<div class="controls">
+  <label>Jogadores:</label>
+  <select id="playerCount">
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4" selected>4</option>
+  </select>
 
-  <!-- CONTROLOS -->
-  <div class="controls">
-    <button class="btn" id="rollBtn">JOGAR</button>
-    🎲 <strong id="diceVal">—</strong>
-  </div>
+  <button class="btn" id="startBtn">COMEÇAR</button>
+  <button class="btn" id="rollBtn" style="display:none">JOGAR</button>
+  <span>🎲 <strong id="diceVal">—</strong></span>
+</div>
 
-  <div class="help" id="statusText">
-    Escolhe o nº de jogadores.
-  </div>
+<div id="pawnChoice" style="display:none">
+  <p id="pawnQuestion"></p>
+  <div id="pawnButtons"></div>
+</div>
+
+<div class="help">
+  Lança o dado e percorre a EN2 casa a casa.
+</div>
 </div>
 
 <script>
 // ===============================
-// CASAS (DO PICKER)
+// POSIÇÕES DAS CASAS (DO PICKER)
 // ===============================
-const SPACES = [
-  {"x":0.0916,"y":0.1138},{"x":0.0867,"y":0.1625},{"x":0.0867,"y":0.2153},
-  {"x":0.0916,"y":0.2701},{"x":0.1271,"y":0.2356},{"x":0.1506,"y":0.1896},
-  {"x":0.1762,"y":0.1436},{"x":0.2188,"y":0.1131},{"x":0.2651,"y":0.0942},
-  {"x":0.3055,"y":0.1023},{"x":0.3459,"y":0.1300},{"x":0.3595,"y":0.1767},
-  {"x":0.3246,"y":0.2160},{"x":0.2875,"y":0.1923},{"x":0.2428,"y":0.1720},
-  {"x":0.2199,"y":0.2180},{"x":0.2384,"y":0.2701},{"x":0.2280,"y":0.3188},
-  {"x":0.1811,"y":0.3269},{"x":0.1391,"y":0.3357},{"x":0.1129,"y":0.3871},
-  {"x":0.1195,"y":0.4372},{"x":0.1571,"y":0.4690},{"x":0.2002,"y":0.4501},
-  {"x":0.2340,"y":0.4122},{"x":0.2613,"y":0.3689},{"x":0.2941,"y":0.3276},
-  {"x":0.3333,"y":0.2999},{"x":0.3786,"y":0.3181},{"x":0.4026,"y":0.3601},
-  {"x":0.4070,"y":0.4196},{"x":0.3824,"y":0.4555},{"x":0.3377,"y":0.4893},
-  {"x":0.2968,"y":0.5049},{"x":0.2510,"y":0.5191},{"x":0.2040,"y":0.5502},
-  {"x":0.1757,"y":0.5888},{"x":0.1888,"y":0.6456},{"x":0.2335,"y":0.6652},
-  {"x":0.2771,"y":0.6517},{"x":0.3175,"y":0.6314},{"x":0.3595,"y":0.6070},
-  {"x":0.4004,"y":0.5725},{"x":0.4283,"y":0.5421},{"x":0.4654,"y":0.5015},
-  {"x":0.4915,"y":0.4677},{"x":0.5237,"y":0.4291},{"x":0.5614,"y":0.4027},
-  {"x":0.5990,"y":0.3635},{"x":0.6378,"y":0.3405},{"x":0.6825,"y":0.3249},
-  {"x":0.7256,"y":0.3364},{"x":0.7409,"y":0.3858},{"x":0.7098,"y":0.4331},
-  {"x":0.6716,"y":0.4636},{"x":0.6296,"y":0.4866},{"x":0.5881,"y":0.5116},
-  {"x":0.5526,"y":0.5434},{"x":0.5281,"y":0.5806},{"x":0.5303,"y":0.6422},
-  {"x":0.5576,"y":0.6862},{"x":0.5996,"y":0.6950},{"x":0.6416,"y":0.6713},
-  {"x":0.6688,"y":0.6246},{"x":0.6972,"y":0.5779},{"x":0.7300,"y":0.5319},
-  {"x":0.7665,"y":0.5069},{"x":0.8091,"y":0.5346},{"x":0.8200,"y":0.5861},
-  {"x":0.7949,"y":0.6409},{"x":0.7496,"y":0.6517},{"x":0.7054,"y":0.6666},
-  {"x":0.7092,"y":0.7133},{"x":0.7278,"y":0.7667},{"x":0.7027,"y":0.8195},
-  {"x":0.6623,"y":0.8012},{"x":0.6127,"y":0.7769},{"x":0.5859,"y":0.8195},
-  {"x":0.6099,"y":0.8689},{"x":0.6487,"y":0.8898},{"x":0.6912,"y":0.8919},
-  {"x":0.7425,"y":0.8716},{"x":0.7801,"y":0.8330},{"x":0.7998,"y":0.7863},
-  {"x":0.8145,"y":0.7396},{"x":0.8522,"y":0.6902},{"x":0.8696,"y":0.7478},
-  {"x":0.8909,"y":0.7897},{"x":0.9078,"y":0.8479},{"x":0.8980,"y":0.9027}
+const SPACES = [ /* NÃO ALTERADO */
+  {"x":0.0916530278,"y":0.1137939783},
+  {"x":0.0867430442,"y":0.1625084573},
+  {"x":0.0867430442,"y":0.2152824763},
+  {"x":0.0916530278,"y":0.2700862652},
+  {"x":0.1271140207,"y":0.2355801759},
+  {"x":0.1505728314,"y":0.1895720568},
+  {"x":0.1762138571,"y":0.1435639378},
+  {"x":0.2187670486,"y":0.1131173884},
+  {"x":0.2651391162,"y":0.0941728687},
+  {"x":0.3055100927,"y":0.1022919486},
+  {"x":0.3458810693,"y":0.1300321380},
+  {"x":0.3595199127,"y":0.1767168471},
+  {"x":0.3246044735,"y":0.2159590663},
+  {"x":0.2875068194,"y":0.1922784168},
+  {"x":0.2427714130,"y":0.1719807172},
+  {"x":0.2198581560,"y":0.2179888363},
+  {"x":0.2384069831,"y":0.2700862652},
+  {"x":0.2280414621,"y":0.3188007442},
+  {"x":0.1811238407,"y":0.3269198241},
+  {"x":0.1391162029,"y":0.3357154939},
+  {"x":0.1129296236,"y":0.3871363329},
+  {"x":0.1194762684,"y":0.4372039919},
+  {"x":0.1571194763,"y":0.4690037212},
+  {"x":0.2002182215,"y":0.4500592016},
+  {"x":0.2340425532,"y":0.4121701624},
+  {"x":0.2613202400,"y":0.3688684032},
+  {"x":0.2940534643,"y":0.3275964141},
+  {"x":0.3333333333,"y":0.2998562246},
+  {"x":0.3786142935,"y":0.3181241543},
+  {"x":0.4026186579,"y":0.3600727334},
+  {"x":0.4069830878,"y":0.4196126522},
+  {"x":0.3824331697,"y":0.4554719215},
+  {"x":0.3376977632,"y":0.4893014208},
+  {"x":0.2967812330,"y":0.5048629905},
+  {"x":0.2509547190,"y":0.5190713802},
+  {"x":0.2040370977,"y":0.5501945196},
+  {"x":0.1756683033,"y":0.5887601488},
+  {"x":0.1887615930,"y":0.6455937077},
+  {"x":0.2334969995,"y":0.6652148173},
+  {"x":0.2771412984,"y":0.6516830176},
+  {"x":0.3175122750,"y":0.6313853180},
+  {"x":0.3595199127,"y":0.6070280785},
+  {"x":0.4004364430,"y":0.5725219892},
+  {"x":0.4282596836,"y":0.5420754398},
+  {"x":0.4653573377,"y":0.5014800406},
+  {"x":0.4915439171,"y":0.4676505413},
+  {"x":0.5237315876,"y":0.4290849120},
+  {"x":0.5613747954,"y":0.4026979026},
+  {"x":0.5990180033,"y":0.3634556834},
+  {"x":0.6377523186,"y":0.3404516238},
+  {"x":0.6824877250,"y":0.3248900541},
+  {"x":0.7255864703,"y":0.3363920839},
+  {"x":0.7408619749,"y":0.3857831529},
+  {"x":0.7097654119,"y":0.4331444520},
+  {"x":0.6715766503,"y":0.4635910014},
+  {"x":0.6295690125,"y":0.4865950609},
+  {"x":0.5881069285,"y":0.5116288904},
+  {"x":0.5526459356,"y":0.5434286198},
+  {"x":0.5280960175,"y":0.5806410690},
+  {"x":0.5302782324,"y":0.6422107578},
+  {"x":0.5575559193,"y":0.6861891069},
+  {"x":0.5995635570,"y":0.6949847767},
+  {"x":0.6415711948,"y":0.6713041272},
+  {"x":0.6688488816,"y":0.6246194181},
+  {"x":0.6972176759,"y":0.5779347091},
+  {"x":0.7299509002,"y":0.5319265900},
+  {"x":0.7665030005,"y":0.5068927605},
+  {"x":0.8090561920,"y":0.5346329499},
+  {"x":0.8199672668,"y":0.5860537889},
+  {"x":0.7948717949,"y":0.6408575778},
+  {"x":0.7495908347,"y":0.6516830176},
+  {"x":0.7054009820,"y":0.6665679973},
+  {"x":0.7092198582,"y":0.7132527064},
+  {"x":0.7277686852,"y":0.7667033153},
+  {"x":0.7026732133,"y":0.8194773342},
+  {"x":0.6623022368,"y":0.8012094046},
+  {"x":0.6126568467,"y":0.7768521651},
+  {"x":0.5859247136,"y":0.8194773342},
+  {"x":0.6099290780,"y":0.8688684032},
+  {"x":0.6486633933,"y":0.8898426928},
+  {"x":0.6912165848,"y":0.8918724628},
+  {"x":0.7424986361,"y":0.8715747632},
+  {"x":0.7801418440,"y":0.8330091340},
+  {"x":0.7997817785,"y":0.7863244249},
+  {"x":0.8145117294,"y":0.7396397158},
+  {"x":0.8521549373,"y":0.6902486468},
+  {"x":0.8696126568,"y":0.7477587957},
+  {"x":0.8908892526,"y":0.7897073748},
+  {"x":0.9078014184,"y":0.8478941137},
+  {"x":0.8979814512,"y":0.9026979026}
 ];
 
 // ===============================
 // ELEMENTOS
 // ===============================
 const boardFrame = document.getElementById("boardFrame");
-const zoomWrap   = document.getElementById("zoomWrap");
-const pawns      = [...document.querySelectorAll(".pawn")];
-const rollBtn    = document.getElementById("rollBtn");
-const diceVal    = document.getElementById("diceVal");
-const setupDiv   = document.getElementById("setupPlayers");
-const playerSel  = document.getElementById("playerCount");
-const startBtn   = document.getElementById("startGame");
-const statusText = document.getElementById("statusText");
+const zoomWrap = document.getElementById("zoomWrap");
+const pawns = [
+  document.getElementById("pawn0"),
+  document.getElementById("pawn1"),
+  document.getElementById("pawn2"),
+  document.getElementById("pawn3")
+];
+const rollBtn = document.getElementById("rollBtn");
+const diceVal = document.getElementById("diceVal");
+const startBtn = document.getElementById("startBtn");
+const playerSel = document.getElementById("playerCount");
 
 // ===============================
-// ESTADO DO JOGO
+// ESTADO
 // ===============================
-let playerCount = 0;
-let currentPlayer = 0;
-let phase = "setupPlayers"; // setupPlayers | choosePawn | playing
 let players = [];
-let pos = [0,0,0,0];
+let currentPlayer = 0;
+let pawnPos = [0,0,0,0];
 
 // ===============================
 // FUNÇÕES
 // ===============================
-function placePawn(i){
-  const s = SPACES[pos[i]];
-  pawns[i].style.left = (s.x * boardFrame.clientWidth) + "px";
-  pawns[i].style.top  = (s.y * boardFrame.clientHeight) + "px";
+function placePawn(pawn,i){
+  const s = SPACES[i];
+  pawn.style.left = s.x*boardFrame.clientWidth+"px";
+  pawn.style.top  = s.y*boardFrame.clientHeight+"px";
 }
 
-function zoomTo(i,scale=1.25){
-  const s = SPACES[pos[i]];
-  const x = s.x * boardFrame.clientWidth;
-  const y = s.y * boardFrame.clientHeight;
+function zoomTo(x,y,scale){
   const cx = boardFrame.clientWidth/2;
   const cy = boardFrame.clientHeight/2;
   zoomWrap.style.transform =
-    `translate(${(cx-x)*(scale-1)}px, ${(cy-y)*(scale-1)}px) scale(${scale})`;
+    `translate(${(cx-x)*(scale-1)}px,${(cy-y)*(scale-1)}px) scale(${scale})`;
 }
 
-async function movePawn(i,steps){
-  for(let n=0;n<steps;n++){
-    if(pos[i]>=SPACES.length-1) break;
-    pos[i]++;
-    placePawn(i);
-    zoomTo(i,1.3);
-    await new Promise(r=>setTimeout(r,600));
+async function movePawn(id,steps){
+  for(let i=0;i<steps;i++){
+    pawnPos[id]++;
+    placePawn(pawns[id],pawnPos[id]);
+    const s = SPACES[pawnPos[id]];
+    zoomTo(s.x*boardFrame.clientWidth,s.y*boardFrame.clientHeight,1.5);
+    await new Promise(r=>setTimeout(r,400));
   }
-  zoomTo(i,1.1);
 }
 
 // ===============================
-// SETUP
+// SETUP JOGADORES
 // ===============================
 startBtn.onclick = ()=>{
-  playerCount = Number(playerSel.value);
-  if(!playerCount){ alert("Escolhe o número de jogadores"); return; }
-
-  setupDiv.style.display="none";
-  phase="choosePawn";
-  currentPlayer=0;
+  const count = Number(playerSel.value);
   players=[];
-  pawns.forEach(p=>p.classList.remove("disabled","selected"));
-  statusText.textContent = `Jogador 1, como quer viajar?`;
+  pawnPos=[0,0,0,0];
+  pawns.forEach(p=>p.style.display="none");
+  currentPlayer=0;
+  showPawnChoice(count);
 };
 
+function showPawnChoice(count){
+  const box=document.getElementById("pawnChoice");
+  const q=document.getElementById("pawnQuestion");
+  const btns=document.getElementById("pawnButtons");
+  box.style.display="block";
+  btns.innerHTML="";
+  q.textContent=`Jogador ${currentPlayer+1}, como quer viajar?`;
+
+  ["🚗","🚴","🏍️","🚶"].forEach((e,i)=>{
+    if(players.find(p=>p===i))return;
+    const b=document.createElement("button");
+    b.className="btn";
+    b.textContent=e;
+    b.onclick=()=>{
+      players.push(i);
+      pawns[i].style.display="flex";
+      placePawn(pawns[i],0);
+      currentPlayer++;
+      if(currentPlayer<count) showPawnChoice(count);
+      else{
+        box.style.display="none";
+        rollBtn.style.display="inline-block";
+        currentPlayer=0;
+      }
+    };
+    btns.appendChild(b);
+  });
+}
+
 // ===============================
-// ESCOLHA DE PEÕES
+// DADO
 // ===============================
-pawns.forEach((pawn,i)=>{
-  pawn.onclick = ()=>{
-    if(phase!=="choosePawn") return;
-
-    players.push({player:currentPlayer,pawn:i});
-    pawn.classList.add("disabled","selected");
-
-    currentPlayer++;
-
-    if(currentPlayer < playerCount){
-      statusText.textContent = `Jogador ${currentPlayer+1}, como quer viajar?`;
-    }else{
-      phase="playing";
-      currentPlayer=0;
-      statusText.textContent = `Jogador 1, lança o dado.`;
-      rollBtn.disabled=false;
-    }
-  };
-});
-
-// ===============================
-// JOGO
-// ===============================
-rollBtn.onclick = async ()=>{
-  if(phase!=="playing") return;
-
-  rollBtn.disabled=true;
+rollBtn.onclick=async()=>{
   const r=Math.floor(Math.random()*6)+1;
   diceVal.textContent=r;
-
-  const pawnIndex = players[currentPlayer].pawn;
-  await movePawn(pawnIndex,r);
-
-  currentPlayer = (currentPlayer+1) % players.length;
-  statusText.textContent = `Jogador ${currentPlayer+1}, lança o dado.`;
-  rollBtn.disabled=false;
+  await movePawn(players[currentPlayer],r);
+  currentPlayer=(currentPlayer+1)%players.length;
 };
 
 // INIT
-rollBtn.disabled=true;
-pawns.forEach((p,i)=>placePawn(i));
+pawns.forEach((p,i)=>placePawn(p,0));
 </script>
 </body>
 </html>
