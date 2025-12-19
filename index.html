@@ -2,281 +2,228 @@
 <html lang="pt">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jogo da EN2 — A Grande Travessia de Portugal</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jogo da EN2</title>
 
 <style>
-:root{
-  --bg:#111;
-  --panel:#1b1b1b;
-  --accent:#f5c400;
-  --text:#fff;
-  --muted:#999;
-}
-body{
-  margin:0;
-  font-family:Inter,system-ui,Arial;
-  background:var(--bg);
-  color:var(--text);
-}
-.wrap{
-  display:grid;
-  grid-template-columns: 1fr 340px;
-  gap:16px;
-  max-width:1400px;
-  margin:16px auto;
-  padding:0 12px;
-}
-h1{margin:0 0 12px}
+body{margin:0;background:#111;color:#fff;font-family:Arial,Helvetica,sans-serif}
+.wrap{display:flex;gap:20px;max-width:1400px;margin:20px auto}
+.board{flex:3;position:relative}
+.side{flex:1;background:#1c1c1c;border-radius:10px;padding:16px}
+h1,h2{margin:0 0 10px}
 
 .board-frame{
   position:relative;
   width:100%;
   aspect-ratio:4/3;
   overflow:hidden;
-  border-radius:8px;
-  background:#000;
+  border-radius:10px;
+  box-shadow:0 0 30px rgba(0,0,0,.7);
 }
-.zoom{
-  position:absolute;
-  inset:0;
-  transform-origin:center;
-  transition:transform .25s ease;
-  pointer-events:none;
-}
+.zoom{position:absolute;inset:0;transition:.25s ease}
 .board-img{
-  position:absolute;
-  inset:0;
-  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
+  position:absolute;inset:0;
+  background:url('https://i.imgur.com/SgYhoY8.png') center/cover no-repeat;
 }
 
 .pawn{
   position:absolute;
-  width:22px;
-  height:22px;
-  border-radius:50%;
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
   transform:translate(-50%,-50%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
-  cursor:pointer;
-  pointer-events:auto;
+  cursor:pointer;font-size:12px;
 }
-.pawn.selected{outline:3px solid #fff}
 .car{background:#f5c400;color:#111}
-.bike{background:#4bb39a;color:#042}
-.motor{background:#ef4a8a;color:#300}
+.bike{background:#4bb39a}
+.motor{background:#ef4a8a}
 .person{background:#4267ff}
+.selected{outline:2px solid #fff}
 
-.controls{
-  margin-top:12px;
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-button{
-  background:var(--accent);
+.controls{text-align:center;margin-top:12px}
+.btn{background:#f5c400;color:#111;border:none;
+     padding:10px 18px;border-radius:8px;font-weight:700;cursor:pointer}
+.hidden{display:none}
+
+.choice button{
+  margin:6px;
+  padding:10px 14px;
+  font-size:20px;
+  border-radius:8px;
   border:none;
-  border-radius:8px;
-  padding:10px 16px;
-  font-weight:700;
   cursor:pointer;
-}
-select{padding:6px}
-
-.panel{
-  background:var(--panel);
-  border-radius:8px;
-  padding:14px;
-}
-.panel h2{margin-top:0}
-
-.objective{
-  background:#111;
-  border-radius:6px;
-  padding:10px;
-  margin-top:10px;
-}
-.marker{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin:6px 0;
-  color:var(--muted);
-}
-.marker svg{
-  width:22px;
-  height:22px;
-  fill:#555;
-}
-.progress{
-  margin-top:8px;
-  font-size:14px;
-  color:#ccc;
+  background:#f5c400;
 }
 </style>
 </head>
 
 <body>
-
 <div class="wrap">
-  <div>
-    <h1>Jogo da EN2</h1>
 
-    <div class="board-frame" id="boardFrame">
-      <div class="zoom" id="zoomWrap">
-        <div class="board-img"></div>
-        <div class="pawn car" id="pawn0">🚗</div>
-        <div class="pawn bike" id="pawn1">🚴</div>
-        <div class="pawn motor" id="pawn2">🏍️</div>
-        <div class="pawn person" id="pawn3">🚶</div>
-      </div>
-    </div>
+<div class="board">
+  <div class="board-frame" id="boardFrame">
+    <div class="zoom" id="zoomWrap">
+      <div class="board-img"></div>
 
-    <div class="controls">
-      <span id="turnInfo">Escolhe nº de jogadores</span>
-      <select id="selectPawn" style="display:none"></select>
-      <button id="rollBtn" style="display:none">JOGAR</button>
-      <strong id="diceVal"></strong>
+      <div class="pawn car" id="pawn0">🚗</div>
+      <div class="pawn bike" id="pawn1">🚴</div>
+      <div class="pawn motor" id="pawn2">🏍️</div>
+      <div class="pawn person" id="pawn3">🚶</div>
     </div>
   </div>
 
-  <div class="panel">
-    <h2 id="objectiveTitle">Objetivo</h2>
-    <div id="objectiveCard"></div>
+  <div class="controls">
+    <div id="setupPlayers">
+      Jogadores:
+      <select id="playerCount">
+        <option>1</option><option>2</option>
+        <option>3</option><option>4</option>
+      </select>
+      <button class="btn" id="startSetup">COMEÇAR</button>
+    </div>
+
+    <div id="pawnChoice" class="hidden">
+      <p id="pawnQuestion"></p>
+      <div class="choice" id="pawnButtons"></div>
+    </div>
+
+    <div id="gameControls" class="hidden">
+      <button class="btn" id="rollBtn">JOGAR</button>
+      🎲 <span id="diceVal">—</span>
+      <p id="turnInfo"></p>
+    </div>
   </div>
+</div>
+
+<div class="side">
+  <h2>Objetivo</h2>
+  <div id="objectiveBox">—</div>
+</div>
+
 </div>
 
 <script>
 // ===============================
-// SPACES (do picker)
+// CASAS
 // ===============================
-const SPACES = [...]; // ⚠️ mantêm exatamente o array que já tens (não alterado)
+const SPACES = [...${"/* mantêm-se exatamente como já tens */"}];
 
 // ===============================
-// OBJETIVOS (13 REAIS)
+// OBJETIVOS (13)
 // ===============================
 const OBJECTIVES = [
-  {
-    text:"O teu objectivo é ser o primeiro a chegar a Faro (Km 738,5)",
-    items:[{label:"Faro",km:"738,5"}]
-  },
-  {
-    text:"Quem disse que o último não pode ganhar? O teu objectivo é ser o último a chegar a Faro (Km 738,5)",
-    items:[{label:"Faro",km:"738,5"}]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Chaves",km:"0"},
-      {label:"Tondela",km:"200"},
-      {label:"Abrantes",km:"400"},
-      {label:"Ciborro",km:"500"},
-      {label:"Faro",km:"738"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Vila Pouca de Aguiar",km:"35"},
-      {label:"Viseu",km:"172"},
-      {label:"Góis",km:"271"},
-      {label:"Alcáçovas",km:"551"},
-      {label:"S. Brás de Alportel",km:"722"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Vila Real",km:"64"},
-      {label:"Santa Comba Dão",km:"213"},
-      {label:"Sertã",km:"345"},
-      {label:"Torrão",km:"565"},
-      {label:"Ameixial (Loulé)",km:"688"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"São Pedro do Sul",km:"152"},
-      {label:"Pedrógão Grande",km:"317"},
-      {label:"Avis",km:"466"},
-      {label:"Montemor-o-Novo",km:"518"},
-      {label:"Almodôvar",km:"663"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Santa Marta de Penaguião",km:"81"},
-      {label:"Mortágua",km:"225"},
-      {label:"Sertã",km:"345"},
-      {label:"Ferreira do Alentejo",km:"595"},
-      {label:"Faro",km:"738"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Peso da Régua",km:"88"},
-      {label:"Penacova",km:"238"},
-      {label:"Vila de Rei",km:"366"},
-      {label:"Aljustrel",km:"619"},
-      {label:"Faro",km:"738"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Lamego",km:"104"},
-      {label:"Vila Nova de Poiares",km:"248"},
-      {label:"Sardoal",km:"386"},
-      {label:"Castro Verde",km:"640"},
-      {label:"Faro",km:"738"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Castro Daire",km:"136"},
-      {label:"Lousã",km:"260"},
-      {label:"Ponte de Sôr",km:"430"},
-      {label:"Km 666",km:"666"},
-      {label:"Faro",km:"738"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Chaves",km:"0"},
-      {label:"Meio da Estrada",km:"369"},
-      {label:"Faro",km:"738"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Chaves",km:"0"},
-      {label:"Faro",km:"738"}
-    ]
-  },
-  {
-    text:"Tens como objectivo visitar:",
-    items:[
-      {label:"Km 69",km:"69"},
-      {label:"Meio da Estrada",km:"369"},
-      {label:"Mora",km:"476"},
-      {label:"Coruche",km:"494"},
-      {label:"Faro",km:"738"}
-    ]
-  }
+{ text:"O teu objectivo é ser o primeiro a chegar a Faro (Km 738,5)" },
+{ text:"Quem disse que o último não pode ganhar?\nSer o último a chegar a Faro (Km 738,5)" },
+{ text:"Visitar: Chaves Km 0, Tondela Km 200, Abrantes Km 400, Ciborro Km 500, Faro Km 738" },
+{ text:"Visitar: Vila Pouca de Aguiar Km 35, Viseu Km 172, Góis Km 271, Alcáçovas Km 551, S. Brás de Alportel Km 722" },
+{ text:"Visitar: Vila Real Km 64, Sta. Comba Dão Km 213, Sertã Km 345, Torrão Km 565, Ameixial Km 688" },
+{ text:"Visitar: São Pedro do Sul Km 152, Pedrogão Grande Km 317, Avis Km 466, Montemor-o-Novo Km 518, Almodôvar Km 663" },
+{ text:"Visitar: Sta. Marta Penaguião Km 81, Mortágua Km 225, Sertã Km 345, Ferreira do Alentejo Km 595, Faro Km 738" },
+{ text:"Visitar: Peso da Régua Km 88, Penacova Km 238, Vila de Rei Km 366, Aljustrel Km 619, Faro Km 738,5" },
+{ text:"Visitar: Lamego Km 104, Vila Nova de Poiares Km 248, Sardoal Km 386, Castro Verde Km 640, Faro Km 738" },
+{ text:"Visitar: Castro Daire Km 136, Lousã Km 260, Ponte de Sôr Km 430, Km 666, Faro Km 738,5" },
+{ text:"Visitar: Chaves Km 0, Meio da Estrada Km 369, Faro Km 738, Faro Km 738,5" },
+{ text:"Visitar: Chaves Km 0, Faro Km 738" },
+{ text:"Visitar: Km 69, Meio da Estrada Km 369, Mora Km 476, Coruche Km 494, Faro Km 738" }
 ];
 
-// ⚠️ A lógica de jogo continua (turnos, dado, movimento)
-// 👉 O próximo passo será ligar fichas + ativar marcos
+// ===============================
+// ESTADO
+// ===============================
+const pawns=[pawn0,pawn1,pawn2,pawn3];
+let Game={
+  phase:"setup",
+  players:[],
+  current:0,
+  usedPawns:[]
+};
 
+// ===============================
+// FUNÇÕES
+// ===============================
+function placePawn(p,i){
+  const s=SPACES[i]; if(!s) return;
+  p.style.left=s.x*boardFrame.clientWidth+"px";
+  p.style.top=s.y*boardFrame.clientHeight+"px";
+}
+
+function zoomTo(x,y,scale=1.4){
+  const cx=boardFrame.clientWidth/2;
+  const cy=boardFrame.clientHeight/2;
+  zoomWrap.style.transform=
+    `translate(${(cx-x)*(scale-1)}px,${(cy-y)*(scale-1)}px) scale(${scale})`;
+}
+
+async function movePawn(p,steps){
+  for(let i=0;i<steps;i++){
+    p.pos=Math.min(SPACES.length-1,p.pos+1);
+    placePawn(p.el,p.pos);
+    const s=SPACES[p.pos];
+    zoomTo(s.x*boardFrame.clientWidth,s.y*boardFrame.clientHeight);
+    await new Promise(r=>setTimeout(r,300));
+  }
+}
+
+function nextTurn(){
+  Game.current=(Game.current+1)%Game.players.length;
+  updateTurn();
+}
+
+function updateTurn(){
+  turnInfo.textContent="Vez do Jogador "+(Game.current+1);
+  objectiveBox.textContent=Game.players[Game.current].objective.text;
+}
+
+// ===============================
+// SETUP
+// ===============================
+startSetup.onclick=()=>{
+  const n=+playerCount.value;
+  Game.players=[];
+  Game.usedPawns=[];
+  Game.phase="choosePawn";
+  setupPlayers.classList.add("hidden");
+  pawnChoice.classList.remove("hidden");
+  askPawn();
+};
+
+function askPawn(){
+  pawnQuestion.textContent="Jogador "+(Game.players.length+1)+", como quer viajar?";
+  pawnButtons.innerHTML="";
+  ["🚗","🚴","🏍️","🚶"].forEach((icon,i)=>{
+    if(!Game.usedPawns.includes(i)){
+      const b=document.createElement("button");
+      b.textContent=icon;
+      b.onclick=()=>choosePawn(i);
+      pawnButtons.appendChild(b);
+    }
+  });
+}
+
+function choosePawn(i){
+  Game.usedPawns.push(i);
+  Game.players.push({
+    el:pawns[i],pos:0,
+    objective:OBJECTIVES.splice(Math.random()*OBJECTIVES.length|0,1)[0]
+  });
+  if(Game.players.length==playerCount.value){
+    pawnChoice.classList.add("hidden");
+    gameControls.classList.remove("hidden");
+    Game.phase="play";
+    Game.players.forEach(p=>placePawn(p.el,0));
+    updateTurn();
+  }else askPawn();
+}
+
+// ===============================
+// JOGO
+// ===============================
+rollBtn.onclick=async()=>{
+  const p=Game.players[Game.current];
+  const r=Math.floor(Math.random()*6)+1;
+  diceVal.textContent=r;
+  await movePawn(p,r);
+  nextTurn();
+};
 </script>
 </body>
 </html>
-
