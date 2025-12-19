@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="pt">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Jogo da EN2 — A Grande Travessia de Portugal</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jogo da EN2 — Demo</title>
 
 <style>
 :root{
@@ -12,292 +12,172 @@
   --text:#fff;
 }
 html,body{
-  height:100%;
   margin:0;
-  font-family:Inter, system-ui, Arial, sans-serif;
   background:var(--bg);
-  color:var(--text)
+  color:var(--text);
+  font-family:Arial, sans-serif;
 }
 .wrap{
   max-width:1200px;
   margin:20px auto;
   text-align:center;
 }
-h1{font-size:28px;margin:8px 0 18px}
-
 .board-frame{
-  width:100%;
   max-width:1000px;
   aspect-ratio:4/3;
-  margin:0 auto;
+  margin:auto;
   position:relative;
   overflow:hidden;
-  border-radius:6px;
-  box-shadow:0 8px 30px rgba(0,0,0,.6);
-  background:#111;
 }
-
-.zoom{
-  position:absolute;
-  inset:0;
-  transform-origin:center center;
-  transition:transform .15s ease-in-out;
-  pointer-events:none;
-}
-
 .board-img{
   position:absolute;
   inset:0;
-  background-image:url('https://i.imgur.com/SgYhoY8.png');
-  background-size:cover;
-  background-position:center;
+  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
 }
-
+.zoom{
+  position:absolute;
+  inset:0;
+  transition:transform .3s ease;
+}
 .pawn{
   position:absolute;
   width:20px;
   height:20px;
   border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   transform:translate(-50%,-50%);
-  box-shadow:0 6px 18px rgba(0,0,0,.5);
-  font-size:11px;
   cursor:pointer;
-  pointer-events:auto;
 }
-.pawn.selected{outline:2px solid #fff}
-.pawn.car{background:#f5c400;color:#111}
-.pawn.bike{background:#4bb39a;color:#06231a}
-.pawn.motor{background:#ef4a8a;color:#2a001a}
-.pawn.person{background:#4267ff;color:#04204a}
+.car{background:#f5c400}
+.bike{background:#4bb39a}
+.motor{background:#ef4a8a}
+.person{background:#4267ff}
+.selected{outline:2px solid #fff}
 
 .controls{
-  margin-top:18px;
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
+  margin-top:15px;
 }
-.btn{
-  background:var(--accent);
-  color:#111;
-  padding:10px 18px;
-  border-radius:10px;
-  font-weight:700;
+button{
+  padding:10px 20px;
+  font-weight:bold;
+  background:#f5c400;
   border:none;
   cursor:pointer;
-  font-size:16px;
-}
-.info{font-size:18px}
-
-.help{
-  margin-top:10px;
-  color:#ddd;
-  font-size:14px
 }
 </style>
 </head>
 
 <body>
 <div class="wrap">
-  <h1>JOGO DA EN2 — A Grande Travessia de Portugal</h1>
+  <h1>JOGO DA EN2</h1>
 
-  <div class="board-frame" id="boardFrame">
-    <div class="zoom" id="zoomWrap">
+  <div class="board-frame" id="board">
+    <div class="zoom" id="zoom">
       <div class="board-img"></div>
-
-      <div class="pawn car" id="pawn0">🚗</div>
-      <div class="pawn bike" id="pawn1">🚴</div>
-      <div class="pawn motor" id="pawn2">🏍️</div>
-      <div class="pawn person" id="pawn3">🚶</div>
+      <div class="pawn car" id="pawn0"></div>
+      <div class="pawn bike" id="pawn1"></div>
+      <div class="pawn motor" id="pawn2"></div>
+      <div class="pawn person" id="pawn3"></div>
     </div>
   </div>
 
   <div class="controls">
-    <label>Peão:</label>
     <select id="selectPawn">
-      <option value="0">Carro 🚗</option>
-      <option value="1">Bicicleta 🚴</option>
-      <option value="2">Mota 🏍️</option>
-      <option value="3">Pessoa 🚶</option>
+      <option value="0">Carro</option>
+      <option value="1">Bicicleta</option>
+      <option value="2">Mota</option>
+      <option value="3">Pessoa</option>
     </select>
-
-    <button class="btn" id="rollBtn">JOGAR</button>
-    <div class="info">🎲 <strong id="diceVal">—</strong></div>
-  </div>
-
-  <div class="help">
-    Clica em JOGAR para lançar o dado. O peão move-se pelas casas reais do tabuleiro.
+    <button id="roll">JOGAR</button>
+    🎲 <span id="dice">—</span>
   </div>
 </div>
 
-<!-- ===============================
-     SCRIPT 1 — CASAS
-     =============================== -->
 <script>
+// ===============================
+// CASAS (EXEMPLO – AS TUAS FUNCIONAM IGUAL)
+// ===============================
 const SPACES = [
-  {"x":0.09165,"y":0.11379},
-  {"x":0.08674,"y":0.16250},
-  {"x":0.08674,"y":0.21528},
-  {"x":0.09165,"y":0.27008},
-  {"x":0.12711,"y":0.23558},
-  {"x":0.15057,"y":0.18957},
-  {"x":0.17621,"y":0.14356},
-  {"x":0.21876,"y":0.11311},
-  {"x":0.26513,"y":0.09417},
-  {"x":0.30551,"y":0.10229},
-  {"x":0.34588,"y":0.13003},
-  {"x":0.35951,"y":0.17671},
-  {"x":0.32460,"y":0.21595},
-  {"x":0.28750,"y":0.19227},
-  {"x":0.24277,"y":0.17198},
-  {"x":0.21985,"y":0.21798},
-  {"x":0.23840,"y":0.27008},
-  {"x":0.22804,"y":0.31880},
-  {"x":0.18112,"y":0.32691},
-  {"x":0.13911,"y":0.33571},
-  {"x":0.11292,"y":0.38713},
-  {"x":0.11947,"y":0.43720},
-  {"x":0.15711,"y":0.46900},
-  {"x":0.20021,"y":0.45005},
-  {"x":0.23404,"y":0.41217},
-  {"x":0.26132,"y":0.36886},
-  {"x":0.29405,"y":0.32759},
-  {"x":0.33333,"y":0.29985},
-  {"x":0.37861,"y":0.31812},
-  {"x":0.40261,"y":0.36007},
-  {"x":0.40698,"y":0.41961},
-  {"x":0.38243,"y":0.45547},
-  {"x":0.33769,"y":0.48930},
-  {"x":0.29678,"y":0.50486},
-  {"x":0.25095,"y":0.51907},
-  {"x":0.20403,"y":0.55019},
-  {"x":0.17566,"y":0.58876},
-  {"x":0.18876,"y":0.64559},
-  {"x":0.23349,"y":0.66521},
-  {"x":0.27714,"y":0.65168},
-  {"x":0.31751,"y":0.63138},
-  {"x":0.35951,"y":0.60702},
-  {"x":0.40043,"y":0.57252},
-  {"x":0.42825,"y":0.54207},
-  {"x":0.46535,"y":0.50148},
-  {"x":0.49154,"y":0.46765},
-  {"x":0.52373,"y":0.42908},
-  {"x":0.56137,"y":0.40269},
-  {"x":0.59901,"y":0.36345},
-  {"x":0.63775,"y":0.34045},
-  {"x":0.68248,"y":0.32489},
-  {"x":0.72558,"y":0.33639},
-  {"x":0.74086,"y":0.38578},
-  {"x":0.70976,"y":0.43314},
-  {"x":0.67157,"y":0.46359},
-  {"x":0.62956,"y":0.48659},
-  {"x":0.58810,"y":0.51162},
-  {"x":0.55264,"y":0.54342},
-  {"x":0.52809,"y":0.58064},
-  {"x":0.53027,"y":0.64221},
-  {"x":0.55755,"y":0.68618},
-  {"x":0.59956,"y":0.69498},
-  {"x":0.64157,"y":0.67130},
-  {"x":0.66884,"y":0.62461},
-  {"x":0.69721,"y":0.57793},
-  {"x":0.72995,"y":0.53192},
-  {"x":0.76650,"y":0.50689},
-  {"x":0.80905,"y":0.53463},
-  {"x":0.81996,"y":0.58605},
-  {"x":0.79487,"y":0.64085},
-  {"x":0.74959,"y":0.65168},
-  {"x":0.70540,"y":0.66656},
-  {"x":0.70921,"y":0.71325},
-  {"x":0.72776,"y":0.76670},
-  {"x":0.70267,"y":0.81947},
-  {"x":0.66230,"y":0.80120},
-  {"x":0.61265,"y":0.77685},
-  {"x":0.58592,"y":0.81947},
-  {"x":0.60992,"y":0.86886},
-  {"x":0.64866,"y":0.88984},
-  {"x":0.69121,"y":0.89187},
-  {"x":0.74249,"y":0.87157},
-  {"x":0.78014,"y":0.83300},
-  {"x":0.79978,"y":0.78632},
-  {"x":0.81451,"y":0.73963},
-  {"x":0.85215,"y":0.69024},
-  {"x":0.86961,"y":0.74775},
-  {"x":0.89088,"y":0.78970},
-  {"x":0.90780,"y":0.84789},
-  {"x":0.89798,"y":0.90269}
+  {x:0.09,y:0.11},
+  {x:0.12,y:0.18},
+  {x:0.16,y:0.24},
+  {x:0.20,y:0.30},
+  {x:0.26,y:0.36},
+  {x:0.32,y:0.42},
+  {x:0.38,y:0.48},
+  {x:0.44,y:0.54},
+  {x:0.50,y:0.60}
 ];
-</script>
 
-<!-- ===============================
-     SCRIPT 2 — JOGO
-     =============================== -->
-<script>
-const boardFrame = document.getElementById('boardFrame');
-const zoomWrap   = document.getElementById('zoomWrap');
+// ===============================
+// ELEMENTOS
+// ===============================
+const board = document.getElementById("board");
+const zoom  = document.getElementById("zoom");
 const pawns = [
-  document.getElementById('pawn0'),
-  document.getElementById('pawn1'),
-  document.getElementById('pawn2'),
-  document.getElementById('pawn3')
+  document.getElementById("pawn0"),
+  document.getElementById("pawn1"),
+  document.getElementById("pawn2"),
+  document.getElementById("pawn3")
 ];
-const selectPawnEl = document.getElementById('selectPawn');
-const rollBtn = document.getElementById('rollBtn');
-const diceVal = document.getElementById('diceVal');
+const rollBtn = document.getElementById("roll");
+const diceEl  = document.getElementById("dice");
+const select  = document.getElementById("selectPawn");
 
-let selectedPawn = 0;
-let pawnPos = [0,0,0,0];
+// ===============================
+// ESTADO
+// ===============================
+let pos = [0,0,0,0];
+let selected = 0;
 
-function placePawn(pawn, index){
-  const s = SPACES[index];
-  pawn.style.left = (s.x * boardFrame.clientWidth) + 'px';
-  pawn.style.top  = (s.y * boardFrame.clientHeight) + 'px';
+// ===============================
+// FUNÇÕES
+// ===============================
+function placePawn(i){
+  const s = SPACES[pos[i]];
+  pawns[i].style.left = s.x * board.clientWidth + "px";
+  pawns[i].style.top  = s.y * board.clientHeight + "px";
 }
 
-function zoomTo(x, y, scale){
-  const cx = boardFrame.clientWidth / 2;
-  const cy = boardFrame.clientHeight / 2;
-  const tx = (cx - x) * (scale - 1);
-  const ty = (cy - y) * (scale - 1);
-  zoomWrap.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+function zoomTo(i){
+  const s = SPACES[pos[i]];
+  const cx = board.clientWidth/2;
+  const cy = board.clientHeight/2;
+  zoom.style.transform =
+    `translate(${(cx-s.x*board.clientWidth)*0.4}px, ${(cy-s.y*board.clientHeight)*0.4}px) scale(1.4)`;
 }
 
-async function movePawn(pawnIndex, steps){
-  for(let i=0;i<steps;i++){
-    pawnPos[pawnIndex] = Math.min(SPACES.length-1, pawnPos[pawnIndex]+1);
-    placePawn(pawns[pawnIndex], pawnPos[pawnIndex]);
-    const s = SPACES[pawnPos[pawnIndex]];
-    zoomTo(s.x*boardFrame.clientWidth, s.y*boardFrame.clientHeight, 1.6);
-    await new Promise(r=>setTimeout(r,350));
+async function movePawn(i,steps){
+  for(let n=0;n<steps;n++){
+    pos[i]=Math.min(SPACES.length-1,pos[i]+1);
+    placePawn(i);
+    zoomTo(i);
+    await new Promise(r=>setTimeout(r,400));
   }
-  const s = SPACES[pawnPos[pawnIndex]];
-  zoomTo(s.x*boardFrame.clientWidth, s.y*boardFrame.clientHeight, 1.15);
+  zoom.style.transform="scale(1)";
 }
 
 function setSelected(i){
-  selectedPawn = i;
-  pawns.forEach((p,idx)=>p.classList.toggle('selected', idx===i));
-  selectPawnEl.value = i;
+  selected=i;
+  pawns.forEach((p,idx)=>p.classList.toggle("selected",idx===i));
+  select.value=i;
 }
 
-rollBtn.onclick = async ()=>{
-  rollBtn.disabled = true;
-  const r = Math.floor(Math.random()*6)+1;
-  diceVal.textContent = r;
-  await movePawn(selectedPawn, r);
-  rollBtn.disabled = false;
+// ===============================
+// EVENTOS
+// ===============================
+rollBtn.onclick=async()=>{
+  const r=Math.floor(Math.random()*6)+1;
+  diceEl.textContent=r;
+  await movePawn(selected,r);
 };
+select.onchange=e=>setSelected(+e.target.value);
+pawns.forEach((p,i)=>p.onclick=()=>setSelected(i));
 
-selectPawnEl.onchange = e => setSelected(Number(e.target.value));
-pawns.forEach((p,i)=>p.onclick = ()=>setSelected(i));
-
+// ===============================
 // INIT
-pawns.forEach(p=>placePawn(p,0));
+// ===============================
+pawns.forEach((_,i)=>placePawn(i));
 setSelected(0);
 </script>
-
 </body>
 </html>
