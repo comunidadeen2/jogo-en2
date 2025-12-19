@@ -235,7 +235,8 @@ let currentPlayer = 0;
 
 const board = document.getElementById("boardFrame");
 
-function placePawn(pawn,i){
+// posicionar peões no início
+function placePawn(pawn, i){
   const s = SPACES[i];
   pawn.style.left = (s.x * board.clientWidth) + "px";
   pawn.style.top  = (s.y * board.clientHeight) + "px";
@@ -247,29 +248,70 @@ pawns.forEach(p=>placePawn(p,0));
 // ===============================
 document.getElementById("startBtn").onclick = ()=>{
   const count = Number(playerCount.value);
+
   players = [];
   currentPlayer = 0;
+
   document.getElementById("setupPlayers").classList.add("hidden");
   document.getElementById("pawnSelect").classList.remove("hidden");
-  updatePawnQuestion();
+
   renderPawnButtons(count);
+  updatePawnQuestion();
 };
 
 function updatePawnQuestion(){
   document.getElementById("pawnQuestion").textContent =
-    `Jogador ${players.length+1}, como quer viajar?`;
+    `Jogador ${players.length + 1}, como quer viajar?`;
 }
 
 function renderPawnButtons(maxPlayers){
   const wrap = document.getElementById("pawnButtons");
   wrap.innerHTML = "";
+
   pawnTypes.forEach(p=>{
     if(players.includes(p.id)) return;
+
     const b = document.createElement("button");
     b.textContent = p.label;
+    b.className = "btn";
+
     b.onclick = ()=>{
       players.push(p.id);
+
+      // esconder peão do tabuleiro se não for usado
+      const pawnIndex = pawnTypes.findIndex(x=>x.id===p.id);
+      pawns[pawnIndex].style.display = "block";
+
       if(players.length === maxPlayers){
+        startGame();
+      }else{
+        renderPawnButtons(maxPlayers);
+        updatePawnQuestion();
+      }
+    };
+
+    wrap.appendChild(b);
+  });
+}
+
+// ===============================
+// INICIAR JOGO
+// ===============================
+function startGame(){
+  document.getElementById("pawnSelect").classList.add("hidden");
+  document.getElementById("gameControls").classList.remove("hidden");
+
+  // esconder peões não usados
+  pawnTypes.forEach((p,i)=>{
+    if(!players.includes(p.id)){
+      pawns[i].style.display = "none";
+    }
+  });
+
+  players.forEach((_,i)=>placePawn(pawns[i],0));
+
+  updateTurnLabel();
+}
 
   // esconder peões não usados
   pawns.forEach((pawn, index) => {
