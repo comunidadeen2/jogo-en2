@@ -66,8 +66,10 @@ h1{
   position:absolute;
   transform:translate(-50%,-50%);
   font-size:22px;
-  z-index:5;
+  z-index:10;
+  pointer-events:none;
 }
+
 /* CONTROLOS */
 .controls{
   margin:20px 0;
@@ -125,12 +127,19 @@ button{
   height:48px;
   border-radius:50%;
   background:#555;
-  color:#222;
+  color:#111;
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight:bold;
-  margin-bottom:8px;
+  margin:8px 0 12px 0;
+  font-size:14px;
+}
+
+/* quando o objetivo for cumprido (mais tarde) */
+.objective-marco.done{
+  background:#f5c400;
+  color:#111;
 }
 
 </style>
@@ -306,10 +315,14 @@ let players=[];
 let positions=[0,0,0,0];
 let currentPlayer=0;
 
-function placePawn(pawn,i){
-  const s=SPACES[i];
-  pawn.style.left=(s.x*board.clientWidth)+"px";
-  pawn.style.top=(s.y*board.clientHeight)+"px";
+function placePawn(pawn, i){
+  const s = SPACES[i];
+
+  const offsetX = -4;   // ajuste fino horizontal
+  const offsetY = -6;   // ajuste fino vertical
+
+  pawn.style.left = (s.x * board.clientWidth + offsetX) + "px";
+  pawn.style.top  = (s.y * board.clientHeight + offsetY) + "px";
 }
 
 // SETUP
@@ -362,15 +375,17 @@ function startGame(){
 }
 
 function updateTurn(){
-  const p = players[currentPlayer];
+  const player = players[currentPlayer];
 
   turnInfo.textContent = `Vez do Jogador ${currentPlayer + 1}`;
 
   objectivePanel.innerHTML = `
     <h3>🎯 Objetivo</h3>
-    <pre>${p.objective.text}</pre>
+    <div class="objective-marco">EN2</div>
+    <pre>${player.objective.text}</pre>
   `;
 }
+
 // JOGAR
 rollBtn.onclick=async()=>{
   const r=Math.floor(Math.random()*6)+1;
