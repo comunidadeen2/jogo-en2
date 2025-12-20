@@ -30,13 +30,16 @@ h1{text-align:center}
 }
 
 .board-frame{
-  flex:1;
+  flex:0 0 1000px;     /* largura fixa */
+  width:100%;
   max-width:1000px;
-  aspect-ratio:4/3;
+  aspect-ratio:4 / 3;
+  min-height:600px;   /* 🔥 força altura */
   position:relative;
   overflow:hidden;
   border-radius:8px;
 }
+
 .board-img{
   position:absolute;
   inset:0;
