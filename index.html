@@ -13,17 +13,18 @@
   .game-area{
   display:flex;
   gap:20px;
-  align-items:flex-start;
   justify-content:center;
+  align-items:flex-start;
+  margin-bottom:20px;
 }
 
 #objectivePanel{
   width:280px;
+  min-height:200px;
   background:#1b1b1b;
   border:1px solid #444;
   border-radius:10px;
   padding:14px;
-  text-align:left;
 }
 
 #objectivePanel h3{
@@ -51,12 +52,13 @@ body{
   text-align:center;
 }
 .board-frame{
-  max-width:1000px;
+  width:100%;
+  max-width:900px;
   aspect-ratio:4/3;
-  margin:0 auto;
   position:relative;
   overflow:hidden;
   border-radius:8px;
+  background:#000;
 }
 .board-img{
   position:absolute;
@@ -106,9 +108,11 @@ button{
   <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
   <div class="game-area">
+
     <div class="board-frame" id="boardFrame">
       <div class="zoom">
         <div class="board-img"></div>
+
         <div class="pawn car" id="pawn0">🚗</div>
         <div class="pawn bike" id="pawn1">🚴</div>
         <div class="pawn motor" id="pawn2">🏍️</div>
@@ -116,11 +120,19 @@ button{
       </div>
     </div>
 
-    <div id="objectivePanel" class="hidden"></div>
+    <div id="objectivePanel"></div>
+
   </div>
 
   <div class="controls">
-    <!-- setupPlayers / pawnSelect / gameControls ficam aqui -->
+    <div id="setupPlayers">…</div>
+
+    <div id="pawnSelect">
+      <p id="pawnQuestion"></p>
+      <div id="pawnButtons"></div>
+    </div>
+
+    <div id="gameControls">…</div>
   </div>
 </div>
 
@@ -357,4 +369,5 @@ rollBtn.onclick=async()=>{
 </script>
 </body>
 </html>
+
 
