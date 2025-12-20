@@ -207,8 +207,14 @@ let currentPlayer=0;
 // ================= FUNÇÕES =================
 function placePawn(pawn,i){
   const s = SPACES[i];
-  pawn.style.left = (s.x * board.clientWidth) + "px";
-  pawn.style.top  = (s.y * board.clientHeight) + "px";
+  function placePawn(pawn,i){
+  const s = SPACES[i];
+
+  const offsetX = -6;   // ← ajusta centro horizontal
+  const offsetY = -8;   // ← ajusta centro vertical
+
+  pawn.style.left = (s.x * board.clientWidth + offsetX) + "px";
+  pawn.style.top  = (s.y * board.clientHeight + offsetY) + "px";
 }
 
 // ================= SETUP =================
@@ -292,4 +298,3 @@ rollBtn.onclick=async()=>{
 </script>
 
 </body>
-</html>
