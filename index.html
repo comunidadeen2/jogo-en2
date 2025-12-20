@@ -367,22 +367,24 @@ function startGame(){
     pawn.style.display="block";
     placePawn(pawn,0);
   });
-
-  objectivePanel.innerHTML=
-    `<h3>🎯 Objetivo</h3><pre>${OBJECTIVES[0].text}</pre>`;
-
-  updateTurn();
+    currentPlayer = 0;
+    updateTurn();
 }
 
-function updateTurn(){
+function updateTurn() {
   const player = players[currentPlayer];
 
   turnInfo.textContent = `Vez do Jogador ${currentPlayer + 1}`;
 
   objectivePanel.innerHTML = `
-    <h3>🎯 Objetivo</h3>
-    <div class="objective-marco">EN2</div>
-    <pre>${player.objective.text}</pre>
+    <div class="objective-card">
+      <div class="objective-header">
+        🧭 Objetivo do Jogador ${currentPlayer + 1}
+      </div>
+      <div class="objective-body">
+        ${player.objective.text.replace(/\n/g, "<br>")}
+      </div>
+    </div>
   `;
 }
 
