@@ -65,10 +65,9 @@ h1{
 .pawn{
   position:absolute;
   transform:translate(-50%,-50%);
-  font-size:30px;
-  display:none;
+  font-size:22px;
+  z-index:5;
 }
-
 /* CONTROLOS */
 .controls{
   margin:20px 0;
@@ -105,32 +104,35 @@ button{
 /* CARTA OBJETIVO */
 #objectivePanel{
   width:320px;
-  padding:18px 18px 22px;
-  border-radius:16px;
-  background:#2a2a2a;
-  border:2px dashed #666;
-  position:relative;
-}
-
-#objectivePanel::before{
-  content:"";
-  width:48px;
-  height:48px;
-  background:#888;
-  mask:url("https://upload.wikimedia.org/wikipedia/commons/3/3c/Map_marker_icon.svg") center / contain no-repeat;
-  -webkit-mask:url("https://upload.wikimedia.org/wikipedia/commons/3/3c/Map_marker_icon.svg") center / contain no-repeat;
-  position:absolute;
-  top:-24px;
-  right:20px;
+  padding:16px;
+  border-radius:14px;
+  background:#1a1a1a;
+  border:2px dashed #555;
+  color:#eee;
 }
 
 #objectivePanel h3{
   margin-top:0;
-  color:var(--accent);
-}pre{
-  white-space:pre-wrap;
-  font-family:inherit;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#f5c400;
 }
+
+/* marco cinzento */
+.objective-marco{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#555;
+  color:#222;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
 </style>
 </head>
 
@@ -360,9 +362,15 @@ function startGame(){
 }
 
 function updateTurn(){
-  turnInfo.textContent=`Vez do Jogador ${currentPlayer+1}`;
-}
+  const p = players[currentPlayer];
 
+  turnInfo.textContent = `Vez do Jogador ${currentPlayer + 1}`;
+
+  objectivePanel.innerHTML = `
+    <h3>🎯 Objetivo</h3>
+    <pre>${p.objective.text}</pre>
+  `;
+}
 // JOGAR
 rollBtn.onclick=async()=>{
   const r=Math.floor(Math.random()*6)+1;
@@ -375,7 +383,7 @@ rollBtn.onclick=async()=>{
     await new Promise(r=>setTimeout(r,300));
   }
 
-  currentPlayer=(currentPlayer+1)%players.length;
+  currentPlayer = (currentPlayer + 1) % players.length;
   updateTurn();
 };
 </script>
