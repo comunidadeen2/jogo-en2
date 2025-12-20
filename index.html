@@ -42,7 +42,15 @@ h1{text-align:center}
   inset:0;
   background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
 }
-.zoom{position:absolute;inset:0;}
+.zoom{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.board-frame{
+  position:relative;   /* 👈 GARANTE REFERÊNCIA */
+}
 
 .pawn-btn{
   border:none;
@@ -259,7 +267,7 @@ const OBJECTIVES = [
 // ===============================
 // ELEMENTOS
 // ===============================
-const board=document.getElementById("boardFrame");
+const board = document.querySelector(".zoom");
 const pawns=[
   document.getElementById("pawn0"),
   document.getElementById("pawn1"),
@@ -297,6 +305,7 @@ function placePawn(pawn,i){
   pawn.style.top=(s.y*board.clientHeight)+"px";
 }
 window.addEventListener("load", () => {
+  window.addEventListener("load", () => {
   pawns.forEach(p => placePawn(p, 0));
 });
 
