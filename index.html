@@ -18,7 +18,7 @@ body{
   font-family:Arial,Helvetica,sans-serif;
 }
 
-wrap{
+.wrap{
   max-width:1300px;
   margin:20px auto;
 }
@@ -164,6 +164,8 @@ button{
 </head>
 
 <body>
+
+<div class="wrap">
 
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
@@ -360,7 +362,10 @@ function renderPawnButtons(max){
     b.textContent=p.label;
     b.className="pawn-btn "+p.cls;
     b.onclick=()=>{
-      players.push({pawn:p.id});
+      players.push({
+  pawn: p.id,
+  objective: OBJECTIVES[players.length % OBJECTIVES.length]
+});
       if(players.length===max) startGame();
       else{
         pawnQuestion.textContent=`Jogador ${players.length+1}, como quer viajar?`;
@@ -398,15 +403,18 @@ function updateTurn(){
   turnInfo.textContent = `Vez do Jogador ${currentPlayer + 1}`;
 
   objectivePanel.innerHTML = `
-    <div class="objective-card">
-      <div class="objective-header">
-        🧭 Objetivo do Jogador ${currentPlayer + 1}
-      </div>
-      <div class="objective-body">
-        ${player.objective.text.replace(/\n/g,"<br>")}
-      </div>
+  <div class="objective-card">
+    <div class="objective-header">
+      🧭 Objetivo do Jogador ${currentPlayer + 1}
     </div>
-  `;
+
+    <div class="objective-marco">Km</div>
+
+    <div class="objective-body">
+      ${player.objective.text.replace(/\n/g,"<br>")}
+    </div>
+  </div>
+`;
 }
 
 // JOGAR
