@@ -123,26 +123,44 @@ button{
 
 .objective-marcos{
   display:flex;
-  gap:10px;
+  gap:12px;
   flex-wrap:wrap;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
 
 /* MARCO INDIVIDUAL */
 .objective-marco{
-  min-width:48px;
-  height:48px;
-  border-radius:50%;
-  background:#555;
-  color:#fff;
+  width:56px;
+  height:70px;
+  background:#666;
+  border-radius:8px 8px 14px 14px;
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
+  color:#111;
   font-weight:bold;
   font-size:13px;
-  box-shadow:0 0 0 2px #333 inset;
+  box-shadow:
+    inset 0 0 0 2px #333,
+    0 4px 6px rgba(0,0,0,.6);
 }
 
+/* topo branco do marco */
+.objective-marco::before{
+  content:"";
+  width:100%;
+  height:18px;
+  background:#eee;
+  border-radius:8px 8px 0 0;
+  margin-bottom:4px;
+}
+
+/* quando concluído */
+.objective-marco.done{
+  background:#f5c400;
+  color:#111;
+}
 .objective-header{
   font-weight:bold;
   color:#f5c400;
@@ -478,20 +496,39 @@ function updateTurn(){
 }
 
 // JOGAR
-rollBtn.onclick=async()=>{
-  const r=Math.floor(Math.random()*6)+1;
-  diceVal.textContent=r;
+rollBtn.onclick = async () => {
+  const r = Math.floor(Math.random() * 6) + 1;
+  diceVal.textContent = r;
 
-  const pawnId=players[currentPlayer].pawn;
-  for(let i=0;i<r;i++){
-    positions[pawnId]=Math.min(SPACES.length-1,positions[pawnId]+1);
-    placePawn(pawns[pawnId],positions[pawnId]);
-    await new Promise(r=>setTimeout(r,300));
+  const pawnId = players[currentPlayer].pawn;
+
+  for (let i = 0; i < r; i++) {
+    positions[pawnId] = Math.min(
+      SPACES.length - 1,
+      positions[pawnId] + 1
+    );
+
+    placePawn(pawns[pawnId], positions[pawnId]);
+    await new Promise(res => setTimeout(res, 300));
   }
 
+  // 🔥 VERIFICAR OBJETIVOS (AQUI É O SÍTIO CERTO)
+  const player = players[currentPlayer];
+
+  if (player.objective && player.objective.kms) {
+    player.objective.kms.forEach(km => {
+      if (positions[pawnId] >= km.index) {
+        const el = document.getElementById("marco-" + km.value);
+        if (el) el.classList.add("done");
+      }
+    });
+  }
+
+  // próximo jogador
   currentPlayer = (currentPlayer + 1) % players.length;
   updateTurn();
 };
+
 </script>
 
 </body>
