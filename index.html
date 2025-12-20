@@ -18,6 +18,18 @@ body{
   font-family:Arial,Helvetica,sans-serif;
 }
 
+wrap{
+  max-width:1300px;
+  margin:20px auto;
+}
+
+.game-layout{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  gap:24px;
+}
+
 h1{
   text-align:center;
   margin:20px 0;
@@ -92,19 +104,30 @@ button{
 
 /* CARTA OBJETIVO */
 #objectivePanel{
-  max-width:420px;
-  margin:20px auto;
-  padding:18px;
-  border-radius:14px;
+  width:320px;
+  padding:18px 18px 22px;
+  border-radius:16px;
   background:#2a2a2a;
-  border:2px dashed #555;
-  color:#ddd;
+  border:2px dashed #666;
+  position:relative;
 }
+
+#objectivePanel::before{
+  content:"";
+  width:48px;
+  height:48px;
+  background:#888;
+  mask:url("https://upload.wikimedia.org/wikipedia/commons/3/3c/Map_marker_icon.svg") center / contain no-repeat;
+  -webkit-mask:url("https://upload.wikimedia.org/wikipedia/commons/3/3c/Map_marker_icon.svg") center / contain no-repeat;
+  position:absolute;
+  top:-24px;
+  right:20px;
+}
+
 #objectivePanel h3{
   margin-top:0;
   color:var(--accent);
-}
-pre{
+}pre{
   white-space:pre-wrap;
   font-family:inherit;
 }
@@ -115,7 +138,8 @@ pre{
 
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
-<div class="board-wrapper">
+<div class="game-layout">
+
   <div class="board-frame">
     <div class="zoom" id="board">
       <div class="board-img"></div>
@@ -125,11 +149,10 @@ pre{
       <div class="pawn" id="pawn3">🚶</div>
     </div>
   </div>
-</div>
 
-<div id="objectivePanel" class="hidden"></div>
+  <div id="objectivePanel" class="hidden"></div>
 
-<div class="controls">
+</div><div class="controls">
 
   <div id="setupPlayers">
     Jogadores:
@@ -256,7 +279,7 @@ const OBJECTIVES=[
 ];
 
 // ELEMENTOS
-const board=document.getElementById("board");
+const board = document.querySelector(".board-frame");
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 const startBtn=startBtnEl=document.getElementById("startBtn");
 const pawnSelect=document.getElementById("pawnSelect");
