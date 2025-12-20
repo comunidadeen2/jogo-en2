@@ -39,7 +39,6 @@ h1{text-align:center}
   overflow:hidden;
   border-radius:8px;
 }
-
 .board-img{
   position:absolute;
   inset:0;
@@ -52,7 +51,7 @@ h1{text-align:center}
   position: relative;
 }
 .board-frame{
-  position:relative;   /* 👈 GARANTE REFERÊNCIA */
+  position:relative;   
 }
 
 .pawn-btn{
@@ -270,8 +269,7 @@ const OBJECTIVES = [
 // ===============================
 // ELEMENTOS
 // ===============================
-const board = document.getElementById("boardFrame");
-
+const board = document.querySelector(".zoom");
 const pawns=[
   document.getElementById("pawn0"),
   document.getElementById("pawn1"),
