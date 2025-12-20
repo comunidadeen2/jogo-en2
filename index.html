@@ -474,9 +474,9 @@ function startGame(){
   // baralhar objetivos
   const deck = [...OBJECTIVES].sort(() => Math.random() - 0.5);
 
-  // atribuir UM objetivo a CADA jogador
-  players.forEach((p, index) => {
-    p.objective = deck[index % deck.length]; // ← resolve já
+  // atribuir peões + objetivo a cada jogador
+  players.forEach(p=>{
+    p.objective = deck.pop();   // 🔥 ISTO FALTAVA
     const pawn = pawns[p.pawn];
     pawn.style.display = "block";
     placePawn(pawn, 0);
@@ -484,6 +484,7 @@ function startGame(){
 
   updateTurn();
 }
+
 function updateTurn(){
   const player = players[currentPlayer];
 
