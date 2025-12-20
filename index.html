@@ -512,14 +512,24 @@ rollBtn.onclick = async () => {
     await new Promise(res => setTimeout(res, 300));
   }
 
-  // 🔥 VERIFICAR OBJETIVOS (AQUI É O SÍTIO CERTO)
+  // 🔥 VERIFICAR OBJETIVOS
   const player = players[currentPlayer];
 
-  if (player.objective && player.objective.kms) {
+  if (player.objective.kms) {
     player.objective.kms.forEach(km => {
-      if (positions[pawnId] >= km.index) {
-        const el = document.getElementById("marco-" + km.value);
-        if (el) el.classList.add("done");
+      if (
+        positions[pawnId] >= km.index &&
+        !km.done
+      ) {
+        const acertou = confirm(
+          `Pergunta do Km ${km.value}!\n\nResposta certa?`
+        );
+
+        if (acertou) {
+          km.done = true;
+          const el = document.getElementById("marco-" + km.value);
+          if (el) el.classList.add("done");
+        }
       }
     });
   }
