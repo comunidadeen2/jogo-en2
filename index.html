@@ -121,6 +121,28 @@ button{
   color:#eaeaea;
 }
 
+.objective-marcos{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+/* MARCO INDIVIDUAL */
+.objective-marco{
+  min-width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#555;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  font-size:13px;
+  box-shadow:0 0 0 2px #333 inset;
+}
+
 .objective-header{
   font-weight:bold;
   color:#f5c400;
@@ -429,9 +451,14 @@ function updateTurn(){
 
   turnInfo.textContent = `Vez do Jogador ${currentPlayer + 1}`;
 
-  // tenta extrair o primeiro Km do texto do objetivo
-  const kmMatch = player.objective.text.match(/Km\s*([0-9]+)/i);
-  const kmValue = kmMatch ? kmMatch[1] : "?";
+  // extrair TODOS os Km do texto
+  const kms = [...player.objective.text.matchAll(/Km\s*([0-9]+)/gi)]
+                .map(m => m[1]);
+
+  // criar marcos
+  const marcosHTML = kms.map(km => `
+    <div class="objective-marco">Km ${km}</div>
+  `).join("");
 
   objectivePanel.innerHTML = `
     <div class="objective-card">
@@ -439,8 +466,8 @@ function updateTurn(){
         🧭 Objetivo do Jogador ${currentPlayer + 1}
       </div>
 
-      <div class="objective-marco">
-        Km ${kmValue}
+      <div class="objective-marcos">
+        ${marcosHTML}
       </div>
 
       <div class="objective-body">
