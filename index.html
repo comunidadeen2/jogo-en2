@@ -385,19 +385,22 @@ function startGame(){
   currentPlayer = 0;
   positions = [0,0,0,0];
 
-  // esconder todos
+  // esconder todos os peões
   pawns.forEach(p => p.style.display = "none");
 
-  // mostrar só os escolhidos e colocar na partida
-  players.forEach(p=>{
+  // baralhar objetivos
+  const deck = [...OBJECTIVES].sort(() => Math.random() - 0.5);
+
+  // atribuir UM objetivo a CADA jogador
+  players.forEach((p, index) => {
+    p.objective = deck[index % deck.length]; // ← resolve já
     const pawn = pawns[p.pawn];
     pawn.style.display = "block";
     placePawn(pawn, 0);
   });
 
-  updateTurn(); 
-}
-function updateTurn(){
+  updateTurn();
+}function updateTurn(){
   const player = players[currentPlayer];
 
   turnInfo.textContent = `Vez do Jogador ${currentPlayer + 1}`;
