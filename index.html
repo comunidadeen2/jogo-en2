@@ -104,7 +104,7 @@ pre{
       <div class="pawn car" id="pawn0">🚗</div>
       <div class="pawn bike" id="pawn1">🚴</div>
       <div class="pawn motor" id="pawn2">🏍️</div>
-      <div class="pawn a pé" id="pawn3">🚶</div>
+      <div class="pawn ape" id="pawn3">🚶</div>
     </div>
   </div>
 
@@ -296,7 +296,9 @@ function placePawn(pawn,i){
   pawn.style.left=(s.x*board.clientWidth)+"px";
   pawn.style.top=(s.y*board.clientHeight)+"px";
 }
-pawns.forEach(p=>placePawn(p,0));
+window.addEventListener("load", () => {
+  pawns.forEach(p => placePawn(p, 0));
+});
 
 // ===============================
 // SETUP
@@ -364,12 +366,16 @@ rollBtn.onclick=async()=>{
   const r=Math.floor(Math.random()*6)+1;
   diceVal.textContent=r;
 
-  const pawnId=players[currentPlayer].pawn;
-  for(let i=0;i<r;i++){
-    positions[pawnId]=Math.min(SPACES.length-1,positions[pawnId]+1);
-    placePawn(pawns[pawnId],positions[pawnId]);
-    await new Promise(res=>setTimeout(res,300));
-  }
+  const player = players[currentPlayer];
+const pawnId = player.pawn;
+
+positions[pawnId] = Math.min(
+  SPACES.length - 1,
+  positions[pawnId] + 1
+);
+
+placePawn(pawns[pawnId], positions[pawnId]);
+
 
   currentPlayer=(currentPlayer+1)%players.length;
   updateTurn();
@@ -378,4 +384,3 @@ rollBtn.onclick=async()=>{
 </script>
 </body>
 </html>
-
