@@ -284,6 +284,8 @@ const rollBtn=document.getElementById("rollBtn");
 const diceVal=document.getElementById("diceVal");
 const turnInfo=document.getElementById("turnInfo");
 const objectivePanel=document.getElementById("objectivePanel");
+const playerCount = document.getElementById("playerCount");
+
 
 // ===============================
 // JOGO
@@ -305,7 +307,6 @@ function placePawn(pawn,i){
   pawn.style.top=(s.y*board.clientHeight)+"px";
 }
 window.addEventListener("load", () => {
-  window.addEventListener("load", () => {
   pawns.forEach(p => placePawn(p, 0));
 });
 
@@ -370,25 +371,28 @@ function updateTurn(){
 // ===============================
 // JOGAR
 // ===============================
-rollBtn.onclick=async()=>{
-  rollBtn.disabled=true;
-  const r=Math.floor(Math.random()*6)+1;
-  diceVal.textContent=r;
+rollBtn.onclick = async () => {
+  rollBtn.disabled = true;
 
-  const player = players[currentPlayer];
-const pawnId = player.pawn;
+  const r = Math.floor(Math.random() * 6) + 1;
+  diceVal.textContent = r;
 
-positions[pawnId] = Math.min(
-  SPACES.length - 1,
-  positions[pawnId] + 1
-);
+  const pawnId = players[currentPlayer].pawn;
 
-placePawn(pawns[pawnId], positions[pawnId]);
+  for (let i = 0; i < r; i++) {
+    positions[pawnId] = Math.min(
+      SPACES.length - 1,
+      positions[pawnId] + 1
+    );
 
+    placePawn(pawns[pawnId], positions[pawnId]);
+    await new Promise(res => setTimeout(res, 250));
+  }
 
-  currentPlayer=(currentPlayer+1)%players.length;
+  currentPlayer = (currentPlayer + 1) % players.length;
   updateTurn();
-  rollBtn.disabled=false;
+
+  rollBtn.disabled = false;
 };
 </script>
 </body>
