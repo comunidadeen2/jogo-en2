@@ -267,7 +267,8 @@ const OBJECTIVES = [
 // ===============================
 // ELEMENTOS
 // ===============================
-const board = document.querySelector(".zoom");
+const board = document.getElementById("boardFrame");
+
 const pawns=[
   document.getElementById("pawn0"),
   document.getElementById("pawn1"),
@@ -356,6 +357,12 @@ function startGame(){
   pawnSelect.classList.add("hidden");
   gameControls.classList.remove("hidden");
   objectivePanel.classList.remove("hidden");
+
+  positions = [0,0,0,0];
+
+  players.forEach(p => {
+    placePawn(pawns[p.pawn], 0);
+  });
 
   const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
   players.forEach(p=>p.objective=deck.pop());
