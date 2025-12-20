@@ -304,6 +304,7 @@ const SPACES = [
 ];
 
 const OBJECTIVES = [
+
   { text: "O teu objectivo é ser o primeiro a chegar a Faro (Km 738,5)." },
 
   { text: "Quem disse que o último não pode ganhar?\nO teu objectivo é ser o último a chegar a Faro (Km 738,5)." },
@@ -422,24 +423,31 @@ function startGame(){
   });
 
   updateTurn();
-}function updateTurn(){
+}
+function updateTurn(){
   const player = players[currentPlayer];
 
   turnInfo.textContent = `Vez do Jogador ${currentPlayer + 1}`;
 
+  // tenta extrair o primeiro Km do texto do objetivo
+  const kmMatch = player.objective.text.match(/Km\s*([0-9]+)/i);
+  const kmValue = kmMatch ? kmMatch[1] : "?";
+
   objectivePanel.innerHTML = `
-  <div class="objective-card">
-    <div class="objective-header">
-      🧭 Objetivo do Jogador ${currentPlayer + 1}
-    </div>
+    <div class="objective-card">
+      <div class="objective-header">
+        🧭 Objetivo do Jogador ${currentPlayer + 1}
+      </div>
 
-    <div class="objective-marco">Km</div>
+      <div class="objective-marco">
+        Km ${kmValue}
+      </div>
 
-    <div class="objective-body">
-      ${player.objective.text.replace(/\n/g,"<br>")}
+      <div class="objective-body">
+        ${player.objective.text.replace(/\n/g,"<br>")}
+      </div>
     </div>
-  </div>
-`;
+  `;
 }
 
 // JOGAR
