@@ -312,18 +312,27 @@ startBtn.onclick=()=>{
 
 function renderPawnButtons(max){
   pawnButtons.innerHTML="";
+
   pawnTypes.forEach(p=>{
-    if(players.find(pl=>pl.pawn===p.id))return;
-    const b=document.createElement("button");
-    b.textContent=p.label;
-    b.onclick=()=>{
-      players.push({pawn:p.id,objective:null});
-      if(players.length===max)startGame();
-      else{
-        pawnQuestion.textContent=`Jogador ${players.length+1}, como quer viajar?`;
+    if(players.find(pl=>pl.pawn===p.id)) return;
+
+    const b = document.createElement("button");
+    b.textContent = p.label;
+
+    b.className = "pawn-btn " + ["car","bike","motor","person"][p.id];
+
+    b.onclick = ()=>{
+      players.push({pawn:p.id, objective:null});
+
+      if(players.length === max){
+        startGame();
+      }else{
+        pawnQuestion.textContent =
+          `Jogador ${players.length+1}, como quer viajar?`;
         renderPawnButtons(max);
       }
     };
+
     pawnButtons.appendChild(b);
   });
 }
