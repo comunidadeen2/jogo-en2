@@ -54,10 +54,10 @@ h1{text-align:center}
   align-items:center;
   justify-content:center;
 }
-.pawn.car{background:#f5c400;color:#111}
-.pawn.bike{background:#4bb39a;color:#06231a}
-.pawn.motor{background:#ef4a8a;color:#2a001a}
-.pawn.person{background:#4267ff;color:#04204a}
+.pawn-btn.car{ background:#d62828; }      /* vermelho */
+.pawn-btn.bike{ background:#f5c400; color:#111; } /* amarelo */
+.pawn-btn.motor{ background:#000; }        /* preto */
+.pawn-btn.person{ background:#2a9d8f; }   /* verde */
 
 .controls{
   margin-top:16px;
@@ -104,7 +104,7 @@ pre{
       <div class="pawn car" id="pawn0">🚗</div>
       <div class="pawn bike" id="pawn1">🚴</div>
       <div class="pawn motor" id="pawn2">🏍️</div>
-      <div class="pawn person" id="pawn3">🚶</div>
+      <div class="pawn a pé" id="pawn3">🚶</div>
     </div>
   </div>
 
@@ -284,7 +284,7 @@ const pawnTypes=[
 {id:0,label:"🚗 Carro"},
 {id:1,label:"🚴 Bicicleta"},
 {id:2,label:"🏍️ Mota"},
-{id:3,label:"🚶 Pessoa"}
+{id:3,label:"🚶 A pé"}
 ];
 
 let players=[];
