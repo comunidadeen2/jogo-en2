@@ -45,6 +45,7 @@ h1{text-align:center;margin:20px 0;}
   transform:translate(-50%,-50%);
   font-size:22px;
   pointer-events:none;
+  display:none;
 }
 
 .controls{text-align:center;margin:20px 0;}
@@ -56,6 +57,7 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
+button:disabled{opacity:.5;cursor:not-allowed}
 .hidden{display:none}
 
 /* OBJECTIVO */
@@ -66,20 +68,16 @@ button{
   padding:16px;
   border:2px dashed #555;
 }
-
 .objective-title{
   font-weight:bold;
-  color:#ff9f1c;  
+  color:#ff9f1c;
   margin-bottom:12px;
-  font-size:16px;
 }
-
 .obj-list{
   display:flex;
   flex-direction:column;
   gap:10px;
 }
-
 .obj-item{
   display:flex;
   align-items:center;
@@ -88,22 +86,16 @@ button{
 .marco{
   width:52px;
   height:52px;
-  border-radius:12px;     
+  border-radius:12px;
   background:#666;
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight:bold;
-  color:#fff;             
+  color:#fff;
   font-size:13px;
 }
-.marco::before{
-  content:"Km ";
-}
-.marco.done{
-  background:#2ecc71;
-  color:#111;
-}
+.marco::before{content:"Km "}
 </style>
 </head>
 
@@ -112,47 +104,31 @@ button{
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
 <div class="main">
-
-  <!-- TABULEIRO -->
   <div class="board-frame" id="board">
     <div class="board-img"></div>
-
     <div class="pawn" id="pawn0">🚗</div>
     <div class="pawn" id="pawn1">🚴</div>
     <div class="pawn" id="pawn2">🏍️</div>
     <div class="pawn" id="pawn3">🚶</div>
   </div>
 
-  <!-- CARTA DE OBJETIVO -->
   <div id="objectivePanel" class="hidden"></div>
-
 </div>
 
-<!-- CONTROLOS -->
 <div class="controls">
 
-  <!-- SETUP: Nº DE JOGADORES -->
   <div id="setup">
     Jogadores:
     <select id="playerCount">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
     </select>
     <button id="startBtn">COMEÇAR</button>
   </div>
 
-  <!-- NOMES DOS JOGADORES -->
   <div id="names" class="hidden"></div>
 
-  <!-- ESCOLHA DE PEÃO -->
-  <div id="pawnSelect" class="hidden">
-    <p id="pawnQuestion"></p>
-    <div id="pawnButtons"></div>
-  </div>
+  <div id="pawnSelect" class="hidden"></div>
 
-  <!-- JOGO -->
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
@@ -161,10 +137,8 @@ button{
 
 </div>
 
-</body>
-
 <script>
-
+// -------- SPACES --------
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -259,136 +233,84 @@ const SPACES = [
 ];
 
 
-// ===== OBJETIVOS (NÃO REPETEM) =====
+// -------- OBJETIVOS --------
 const OBJECTIVES = [
-  {items:[
-    {km:0,text:"Visitar Chaves"},
-    {km:88,text:"Visitar Peso da Régua"},
-    {km:238,text:"Visitar Penacova"},
-    {km:619,text:"Visitar Aljustrel"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-  {items:[
-    {km:0,text:"Visitar Chaves"},
-    {km:104,text:"Visitar Lamego"},
-    {km:248,text:"Visitar Vila Nova de Poiares"},
-    {km:640,text:"Visitar Castro Verde"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-  {items:[
-    {km:35,text:"Vila Pouca de Aguiar"},
-    {km:172,text:"Viseu"},
-    {km:271,text:"Góis"},
-    {km:551,text:"Alcáçovas"},
-    {km:722,text:"São Brás de Alportel"}
-  ]},
-  {items:[
-    {km:64,text:"Vila Real"},
-    {km:213,text:"Santa Comba Dão"},
-    {km:345,text:"Sertã"},
-    {km:565,text:"Torrão"},
-    {km:688,text:"Ameixial"}
-  ]}
+  {items:[{km:0,text:"Visitar Chaves"},{km:88,text:"Visitar Peso da Régua"},{km:238,text:"Visitar Penacova"},{km:619,text:"Visitar Aljustrel"},{km:738,text:"Chegar a Faro"}]},
+  {items:[{km:0,text:"Visitar Chaves"},{km:104,text:"Visitar Lamego"},{km:248,text:"Visitar Vila Nova de Poiares"},{km:640,text:"Visitar Castro Verde"},{km:738,text:"Chegar a Faro"}]},
+  {items:[{km:35,text:"Vila Pouca de Aguiar"},{km:172,text:"Viseu"},{km:271,text:"Góis"},{km:551,text:"Alcáçovas"},{km:722,text:"São Brás de Alportel"}]},
+  {items:[{km:64,text:"Vila Real"},{km:213,text:"Santa Comba Dão"},{km:345,text:"Sertã"},{km:565,text:"Torrão"},{km:688,text:"Ameixial"}]}
 ];
 
-// ===== ELEMENTOS =====
+// -------- ELEMENTOS --------
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 const board=document.getElementById("board");
 
-let players=[];
-let positions=[0,0,0,0];
-let current=0;
+let players=[],current=0;
 
-
-// ===== POSICIONAR PEÃO =====
-function placePawn(pawn, i){
-  const s = SPACES[i];
-
-  const offsetX = -6;   // ajusta horizontal
-  const offsetY = -8;   // ajusta vertical
-
-  pawn.style.left = (s.x * board.clientWidth + offsetX) + "px";
-  pawn.style.top  = (s.y * board.clientHeight + offsetY) + "px";
+// -------- POSICIONAR --------
+function placePawn(p,i){
+  const s=SPACES[i];
+  p.style.left=(s.x*board.clientWidth-6)+"px";
+  p.style.top=(s.y*board.clientHeight-8)+"px";
 }
 
-
-// ===== SETUP =====
+// -------- SETUP --------
 startBtn.onclick=()=>{
   setup.classList.add("hidden");
   names.classList.remove("hidden");
   names.innerHTML="";
   players=[];
   for(let i=0;i<playerCount.value;i++){
-    const input=document.createElement("input");
-    input.placeholder="Nome do Jogador "+(i+1);
-    names.appendChild(input);
+    const inp=document.createElement("input");
+    inp.placeholder="Nome do Jogador "+(i+1);
+    names.appendChild(inp);
     names.appendChild(document.createElement("br"));
   }
-  
-const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
-players=[];
+  const btn=document.createElement("button");
+  btn.textContent="Confirmar";
+  btn.onclick=confirmNames;
+  names.appendChild(btn);
+};
 
-[...names.querySelectorAll("input")].forEach((inp,i)=>{
-  players.push({
-    name: inp.value || ("Jogador "+(i+1)),
-    pawn: null,              // 👈 ainda não escolhido
-    pos: 0,
-    finished: false,
-    objective: deck.pop()
-  });
-});
+function confirmNames(){
+  const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+  players=[...names.querySelectorAll("input")].map((i,idx)=>({
+    name:i.value||"Jogador "+(idx+1),
+    pawn:null,
+    pos:0,
+    finished:false,
+    objective:deck.pop()
+  }));
+  startPawnSelection();
+}
 
-startPawnSelection();
-
+// -------- PEÕES --------
 function startPawnSelection(){
-  let idx = 0;
-  names.classList.remove("hidden");
-  names.innerHTML = `<p>${players[idx].name}, escolhe o teu peão:</p>`;
-
+  pawnSelect.classList.remove("hidden");
+  pawnSelect.innerHTML=`<p>${players[current].name}, escolhe o teu peão:</p>`;
   pawns.forEach((p,i)=>{
+    if(players.some(pl=>pl.pawn===i))return;
     const b=document.createElement("button");
     b.textContent=p.textContent;
     b.onclick=()=>{
-      players[idx].pawn=i;
+      players[current].pawn=i;
       p.style.display="block";
       placePawn(p,0);
-      idx++;
-      if(idx<players.length) startPawnSelection();
+      current++;
+      if(current<players.length) startPawnSelection();
       else{
-        names.classList.add("hidden");
+        pawnSelect.classList.add("hidden");
         game.classList.remove("hidden");
         objectivePanel.classList.remove("hidden");
+        current=0;
         updateTurn();
       }
     };
-    names.appendChild(b);
+    pawnSelect.appendChild(b);
   });
 }
 
-const b=document.createElement("button");
-  b.textContent="Confirmar";
-  b.onclick=()=>{
-    const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
-    [...names.querySelectorAll("input")].forEach((inp,i)=>{
-      players.push({
-        name:inp.value||("Jogador "+(i+1)),
-        pawn:i,
-        pos:0,
-        finished:false,
-        objective:deck.pop()
-      });
-      placePawn(pawns[i],0);
-    });
-    names.classList.add("hidden");
-    game.classList.remove("hidden");
-    objectivePanel.classList.remove("hidden");
-    updateTurn();
-  };
-  names.appendChild(b);
-};
-
-
-// ===== TURNO =====
+// -------- TURNO --------
 function updateTurn(){
   while(players[current].finished){
     current=(current+1)%players.length;
@@ -397,8 +319,6 @@ function updateTurn(){
   renderObjective(players[current]);
 }
 
-
-// ===== CARTA OBJETIVO =====
 function renderObjective(p){
   objectivePanel.innerHTML=
     `<div class="objective-title">🎯 Objetivo de ${p.name}</div>
@@ -411,36 +331,29 @@ function renderObjective(p){
      </div>`;
 }
 
-// ===== JOGAR =====
-function startPawnSelection(){
-  let idx = 0;
-  names.classList.remove("hidden");
-  names.innerHTML = `<p>${players[idx].name}, escolhe o teu peão:</p>`;
+// -------- JOGAR --------
+rollBtn.onclick=async()=>{
+  rollBtn.disabled=true;
+  const r=Math.floor(Math.random()*6)+1;
+  dice.textContent=r;
+  const p=players[current];
+  const pawn=pawns[p.pawn];
 
-  pawns.forEach((p,i)=>{
-    const b=document.createElement("button");
-    b.textContent=p.textContent;
-    b.onclick=()=>{
-      players[idx].pawn=i;
-      p.style.display="block";
-      placePawn(p,0);
-      idx++;
-      if(idx<players.length) startPawnSelection();
-      else{
-        names.classList.add("hidden");
-        game.classList.remove("hidden");
-        objectivePanel.classList.remove("hidden");
-        updateTurn();
-      }
-    };
-    names.appendChild(b);
-  });
-}
-  if(p.pos===SPACES.length-1){
-    p.finished=true;
+  let target=p.pos+r;
+  if(target>=SPACES.length){
+    target=SPACES.length-1-(target-(SPACES.length-1));
   }
 
+  while(p.pos!==target){
+    p.pos+=p.pos<target?1:-1;
+    placePawn(pawn,p.pos);
+    await new Promise(r=>setTimeout(r,250));
+  }
+
+  if(p.pos===SPACES.length-1)p.finished=true;
+
   current=(current+1)%players.length;
+  rollBtn.disabled=false;
   updateTurn();
 };
 </script>
