@@ -124,23 +124,36 @@ button{
 </div>
 
 <div class="controls">
+
+  <!-- SETUP: Nº DE JOGADORES -->
   <div id="setup">
     Jogadores:
     <select id="playerCount">
-      <option>1</option><option>2</option><option>3</option><option>4</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
     </select>
     <button id="startBtn">COMEÇAR</button>
   </div>
 
+  <!-- NOMES DOS JOGADORES -->
   <div id="names" class="hidden"></div>
 
+  <!-- ESCOLHA DE PEÃO (ISTO FALTAVA) -->
+  <div id="pawnSelect" class="hidden">
+    <p id="pawnQuestion"></p>
+    <div id="pawnButtons"></div>
+  </div>
+
+  <!-- JOGO -->
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
     <p id="turn"></p>
   </div>
-</div>
 
+</div>
 <script>
 
 const SPACES = [
@@ -235,6 +248,8 @@ const SPACES = [
 {"x":0.9078014184397163,"y":0.8478941136671179},
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
+
+
 // ===== OBJETIVOS (NÃO REPETEM) =====
 const OBJECTIVES = [
   {items:[
@@ -275,6 +290,7 @@ let players=[];
 let positions=[0,0,0,0];
 let current=0;
 
+
 // ===== POSICIONAR PEÃO =====
 function placePawn(pawn, i){
   const s = SPACES[i];
@@ -285,6 +301,7 @@ function placePawn(pawn, i){
   pawn.style.left = (s.x * board.clientWidth + offsetX) + "px";
   pawn.style.top  = (s.y * board.clientHeight + offsetY) + "px";
 }
+
 
 // ===== SETUP =====
 startBtn.onclick=()=>{
@@ -361,6 +378,7 @@ const b=document.createElement("button");
   names.appendChild(b);
 };
 
+
 // ===== TURNO =====
 function updateTurn(){
   while(players[current].finished){
@@ -369,6 +387,7 @@ function updateTurn(){
   turn.textContent="Vez de "+players[current].name;
   renderObjective(players[current]);
 }
+
 
 // ===== CARTA OBJETIVO =====
 function renderObjective(p){
