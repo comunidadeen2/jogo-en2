@@ -10,7 +10,7 @@
   --bg:#111;
   --text:#eee;
   --panel:#1c1c1c;
-  --grey:#444;
+  --grey:#555;
   --green:#2ecc71;
   --accent:#ff9800;
 }
@@ -84,16 +84,6 @@ button:disabled{opacity:.4}
   border-radius:12px;width:360px;text-align:center
 }
 #modalBox button{margin:6px}
-
-/* FINAL */
-#finalScreen{
-  position:fixed;inset:0;
-  background:#000;
-  color:#fff;
-  display:none;
-  padding:40px;
-  overflow:auto
-}
 </style>
 </head>
 
@@ -140,25 +130,23 @@ button:disabled{opacity:.4}
   </div>
 </div>
 
-<div id="finalScreen"></div>
-
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
 
-/* -------- REGRAS -------- */
+/* ---------- BOTÃO REGRAS ---------- */
 rulesBtn.onclick=()=>window.open("regras.html","_blank");
 
-/* -------- PERGUNTAS ALEATÓRIAS -------- */
+/* ---------- PERGUNTAS ALEATÓRIAS ---------- */
 const QUESTIONS=[
- "Qual é o prato típico mais famoso de Portugal?",
+ "Qual é o prato típico de Vila de Rei?",
  "Em que ano foi inaugurada a EN2?",
  "Qual é o rio mais longo de Portugal?",
  "Portugal tem quantos distritos?",
  "Qual é a capital do Algarve?"
 ];
 
-/* TABULEIRO */
-const SPACES = [
+/* ---------- SPACES (OFICIAL) ---------- */
+const SPACES = [/* (lista completa exatamente igual à que enviaste) */ 
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
 {"x":0.0867430441898527,"y":0.2152824763193505},
@@ -251,18 +239,21 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* MUNICÍPIOS (CASAS VERDES) */
-const MUNICIPIOS_KM=[
-0,35,64,69,81,88,104,136,152,171,200,213,225,238,248,262,272,324,345,366,369,
-386,400,435,466,475,494,500,518,551,565,595,619,640,663,666,688,722,738,738.5
-];
+/* ---------- MUNICÍPIOS (INDEX → KM) ---------- */
+const SPECIAL_CELLS={
+  3:{km:0},5:{km:35},7:{km:64},8:{km:69},11:{km:81},13:{km:88},
+  16:{km:104},19:{km:136},21:{km:152},23:{km:171},25:{km:200},
+  27:{km:213},29:{km:225},31:{km:238},33:{km:248},35:{km:262},
+  37:{km:272},39:{km:324},41:{km:345},43:{km:366},44:{km:369},
+  46:{km:386},48:{km:400},50:{km:435},52:{km:466},54:{km:475},
+  57:{km:494},58:{km:500},60:{km:518},63:{km:551},66:{km:565},
+  68:{km:595},70:{km:619},73:{km:640},75:{km:663},77:{km:666},
+  80:{km:688},83:{km:722},85:{km:738},89:{km:738.5,final:true}
+};
+Object.values(SPECIAL_CELLS).forEach(c=>c.tokensLeft=2);
 
-const MUNICIPIOS={};
-MUNICIPIOS_KM.forEach(km=>{
-  MUNICIPIOS[km]={tokensLeft:2};
-});
-
-  const OBJECTIVES = [
+/* ---------- OBJETIVOS ---------- */
+const OBJECTIVES = [
 
   { items:[
     {km:0,text:"Visitar Chaves"},
@@ -343,23 +334,19 @@ MUNICIPIOS_KM.forEach(km=>{
   ]}
 ];
 
-/* -------- MUNICÍPIOS -------- */
-const SPECIAL_CELLS={89:{km:738.5,final:true}};
-Object.values(SPECIAL_CELLS).forEach(c=>c.tokens=2);
-
-/* -------- ESTADO -------- */
+/* ---------- ESTADO ---------- */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0,finishOrder=0;
 
-/* -------- POSIÇÃO -------- */
+/* ---------- POSICIONAR ---------- */
 function placePawn(pawn,i){
- const s=[...Array(120)].map((_,i)=>({x:0.1+0.007*i,y:0.1+0.006*i}))[i];
+ const s=SPACES[i];
  pawn.style.left=(s.x*board.clientWidth-6)+"px";
  pawn.style.top =(s.y*board.clientHeight-8)+"px";
  debugIndex.textContent="Index: "+i;
 }
 
-/* -------- SETUP -------- */
+/* ---------- SETUP ---------- */
 startBtn.onclick=()=>{
  setup.classList.add("hidden");
  names.classList.remove("hidden");
@@ -403,7 +390,7 @@ startBtn.onclick=()=>{
  next();
 };
 
-/* -------- TURNO -------- */
+/* ---------- TURNO ---------- */
 function updateTurn(){
  if(players.every(p=>p.finished)){endGame();return;}
  while(players[current].finished)current=(current+1)%players.length;
@@ -411,7 +398,7 @@ function updateTurn(){
  renderObjective(players[current]);
 }
 
-/* -------- OBJETIVO -------- */
+/* ---------- OBJETIVO ---------- */
 function renderObjective(p){
  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
  p.objective.items.forEach(it=>{
@@ -433,7 +420,7 @@ function renderObjective(p){
  }
 }
 
-/* -------- PERGUNTA -------- */
+/* ---------- PERGUNTA ---------- */
 function ask(cell){
  modalText.textContent=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
  modal.style.display="flex";
@@ -444,12 +431,13 @@ function ask(cell){
     if(players[current].objective.items.some(it=>it.km===cell.km))
       players[current].done[cell.km]=true;
     else players[current].extra.push(cell.km);
+    cell.tokensLeft--;
     if(cell.final){
       players[current].finished=true;
       players[current].rank=++finishOrder;
     }
   }
-  updateTurn(); // JOGA OUTRA VEZ
+  updateTurn(); // joga outra vez
  };
 
  wrongBtn.onclick=()=>{
@@ -459,23 +447,33 @@ function ask(cell){
  };
 }
 
-/* -------- JOGAR -------- */
-rollBtn.onclick=()=>{
- const cell=SPECIAL_CELLS[89];
- ask(cell);
+/* ---------- JOGAR ---------- */
+rollBtn.onclick=async()=>{
+ rollBtn.disabled=true;
+ const r=Math.floor(Math.random()*6)+1;
+ dice.textContent=r;
+ const p=players[current];
+ let t=p.pos+r;
+ if(t>=SPACES.length-1)t=(SPACES.length-1)-(t-(SPACES.length-1));
+ while(p.pos!==t){
+  p.pos+=p.pos<t?1:-1;
+  placePawn(pawns[p.pawn],p.pos);
+  await new Promise(res=>setTimeout(res,200));
+ }
+ const cell=SPECIAL_CELLS[p.pos];
+ if(cell && cell.tokensLeft>0) ask(cell);
+ else updateTurn();
+ rollBtn.disabled=false;
 };
 
-/* -------- FIM -------- */
+/* ---------- FIM ---------- */
 function endGame(){
- finalScreen.style.display="block";
- finalScreen.innerHTML="<h2>🏆 Classificação Final</h2>";
- [...players].sort((a,b)=>{
+ const ranking=[...players].sort((a,b)=>{
    const da=Object.keys(a.done).length;
    const db=Object.keys(b.done).length;
    return db-da||a.rank-b.rank;
- }).forEach((p,i)=>{
-   finalScreen.innerHTML+=`<p>${i+1}º — ${p.name} (${Object.keys(p.done).length} objetivos)</p>`;
  });
+ alert("🏆 Vencedor: "+ranking[0].name);
 }
 
 });
