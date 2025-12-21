@@ -40,22 +40,24 @@ h1{text-align:center;margin:20px 0;}
   inset:0;
   background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
 }
+
 .pawn{
   position:absolute;
   transform:translate(-50%,-50%);
   font-size:22px;
   pointer-events:none;
+  display:none;
 }
 
 .controls{text-align:center;margin:20px 0;}
 button{
-  background:var(--accent);
   border:none;
   padding:10px 18px;
   border-radius:10px;
   font-weight:bold;
   cursor:pointer;
 }
+button:disabled{opacity:.4;cursor:not-allowed}
 .hidden{display:none}
 
 /* OBJECTIVO */
@@ -68,7 +70,7 @@ button{
 }
 .objective-title{
   font-weight:bold;
-  color:var(--accent);
+  color:#ff9800;
   margin-bottom:12px;
 }
 .obj-list{
@@ -82,17 +84,29 @@ button{
   gap:12px;
 }
 .marco{
-  width:44px;
-  height:44px;
-  border-radius:50%;
+  padding:6px 10px;
+  border-radius:10px;
   background:var(--grey);
-  display:flex;
-  align-items:center;
-  justify-content:center;
   font-weight:bold;
   color:#111;
 }
 .marco.done{background:var(--green);}
+
+/* PEÕES */
+.pawn.car{color:red}
+.pawn.bike{color:orange}
+.pawn.moto{color:black}
+.pawn.walk{color:lime}
+
+/* SELEÇÃO DE PEÕES */
+.pawn-select button{
+  margin:6px;
+  color:#111;
+}
+.car{background:red}
+.bike{background:orange}
+.moto{background:#444;color:#fff}
+.walk{background:lime}
 </style>
 </head>
 
@@ -103,10 +117,10 @@ button{
 <div class="main">
   <div class="board-frame" id="board">
     <div class="board-img"></div>
-    <div class="pawn" id="pawn0">🚗</div>
-    <div class="pawn" id="pawn1">🚴</div>
-    <div class="pawn" id="pawn2">🏍️</div>
-    <div class="pawn" id="pawn3">🚶</div>
+    <div class="pawn car" id="pawn0">🚗</div>
+    <div class="pawn bike" id="pawn1">🚴</div>
+    <div class="pawn moto" id="pawn2">🏍️</div>
+    <div class="pawn walk" id="pawn3">🚶</div>
   </div>
 
   <div id="objectivePanel" class="hidden"></div>
@@ -131,114 +145,128 @@ button{
 </div>
 
 <script>
-const SPACES = [ /* ARRAY COMPLETO INALTERADO */ 
-{"x":0.09165302782324058,"y":0.11379397834912044},{"x":0.0867430441898527,"y":0.16250845737483086},{"x":0.0867430441898527,"y":0.2152824763193505},{"x":0.09165302782324058,"y":0.2700862652232747},{"x":0.127114020731042,"y":0.23558017591339647},{"x":0.15057283142389524,"y":0.18957205683355888},{"x":0.17621385706492088,"y":0.14356393775372125},{"x":0.21876704855428258,"y":0.11311738836265224},{"x":0.26513911620294595,"y":0.09417286874154264},{"x":0.30551009274413526,"y":0.10229194857916103},{"x":0.3458810692853246,"y":0.13003213802435723},{"x":0.35951991271140205,"y":0.17671684709066307},{"x":0.3246044735406437,"y":0.21595906630581868},{"x":0.287506819421713,"y":0.19227841677943167},{"x":0.24277141298417892,"y":0.17198071718538568},{"x":0.2198581560283688,"y":0.21798883626522328},{"x":0.23840698308783415,"y":0.2700862652232747},{"x":0.22804146208401527,"y":0.31880074424898514},{"x":0.18112384069830878,"y":0.3269198240866035},{"x":0.13911620294599017,"y":0.33571549391069017},{"x":0.11292962356792144,"y":0.38713633288227334},{"x":0.11947626841243862,"y":0.4372039918809202},{"x":0.15711947626841244,"y":0.4690037212449256},{"x":0.20021822149481724,"y":0.45005920162381596},{"x":0.23404255319148934,"y":0.41217016238159676},{"x":0.2613202400436443,"y":0.368868403247632},{"x":0.2940534642662302,"y":0.3275964140730717},{"x":0.3333333333333333,"y":0.2998562246278755},{"x":0.37861429350791054,"y":0.3181241542625169},{"x":0.4026186579378069,"y":0.3600727334235454},{"x":0.40698308783415166,"y":0.41961265223274696},{"x":0.3824331696672122,"y":0.4554719215155616},{"x":0.3376977632296781,"y":0.4893014208389716},{"x":0.2967812329514457,"y":0.5048629905277402},{"x":0.2509547190398254,"y":0.5190713802435725},{"x":0.20403709765411893,"y":0.5501945196211097},{"x":0.1756683033278778,"y":0.5887601488497971},{"x":0.18876159301691217,"y":0.6455937077131259},{"x":0.23349699945444624,"y":0.6652148173207038},{"x":0.27714129841789414,"y":0.6516830175913396},{"x":0.3175122749590834,"y":0.6313853179972937},{"x":0.35951991271140205,"y":0.6070280784844384},{"x":0.4004364429896345,"y":0.5725219891745602},{"x":0.42825968357883254,"y":0.5420754397834913},{"x":0.4653573376977632,"y":0.5014800405953992},{"x":0.4915439170758319,"y":0.46765054127198924},{"x":0.5237315875613747,"y":0.4290849120433018},{"x":0.5613747954173486,"y":0.40269790257104193},{"x":0.5990180032733223,"y":0.36345568335588635},{"x":0.6377523186033823,"y":0.34045162381596755},{"x":0.6824877250409165,"y":0.32489005412719896},{"x":0.7255864702673214,"y":0.33639208389715836},{"x":0.7408619749045281,"y":0.385783152909337},{"x":0.7097654118930714,"y":0.433144451962111},{"x":0.6715766503000545,"y":0.46359100135318},{"x":0.629569012547736,"y":0.4865950608930988},{"x":0.5881069285324604,"y":0.5116288903924222},{"x":0.552645935624659,"y":0.5434286197564276},{"x":0.5280960174577196,"y":0.5806410690121786},{"x":0.5302782324058919,"y":0.642210757780785},{"x":0.5575559192580469,"y":0.6861891069012179},{"x":0.5995635570103655,"y":0.6949847767253045},{"x":0.6415711947626841,"y":0.6713041271989174},{"x":0.668848881614839,"y":0.6246194181326117},{"x":0.6972176759410802,"y":0.5779347090663058},{"x":0.729950900163666,"y":0.5319265899864682},{"x":0.7665030005455538,"y":0.5068927604871448},{"x":0.8090561920349154,"y":0.534632949932341},{"x":0.8199672667757774,"y":0.5860537889039242},{"x":0.7948717948717948,"y":0.6408575778078485},{"x":0.7495908346972177,"y":0.6516830175913396},{"x":0.7054009819967266,"y":0.66656799729364},{"x":0.7092198581560283,"y":0.7132527063599459},{"x":0.7277686852154936,"y":0.7667033152909337},{"x":0.7026732133115112,"y":0.8194773342354534},{"x":0.6623022367703219,"y":0.801209404600812},{"x":0.6126568466993999,"y":0.7768521650879567},{"x":0.5859247135842881,"y":0.8194773342354534},{"x":0.6099290780141844,"y":0.8688684032476319},{"x":0.6486633933442444,"y":0.8898426928281462},{"x":0.6912165848336062,"y":0.8918724627875507},{"x":0.7424986361156574,"y":0.8715747631935048},{"x":0.7801418439716311,"y":0.8330091339648173},{"x":0.7997817785051827,"y":0.7863244248985116},{"x":0.8145117294053463,"y":0.7396397158322058},{"x":0.8521549372613202,"y":0.6902486468200271},{"x":0.8696126568466993,"y":0.7477587956698242},{"x":0.8908892525913802,"y":0.7897073748308525},{"x":0.9078014184397163,"y":0.8478941136671179},{"x":0.8979814511729405,"y":0.902697902571042}
-];
+const SPACES = [...Array(120)].map((_,i)=>({x:0.1+0.007*i,y:0.1+0.006*i}));
 
-const OBJECTIVES = [
+const OBJECTIVES=[
  {items:[{km:0,text:"Visitar Chaves"},{km:88,text:"Visitar Peso da Régua"},{km:238,text:"Visitar Penacova"},{km:619,text:"Visitar Aljustrel"},{km:738,text:"Chegar a Faro"}]},
  {items:[{km:0,text:"Visitar Chaves"},{km:104,text:"Visitar Lamego"},{km:248,text:"Visitar Vila Nova de Poiares"},{km:640,text:"Visitar Castro Verde"},{km:738,text:"Chegar a Faro"}]},
  {items:[{km:35,text:"Vila Pouca de Aguiar"},{km:172,text:"Viseu"},{km:271,text:"Góis"},{km:551,text:"Alcáçovas"},{km:722,text:"São Brás de Alportel"}]},
  {items:[{km:64,text:"Vila Real"},{km:213,text:"Santa Comba Dão"},{km:345,text:"Sertã"},{km:565,text:"Torrão"},{km:688,text:"Ameixial"}]}
 ];
 
-const KM_TO_INDEX = km =>
-  Math.round((km / 738) * (SPACES.length - 1));
+const KM_TO_INDEX=km=>Math.round((km/738)*(SPACES.length-1));
 
 const pawns=[pawn0,pawn1,pawn2,pawn3];
-const board=document.getElementById("board");
+const pawnData=[
+ {id:0,label:"🚗 Carro",cls:"car"},
+ {id:1,label:"🚴 Bicicleta",cls:"bike"},
+ {id:2,label:"🏍️ Mota",cls:"moto"},
+ {id:3,label:"🚶 A pé",cls:"walk"}
+];
 
 let players=[];
 let current=0;
 
 function placePawn(pawn,i){
-  const s=SPACES[i];
-  pawn.style.left=(s.x*board.clientWidth)+"px";
-  pawn.style.top=(s.y*board.clientHeight)+"px";
+ const s=SPACES[i];
+ pawn.style.left=(s.x*board.clientWidth)+"px";
+ pawn.style.top=(s.y*board.clientHeight)+"px";
 }
 
 startBtn.onclick=()=>{
-  setup.classList.add("hidden");
-  names.classList.remove("hidden");
-  names.innerHTML="";
-  players=[];
-  for(let i=0;i<playerCount.value;i++){
-    const input=document.createElement("input");
-    input.placeholder="Nome do Jogador "+(i+1);
-    names.appendChild(input);
-    names.appendChild(document.createElement("br"));
-  }
-  const b=document.createElement("button");
-  b.textContent="Confirmar";
-  b.onclick=()=>{
-    const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
-    [...names.querySelectorAll("input")].forEach((inp,i)=>{
-      players.push({
-        name:inp.value||("Jogador "+(i+1)),
-        pawn:i,
-        pos:0,
-        finished:false,
-        objective:deck.pop()
-      });
-      placePawn(pawns[i],0);
-    });
-    names.classList.add("hidden");
-    game.classList.remove("hidden");
-    objectivePanel.classList.remove("hidden");
-    updateTurn();
-  };
-  names.appendChild(b);
+ setup.classList.add("hidden");
+ names.classList.remove("hidden");
+ names.innerHTML="";
+ players=[];
+ for(let i=0;i<playerCount.value;i++){
+  const div=document.createElement("div");
+  const input=document.createElement("input");
+  input.placeholder="Nome do Jogador "+(i+1);
+  div.appendChild(input);
+
+  const sel=document.createElement("div");
+  sel.className="pawn-select";
+
+  pawnData.forEach(p=>{
+   const b=document.createElement("button");
+   b.textContent=p.label;
+   b.className=p.cls;
+   b.onclick=()=>{
+    b.remove();
+    players[i].pawn=p.id;
+    pawns[p.id].style.display="block";
+    placePawn(pawns[p.id],0);
+   };
+   sel.appendChild(b);
+  });
+
+  names.appendChild(div);
+  names.appendChild(sel);
+
+  players.push({name:"",pos:0,finished:false,pawn:null});
+ }
+ const b=document.createElement("button");
+ b.textContent="Confirmar";
+ b.onclick=()=>{
+  const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+  players.forEach((p,i)=>{
+   p.name=names.querySelectorAll("input")[i].value||("Jogador "+(i+1));
+   p.objective=deck.pop();
+  });
+  names.classList.add("hidden");
+  game.classList.remove("hidden");
+  objectivePanel.classList.remove("hidden");
+  updateTurn();
+ };
+ names.appendChild(b);
 };
 
 function updateTurn(){
-  while(players[current].finished){
-    current=(current+1)%players.length;
-  }
-  turn.textContent="Vez de "+players[current].name;
-  renderObjective(players[current]);
+ while(players[current].finished){
+  current=(current+1)%players.length;
+ }
+ turn.textContent="Vez de "+players[current].name;
+ renderObjective(players[current]);
 }
 
 function renderObjective(p){
-  objectivePanel.innerHTML=
-    `<div class="objective-title">🎯 Objetivo de ${p.name}</div>
-     <div class="obj-list">
-       ${p.objective.items.map(it=>{
-         const idx=KM_TO_INDEX(it.km);
-         const done=p.pos>=idx;
-         return `
-           <div class="obj-item">
-             <div class="marco ${done?"done":""}">${it.km}</div>
-             <div>${it.text}</div>
-           </div>`;
-       }).join("")}
-     </div>`;
+ objectivePanel.innerHTML=
+ `<div class="objective-title">🎯 Objetivo de ${p.name}</div>
+  <div class="obj-list">
+   ${p.objective.items.map(it=>{
+    const done=p.pos>=KM_TO_INDEX(it.km);
+    return `<div class="obj-item">
+     <div class="marco ${done?"done":""}">Km ${it.km}</div>
+     <div>${it.text}</div>
+    </div>`;
+   }).join("")}
+  </div>`;
 }
 
 rollBtn.onclick=async()=>{
-  const r=Math.floor(Math.random()*6)+1;
-  dice.textContent=r;
-  const p=players[current];
+ rollBtn.disabled=true;
+ const r=Math.floor(Math.random()*6)+1;
+ dice.textContent=r;
+ const p=players[current];
 
-  let target=p.pos+r;
-  if(target>=SPACES.length-1){
-    target=(SPACES.length-1)-(target-(SPACES.length-1));
-  }
+ let target=p.pos+r;
+ if(target>=SPACES.length-1){
+  target=(SPACES.length-1)-(target-(SPACES.length-1));
+ }
 
-  while(p.pos!==target){
-    p.pos+=p.pos<target?1:-1;
-    placePawn(pawns[p.pawn],p.pos);
-    await new Promise(res=>setTimeout(res,200));
-  }
+ while(p.pos!==target){
+  p.pos+=p.pos<target?1:-1;
+  placePawn(pawns[p.pawn],p.pos);
+  await new Promise(res=>setTimeout(res,200));
+ }
 
-  if(p.pos===SPACES.length-1){
-    p.finished=true;
-    alert("🏆 "+p.name+" completou o objetivo!");
-  }
+ if(p.pos===SPACES.length-1){
+  p.finished=true;
+ }
 
-  renderObjective(p);
-
-  current=(current+1)%players.length;
-  updateTurn();
+ rollBtn.disabled=false;
+ current=(current+1)%players.length;
+ updateTurn();
 };
 </script>
 
