@@ -60,39 +60,50 @@ button{
 
 /* OBJECTIVO */
 #objectivePanel{
-  width:340px;
-  background:var(--panel);
+  width:320px;
+  background:#1c1c1c;
   border-radius:16px;
   padding:16px;
   border:2px dashed #555;
 }
+
 .objective-title{
   font-weight:bold;
-  color:var(--accent);
+  color:#ff9f1c;  
   margin-bottom:12px;
+  font-size:16px;
 }
+
 .obj-list{
   display:flex;
   flex-direction:column;
   gap:10px;
 }
+
 .obj-item{
   display:flex;
   align-items:center;
   gap:12px;
 }
 .marco{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  background:var(--grey);
+  width:52px;
+  height:52px;
+  border-radius:12px;     
+  background:#666;
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight:bold;
+  color:#fff;             
+  font-size:13px;
+}
+.marco::before{
+  content:"Km ";
+}
+.marco.done{
+  background:#2ecc71;
   color:#111;
 }
-.marco.done{background:var(--green);}
 </style>
 </head>
 
@@ -265,10 +276,14 @@ let positions=[0,0,0,0];
 let current=0;
 
 // ===== POSICIONAR PEÃO =====
-function placePawn(pawn,i){
-  const s=SPACES[i];
-  pawn.style.left=(s.x*board.clientWidth)+"px";
-  pawn.style.top=(s.y*board.clientHeight)+"px";
+function placePawn(pawn, i){
+  const s = SPACES[i];
+
+  const offsetX = -6;   // ajusta horizontal
+  const offsetY = -8;   // ajusta vertical
+
+  pawn.style.left = (s.x * board.clientWidth + offsetX) + "px";
+  pawn.style.top  = (s.y * board.clientHeight + offsetY) + "px";
 }
 
 // ===== SETUP =====
@@ -283,7 +298,48 @@ startBtn.onclick=()=>{
     names.appendChild(input);
     names.appendChild(document.createElement("br"));
   }
-  const b=document.createElement("button");
+  
+const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+players=[];
+
+[...names.querySelectorAll("input")].forEach((inp,i)=>{
+  players.push({
+    name: inp.value || ("Jogador "+(i+1)),
+    pawn: null,              // 👈 ainda não escolhido
+    pos: 0,
+    finished: false,
+    objective: deck.pop()
+  });
+});
+
+startPawnSelection();
+
+function startPawnSelection(){
+  let idx = 0;
+  names.classList.remove("hidden");
+  names.innerHTML = `<p>${players[idx].name}, escolhe o teu peão:</p>`;
+
+  pawns.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.textContent=p.textContent;
+    b.onclick=()=>{
+      players[idx].pawn=i;
+      p.style.display="block";
+      placePawn(p,0);
+      idx++;
+      if(idx<players.length) startPawnSelection();
+      else{
+        names.classList.add("hidden");
+        game.classList.remove("hidden");
+        objectivePanel.classList.remove("hidden");
+        updateTurn();
+      }
+    };
+    names.appendChild(b);
+  });
+}
+
+const b=document.createElement("button");
   b.textContent="Confirmar";
   b.onclick=()=>{
     const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
@@ -328,22 +384,30 @@ function renderObjective(p){
 }
 
 // ===== JOGAR =====
-rollBtn.onclick=async()=>{
-  const r=Math.floor(Math.random()*6)+1;
-  dice.textContent=r;
-  const p=players[current];
+function startPawnSelection(){
+  let idx = 0;
+  names.classList.remove("hidden");
+  names.innerHTML = `<p>${players[idx].name}, escolhe o teu peão:</p>`;
 
-  let target=p.pos+r;
-  if(target>=SPACES.length-1){
-    target=(SPACES.length-1)-(target-(SPACES.length-1));
-  }
-
-  while(p.pos!==target){
-    p.pos+=p.pos<target?1:-1;
-    placePawn(pawns[p.pawn],p.pos);
-    await new Promise(res=>setTimeout(res,200));
-  }
-
+  pawns.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.textContent=p.textContent;
+    b.onclick=()=>{
+      players[idx].pawn=i;
+      p.style.display="block";
+      placePawn(p,0);
+      idx++;
+      if(idx<players.length) startPawnSelection();
+      else{
+        names.classList.add("hidden");
+        game.classList.remove("hidden");
+        objectivePanel.classList.remove("hidden");
+        updateTurn();
+      }
+    };
+    names.appendChild(b);
+  });
+}
   if(p.pos===SPACES.length-1){
     p.finished=true;
   }
