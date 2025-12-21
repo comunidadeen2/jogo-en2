@@ -258,14 +258,11 @@ const SPACES = [
 ];
 
 
-/* CASAS ESPECIAIS (DECLARADAS) */
-const SPECIAL_CELLS = {
-  0:   { type:"municipio", km:0,   tokensLeft:2 },
-  12:  { type:"evento" },
-  15:  { type:"municipio", km:136, tokensLeft:2 },
-  19:  { type:"evento" },
-  43:  { type:"municipio", km:369, tokensLeft:2 },
-  89:  { type:"municipio", km:738, tokensLeft:2 }
+/* MUNICÍPIOS CONFIRMADOS (mínimo, seguro) */
+const SPECIAL_CELLS={
+  0:{type:"municipio",km:0,tokensLeft:2},
+  43:{type:"municipio",km:369,tokensLeft:2},
+  89:{type:"municipio",km:738,tokensLeft:2}
 };
 
 /* OBJETIVO TESTE */
@@ -286,12 +283,14 @@ const pawnData=[
 let players=[],current=0,usedPawns=[],setupIndex=0;
 let pendingMunicipio=null;
 
-/* UTIL */
-function placePawn(pawn,i){
- const s=SPACES[i];
- pawn.style.left=(s.x*board.clientWidth)+"px";
- pawn.style.top=(s.y*board.clientHeight)+"px";
- debugIndex.textContent="Index: "+i;
+/* POSICIONAR PEÃO — OFFSET FINO INTEGRADO */
+function placePawn(pawn,index){
+ const s=SPACES[index];
+ const offsetX=-6;
+ const offsetY=-8;
+ pawn.style.left=(s.x*board.clientWidth+offsetX)+"px";
+ pawn.style.top =(s.y*board.clientHeight+offsetY)+"px";
+ debugIndex.textContent="Index: "+index;
 }
 
 /* SETUP */
