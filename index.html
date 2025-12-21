@@ -256,33 +256,51 @@ function placePawn(p,i){
 
 // -------- SETUP --------
 startBtn.onclick = () => {
-  setup.classList.add("hidden");
-
-  names.classList.remove("hidden");
-  confirmBtn.onclick = () => {
-  const inputs = names.querySelectorAll("input");
+  const n = Number(playerCount.value);
 
   players = [];
-  inputs.forEach((inp, i) => {
-    players.push({
-      name: inp.value || "Jogador " + (i + 1),
-      pawn: null,
-      pos: 0,
-      finished: false,
-      objective: null
+  names.innerHTML = "";
+  setup.classList.add("hidden");
+
+  // 🔹 MOSTRAR ECRÃ DOS NOMES
+  names.classList.remove("hidden");
+
+  for (let i = 0; i < n; i++) {
+    const input = document.createElement("input");
+    input.placeholder = "Nome do Jogador " + (i + 1);
+    input.style.display = "block";
+    input.style.margin = "6px auto";
+    names.appendChild(input);
+  }
+
+  const confirmBtn = document.createElement("button");
+  confirmBtn.textContent = "Confirmar nomes";
+  confirmBtn.style.marginTop = "12px";
+
+  confirmBtn.onclick = () => {
+    const inputs = names.querySelectorAll("input");
+
+    players = [];
+    inputs.forEach((inp, i) => {
+      players.push({
+        name: inp.value || "Jogador " + (i + 1),
+        pawn: null,
+        pos: 0,
+        finished: false,
+        objective: null
+      });
     });
-  });
 
-  // ✅ ESCONDE APENAS A ÁREA DOS NOMES
-  names.classList.add("hidden");
+    // 🔹 ESCONDE NOMES (NÃO APAGA)
+    names.classList.add("hidden");
 
-  // ❌ NÃO APAGAR O HTML
-  // names.innerHTML = "";  ← PROIBIDO
+    // 🔹 MOSTRA ESCOLHA DE PEÕES
+    pawnSelect.classList.remove("hidden");
 
-  // ✅ AVANÇA PARA ESCOLHA DE PEÕES
-  pawnSelect.classList.remove("hidden");
+    startPawnSelection();
+  };
 
-  startPawnSelection();
+  names.appendChild(confirmBtn);
 };
 
   players = [];
@@ -445,3 +463,4 @@ rollBtn.onclick=async()=>{
 
 </body>
 </html>
+
