@@ -85,6 +85,33 @@ button{
   border-radius:18px;
   padding:16px;
 }
+.objective-marcos{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.objective-marco{
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  background:#555;
+  color:#111;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  font-size:13px;
+  border:2px solid #777;
+}
+
+.objective-marco.done{
+  background:#f5c400;
+  border-color:#f5c400;
+  color:#111;
+}
+
 .objective-header{
   color:#f5c400;
   font-weight:bold;
@@ -168,20 +195,13 @@ const SPACES = Array.from({length:100},(_,i)=>({
 // ================= OBJETIVOS (ÚNICOS) =================
 const OBJECTIVES = [
   {
-    text:"Visitar Régua, Penacova e Faro",
-    targets:[10,40,90]
-  },
-  {
-    text:"Ser o primeiro a chegar a Faro",
-    targets:[90]
-  },
-  {
-    text:"Ser o último a chegar a Faro",
-    targets:[90]
-  },
-  {
-    text:"Passar por três municípios à escolha",
-    targets:[20,50,70]
+    kms: [
+      { value: 81, label: "Santa Marta de Penaguião", index: 10, done:false },
+      { value: 225, label: "Mortágua", index: 30, done:false },
+      { value: 345, label: "Sertã", index: 45, done:false },
+      { value: 595, label: "Ferreira do Alentejo", index: 78, done:false },
+      { value: 738, label: "Faro", index: 95, done:false }
+    ]
   }
 ];
 
@@ -271,50 +291,71 @@ function updateTurn(){
   const player=players[currentPlayer];
   turnInfo.textContent=`Vez do Jogador ${currentPlayer+1}`;
 
-  objectivePanel.innerHTML=`
+  function renderObjectiveCard(player, playerIndex) {
+  const marcosHTML = player.objective.kms.map(km => `
+    <div class="objective-marco ${km.done ? 'done' : ''}" id="marco-${km.value}">
+      Km ${km.value}
+    </div>
+  `).join("");
+
+  const textoHTML = player.objective.kms.map(km => `
+    • ${km.label} (Km ${km.value})
+  `).join("<br>");
+
+  objectivePanel.innerHTML = `
     <div class="objective-card">
-      <div class="objective-header">🧭 Objetivo</div>
-      <div>${player.objective.text}</div>
-      <div class="objective-marks">
-        ${player.objective.targets.map(t=>`
-          <div class="objective-marco ${player.done.includes(t)?"done":""}">
-            ${t}
-          </div>
-        `).join("")}
+      <div class="objective-header">
+        🧭 Objetivo do Jogador ${playerIndex + 1}
+      </div>
+
+      <div class="objective-marcos">
+        ${marcosHTML}
+      </div>
+
+      <div class="objective-body">
+        Tens como objetivo visitar:<br><br>
+        ${textoHTML}
       </div>
     </div>
   `;
 }
 
 // ================= JOGAR =================
-rollBtn.onclick=async()=>{
-  const r=Math.floor(Math.random()*6)+1;
-  diceVal.textContent=r;
+rollBtn.onclick = async () => {
+  const r = Math.floor(Math.random() * 6) + 1;
+  diceVal.textContent = r;
 
-  const pawnId=players[currentPlayer].pawn;
-  for(let i=0;i<r;i++){
-    positions[pawnId]=Math.min(SPACES.length-1,positions[pawnId]+1);
-    placePawn(pawns[pawnId],positions[pawnId]);
-    await new Promise(res=>setTimeout(res,250));
+  const pawnId = players[currentPlayer].pawn;
+
+  for (let i = 0; i < r; i++) {
+    positions[pawnId] = Math.min(SPACES.length - 1, positions[pawnId] + 1);
+    placePawn(pawns[pawnId], positions[pawnId]);
+    await new Promise(res => setTimeout(res, 300));
   }
 
-  // TESTE DE PERGUNTA
-  const player=players[currentPlayer];
-  const pos=positions[pawnId];
+  // 🔥 AQUI — NÃO É FORA, NÃO É ABAIXO
+  const player = players[currentPlayer];
 
-  if(player.objective.targets.includes(pos) && !player.done.includes(pos)){
-    const ok=confirm("Pergunta do município!\nResposta certa?");
-    if(ok){
-      const usar=confirm("Queres usar esta ficha para o objetivo?");
-      if(usar){
-        player.done.push(pos);
+  if (player.objective.kms) {
+    player.objective.kms.forEach(km => {
+      if (positions[pawnId] === km.index && !km.done) {
+        const acertou = confirm(
+          `Pergunta do município ${km.label} (Km ${km.value})\n\nResposta certa?`
+        );
+
+        if (acertou) {
+          km.done = true;
+          const el = document.getElementById("marco-" + km.value);
+          if (el) el.classList.add("done");
+        }
       }
-    }
+    });
   }
 
-  currentPlayer=(currentPlayer+1)%players.length;
+  currentPlayer = (currentPlayer + 1) % players.length;
   updateTurn();
 };
+
 </script>
 </body>
 </html>
