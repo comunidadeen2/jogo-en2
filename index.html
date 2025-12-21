@@ -101,6 +101,23 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .bike{background:orange}
 .moto{background:#444;color:#fff}
 .walk{background:lime}
+
+/* PERGUNTA */
+#questionModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+#questionBox{
+  background:#222;
+  padding:20px;
+  border-radius:12px;
+  width:320px;
+  text-align:center;
+}
 </style>
 </head>
 
@@ -138,20 +155,33 @@ button:disabled{opacity:.4;cursor:not-allowed}
   </div>
 </div>
 
-<script>
-/* ===== DOM ===== */
-const setup = document.getElementById("setup");
-const names = document.getElementById("names");
-const game = document.getElementById("game");
-const startBtn = document.getElementById("startBtn");
-const playerCount = document.getElementById("playerCount");
-const rollBtn = document.getElementById("rollBtn");
-const dice = document.getElementById("dice");
-const turn = document.getElementById("turn");
-const objectivePanel = document.getElementById("objectivePanel");
-const board = document.getElementById("board");
+<div id="questionModal">
+  <div id="questionBox">
+    <p id="questionText">Pergunta do Município</p>
+    <button id="answerRight">Resposta Certa</button>
+    <button id="answerWrong">Resposta Errada</button>
+  </div>
+</div>
 
-/* ===== TABULEIRO ===== */
+<script>
+/* DOM */
+const setup=document.getElementById("setup");
+const names=document.getElementById("names");
+const game=document.getElementById("game");
+const startBtn=document.getElementById("startBtn");
+const playerCount=document.getElementById("playerCount");
+const rollBtn=document.getElementById("rollBtn");
+const dice=document.getElementById("dice");
+const turn=document.getElementById("turn");
+const objectivePanel=document.getElementById("objectivePanel");
+const board=document.getElementById("board");
+
+const questionModal=document.getElementById("questionModal");
+const questionText=document.getElementById("questionText");
+const answerRight=document.getElementById("answerRight");
+const answerWrong=document.getElementById("answerWrong");
+
+/* TABULEIRO */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -245,8 +275,18 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
+/* MUNICÍPIOS (CASAS VERDES) */
+const MUNICIPIOS_KM=[
+0,35,64,69,81,88,104,136,152,171,200,213,225,238,248,262,272,324,345,366,369,
+386,400,435,466,475,494,500,518,551,565,595,619,640,663,666,688,722,738,738.5
+];
 
-/* ===== OBJETIVOS (COMPLETOS) ===== */
+const MUNICIPIOS={};
+MUNICIPIOS_KM.forEach(km=>{
+  MUNICIPIOS[km]={tokensLeft:2};
+});
+
+/* OBJETIVOS */
 const OBJECTIVES = [
 
   { items:[
@@ -328,10 +368,8 @@ const OBJECTIVES = [
   ]}
 ];
 
-/* ===== PEÕES ===== */
-const pawns=[
- pawn0,pawn1,pawn2,pawn3
-];
+/* PEÕES */
+const pawns=[pawn0,pawn1,pawn2,pawn3];
 const pawnData=[
  {id:0,label:"🚗 Carro",cls:"car"},
  {id:1,label:"🚴 Bicicleta",cls:"bike"},
@@ -343,14 +381,20 @@ let players=[];
 let current=0;
 let usedPawns=[];
 let setupIndex=0;
+let pendingMunicipio=null;
 
-/* ===== FUNÇÕES ===== */
+/* FUNÇÕES */
 function placePawn(pawn,i){
  const s=SPACES[i];
  pawn.style.left=(s.x*board.clientWidth)+"px";
  pawn.style.top=(s.y*board.clientHeight)+"px";
 }
 
+function kmToIndex(km){
+ return Math.round((km/738)*(SPACES.length-1));
+}
+
+/* SETUP */
 startBtn.onclick=()=>{
  setup.classList.add("hidden");
  names.classList.remove("hidden");
@@ -395,7 +439,8 @@ function nextSetup(){
     pawn:p.id,
     pos:0,
     finished:false,
-    objectivesDone:{}
+    objectivesDone:{},
+    tokens:[]
    });
    pawns[p.id].style.display="block";
    placePawn(pawns[p.id],0);
@@ -408,6 +453,7 @@ function nextSetup(){
  names.appendChild(sel);
 }
 
+/* TURNO */
 function updateTurn(){
  while(players[current].finished){
   current=(current+1)%players.length;
@@ -416,6 +462,7 @@ function updateTurn(){
  renderObjective(players[current]);
 }
 
+/* OBJETIVO */
 function renderObjective(p){
  objectivePanel.innerHTML=
  `<div class="objective-title">🎯 Objetivo de ${p.name}</div>
@@ -430,6 +477,38 @@ function renderObjective(p){
   </div>`;
 }
 
+/* PERGUNTAS */
+function triggerQuestion(km){
+ pendingMunicipio=km;
+ questionText.textContent="Pergunta do município Km "+km;
+ questionModal.style.display="flex";
+}
+
+answerRight.onclick=()=>{
+ const p=players[current];
+ const m=MUNICIPIOS[pendingMunicipio];
+ questionModal.style.display="none";
+
+ if(m.tokensLeft>0){
+  if(confirm("Aceitar ficha do município?")){
+   m.tokensLeft--;
+   p.tokens.push(pendingMunicipio);
+   if(p.objective.items.some(it=>it.km===pendingMunicipio)){
+    p.objectivesDone[pendingMunicipio]=true;
+   }
+  }
+ }
+ pendingMunicipio=null;
+ finishTurn();
+};
+
+answerWrong.onclick=()=>{
+ questionModal.style.display="none";
+ pendingMunicipio=null;
+ finishTurn();
+};
+
+/* JOGAR */
 rollBtn.onclick=async()=>{
  rollBtn.disabled=true;
  const r=Math.floor(Math.random()*6)+1;
@@ -447,14 +526,24 @@ rollBtn.onclick=async()=>{
   await new Promise(res=>setTimeout(res,200));
  }
 
- if(p.pos===SPACES.length-1){
+ const kmHit=MUNICIPIOS_KM.find(k=>kmToIndex(k)===p.pos);
+ if(kmHit!==undefined && MUNICIPIOS[kmHit].tokensLeft>0){
+  triggerQuestion(kmHit);
+ }else{
+  finishTurn();
+ }
+};
+
+function finishTurn(){
+ const p=players[current];
+ if(p.pos===SPACES.length-1 &&
+    p.objective.items.every(it=>p.objectivesDone[it.km])){
   p.finished=true;
  }
-
  rollBtn.disabled=false;
  current=(current+1)%players.length;
  updateTurn();
-};
+}
 </script>
 
 </body>
