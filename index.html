@@ -55,6 +55,7 @@ button{
 }
 button:disabled{opacity:.4;cursor:not-allowed}
 .hidden{display:none}
+.rules-btn{background:#888;margin-left:10px}
 
 /* OBJECTIVOS */
 #objectivePanel{
@@ -77,6 +78,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
   font-weight:bold
 }
 .marco.done{background:var(--green)}
+.extra-title{margin-top:12px;color:#aaa;font-size:13px}
 
 /* PEÕES */
 .pawn-select button{margin:6px;color:#111}
@@ -122,6 +124,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <option>1</option><option>2</option><option>3</option><option>4</option>
     </select>
     <button id="startBtn">COMEÇAR</button>
+    <button class="rules-btn" onclick="alert('Regras do jogo')">REGRAS</button>
   </div>
 
   <div id="names" class="hidden"></div>
@@ -144,33 +147,32 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
 
-/* DOM */
-const setup=document.getElementById("setup");
-const names=document.getElementById("names");
-const game=document.getElementById("game");
-const startBtn=document.getElementById("startBtn");
-const playerCount=document.getElementById("playerCount");
-const rollBtn=document.getElementById("rollBtn");
-const dice=document.getElementById("dice");
-const turn=document.getElementById("turn");
-const objectivePanel=document.getElementById("objectivePanel");
-const board=document.getElementById("board");
-const debugIndex=document.getElementById("debugIndex");
-
-const pawns=[
- document.getElementById("pawn0"),
- document.getElementById("pawn1"),
- document.getElementById("pawn2"),
- document.getElementById("pawn3")
+/* OBJETIVOS — BARALHO COMPLETO */
+const OBJECTIVES=[
+ {items:[
+  {km:0,text:"Visitar Chaves"},
+  {km:88,text:"Visitar Peso da Régua"},
+  {km:238,text:"Visitar Penacova"},
+  {km:619,text:"Visitar Aljustrel"},
+  {km:738.5,text:"Visitar Faro"}
+ ]},
+ {items:[
+  {km:35,text:"Vila Pouca de Aguiar"},
+  {km:172,text:"Viseu"},
+  {km:271,text:"Góis"},
+  {km:551,text:"Alcáçovas"},
+  {km:722,text:"São Brás de Alportel"}
+ ]},
+ {items:[
+  {km:69,text:"Passar pelo Km 69"},
+  {km:369,text:"Chegar ao Meio da Estrada"},
+  {km:476,text:"Visitar Mora"},
+  {km:494,text:"Visitar Coruche"},
+  {km:738.5,text:"Visitar Faro"}
+ ]}
 ];
 
-const questionModal=document.getElementById("questionModal");
-const questionText=document.getElementById("questionText");
-const answerRight=document.getElementById("answerRight");
-const answerWrong=document.getElementById("answerWrong");
-
-/* TABULEIRO */
-const SPACES = [
+  const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
 {"x":0.0867430441898527,"y":0.2152824763193505},
@@ -263,58 +265,101 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* MUNICÍPIOS + FARO DUPLO */
-const SPECIAL_CELLS={
-  3:{type:"municipio",km:0,tokensLeft:2},
-  5:{type:"municipio",km:35,tokensLeft:2},
-  7:{type:"municipio",km:64,tokensLeft:2},
-  8:{type:"municipio",km:69,tokensLeft:2},
-  11:{type:"municipio",km:81,tokensLeft:2},
-  13:{type:"municipio",km:88,tokensLeft:2},
-  16:{type:"municipio",km:104,tokensLeft:2},
-  19:{type:"municipio",km:136,tokensLeft:2},
-  21:{type:"municipio",km:152,tokensLeft:2},
-  23:{type:"municipio",km:171,tokensLeft:2},
-  25:{type:"municipio",km:200,tokensLeft:2},
-  27:{type:"municipio",km:213,tokensLeft:2},
-  29:{type:"municipio",km:225,tokensLeft:2},
-  31:{type:"municipio",km:238,tokensLeft:2},
-  33:{type:"municipio",km:248,tokensLeft:2},
-  35:{type:"municipio",km:262,tokensLeft:2},
-  37:{type:"municipio",km:272,tokensLeft:2},
-  39:{type:"municipio",km:324,tokensLeft:2},
-  41:{type:"municipio",km:345,tokensLeft:2},
-  43:{type:"municipio",km:366,tokensLeft:2},
-  44:{type:"municipio",km:369,tokensLeft:2},
-  46:{type:"municipio",km:386,tokensLeft:2},
-  48:{type:"municipio",km:400,tokensLeft:2},
-  50:{type:"municipio",km:435,tokensLeft:2},
-  52:{type:"municipio",km:466,tokensLeft:2},
-  54:{type:"municipio",km:475,tokensLeft:2},
-  57:{type:"municipio",km:494,tokensLeft:2},
-  58:{type:"municipio",km:500,tokensLeft:2},
-  60:{type:"municipio",km:518,tokensLeft:2},
-  63:{type:"municipio",km:551,tokensLeft:2},
-  66:{type:"municipio",km:565,tokensLeft:2},
-  68:{type:"municipio",km:595,tokensLeft:2},
-  70:{type:"municipio",km:619,tokensLeft:2},
-  73:{type:"municipio",km:640,tokensLeft:2},
-  75:{type:"municipio",km:663,tokensLeft:2},
-  77:{type:"municipio",km:666,tokensLeft:2},
-  80:{type:"municipio",km:688,tokensLeft:2},
-  83:{type:"municipio",km:722,tokensLeft:2},
-  85:{type:"municipio",km:738,tokensLeft:2},
-  89:{type:"faroFinal",km:738.5,tokensLeft:99}
-};
+/* MUNICÍPIOS (CASAS VERDES) */
+const MUNICIPIOS_KM=[
+0,35,64,69,81,88,104,136,152,171,200,213,225,238,248,262,272,324,345,366,369,
+386,400,435,466,475,494,500,518,551,565,595,619,640,663,666,688,722,738,738.5
+];
 
-/* OBJETIVO TESTE */
-const OBJECTIVE={items:[
- {km:0,text:"Visitar Chaves"},
- {km:369,text:"Chegar ao Meio da Estrada"},
- {km:738.5,text:"Visitar Faro"}
-]};
+const MUNICIPIOS={};
+MUNICIPIOS_KM.forEach(km=>{
+  MUNICIPIOS[km]={tokensLeft:2};
+});
+
+/* OBJETIVOS */
+const OBJECTIVES = [
+
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:35,text:"Visitar Vila Pouca de Aguiar"},
+    {km:172,text:"Visitar Viseu"},
+    {km:271,text:"Visitar Góis"},
+    {km:551,text:"Visitar Alcáçovas"},
+    {km:722,text:"Visitar São Brás de Alportel"}
+  ]},
+
+  { items:[
+    {km:64,text:"Visitar Vila Real"},
+    {km:213,text:"Visitar Santa Comba Dão"},
+    {km:345,text:"Visitar Sertã"},
+    {km:565,text:"Visitar Torrão"},
+    {km:688,text:"Visitar Ameixial"}
+  ]},
+
+  { items:[
+    {km:81,text:"Visitar Santa Marta de Penaguião"},
+    {km:225,text:"Visitar Mortágua"},
+    {km:345,text:"Visitar Sertã"},
+    {km:595,text:"Visitar Ferreira do Alentejo"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:366,text:"Visitar Vila de Rei"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:386,text:"Visitar Sardoal"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:136,text:"Visitar Castro Daire"},
+    {km:260,text:"Visitar Lousã"},
+    {km:430,text:"Visitar Ponte de Sôr"},
+    {km:666,text:"Passar pelo Km 666"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:0,text:"Partir de Chaves"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:69,text:"Passar pelo Km 69"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:476,text:"Visitar Mora"},
+    {km:494,text:"Visitar Coruche"},
+    {km:738,text:"Chegar a Faro"}
+  ]}
+];
 
 /* PEÕES */
+const pawns=[pawn0,pawn1,pawn2,pawn3];
 const pawnData=[
  {id:0,label:"🚗 Carro",cls:"car"},
  {id:1,label:"🚴 Bicicleta",cls:"bike"},
@@ -322,37 +367,45 @@ const pawnData=[
  {id:3,label:"🚶 A pé",cls:"walk"}
 ];
 
-let players=[],current=0,usedPawns=[],setupIndex=0;
-let pendingCell=null;
-let finishOrder=0;
+let players=[];
+let current=0;
+let usedPawns=[];
+let setupIndex=0;
+let pendingMunicipio=null;
 
-/* POSICIONAR PEÃO */
-function placePawn(pawn,index){
- const s=SPACES[index];
- const offsetX=-6, offsetY=-8;
- pawn.style.left=(s.x*board.clientWidth+offsetX)+"px";
- pawn.style.top =(s.y*board.clientHeight+offsetY)+"px";
- debugIndex.textContent="Index: "+index;
+/* FUNÇÕES */
+function placePawn(pawn,i){
+ const s=SPACES[i];
+ pawn.style.left=(s.x*board.clientWidth)+"px";
+ pawn.style.top=(s.y*board.clientHeight)+"px";
+}
+
+function kmToIndex(km){
+ return Math.round((km/738)*(SPACES.length-1));
 }
 
 /* SETUP */
 startBtn.onclick=()=>{
  setup.classList.add("hidden");
  names.classList.remove("hidden");
- players=[];usedPawns=[];setupIndex=0;
+ players=[];
+ usedPawns=[];
+ setupIndex=0;
  nextSetup();
 };
 
 function nextSetup(){
  names.innerHTML="";
  if(setupIndex>=playerCount.value){
-  players.forEach(p=>p.objective=OBJECTIVE);
+  const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+  players.forEach(p=>p.objective=deck.pop());
   names.classList.add("hidden");
   game.classList.remove("hidden");
   objectivePanel.classList.remove("hidden");
   updateTurn();
   return;
  }
+
  const h=document.createElement("h3");
  h.textContent="Jogador "+(setupIndex+1);
  names.appendChild(h);
@@ -363,35 +416,38 @@ function nextSetup(){
 
  const sel=document.createElement("div");
  sel.className="pawn-select";
+
  pawnData.forEach(p=>{
-  if(usedPawns.includes(p.id))return;
+  if(usedPawns.includes(p.id)) return;
   const b=document.createElement("button");
-  b.textContent=p.label;b.className=p.cls;
+  b.textContent=p.label;
+  b.className=p.cls;
   b.onclick=()=>{
    usedPawns.push(p.id);
    players.push({
-     name:input.value||("Jogador "+(setupIndex+1)),
-     pawn:p.id,pos:0,finished:false,
-     objectivesDone:{},tokens:[],
-     finishRank:null
+    name:input.value||("Jogador "+(setupIndex+1)),
+    pawn:p.id,
+    pos:0,
+    finished:false,
+    objectivesDone:{},
+    tokens:[]
    });
    pawns[p.id].style.display="block";
    placePawn(pawns[p.id],0);
-   setupIndex++;nextSetup();
+   setupIndex++;
+   nextSetup();
   };
   sel.appendChild(b);
  });
+
  names.appendChild(sel);
 }
 
 /* TURNO */
 function updateTurn(){
- if(players.every(p=>p.finished)){
-   endGame();
-   return;
+ while(players[current].finished){
+  current=(current+1)%players.length;
  }
- while(players[current].finished)
-   current=(current+1)%players.length;
  turn.textContent="Vez de "+players[current].name;
  renderObjective(players[current]);
 }
@@ -400,36 +456,45 @@ function updateTurn(){
 function renderObjective(p){
  objectivePanel.innerHTML=
  `<div class="objective-title">🎯 Objetivo de ${p.name}</div>
-  ${p.objective.items.map(it=>`
-   <div class="obj-item">
-     <div class="marco ${p.objectivesDone[it.km]?"done":""}">Km ${it.km}</div>
+  <div class="obj-list">
+   ${p.objective.items.map(it=>{
+    const done=p.objectivesDone[it.km];
+    return `<div class="obj-item">
+     <div class="marco ${done?"done":""}">Km ${it.km}</div>
      <div>${it.text}</div>
-   </div>`).join("")}`;
+    </div>`;
+   }).join("")}
+  </div>`;
 }
 
 /* PERGUNTAS */
-function triggerQuestion(cell){
- pendingCell=cell;
- questionText.textContent="Pergunta do Km "+cell.km;
+function triggerQuestion(km){
+ pendingMunicipio=km;
+ questionText.textContent="Pergunta do município Km "+km;
  questionModal.style.display="flex";
 }
+
 answerRight.onclick=()=>{
  const p=players[current];
- const cell=pendingCell;
+ const m=MUNICIPIOS[pendingMunicipio];
  questionModal.style.display="none";
- if(confirm("Aceitar ficha?")){
-  p.tokens.push(cell.km);
-  if(p.objective.items.some(it=>it.km===cell.km))
-    p.objectivesDone[cell.km]=true;
-  if(cell.type==="faroFinal"){
-    p.finished=true;
-    p.finishRank=++finishOrder;
+
+ if(m.tokensLeft>0){
+  if(confirm("Aceitar ficha do município?")){
+   m.tokensLeft--;
+   p.tokens.push(pendingMunicipio);
+   if(p.objective.items.some(it=>it.km===pendingMunicipio)){
+    p.objectivesDone[pendingMunicipio]=true;
+   }
   }
  }
+ pendingMunicipio=null;
  finishTurn();
 };
+
 answerWrong.onclick=()=>{
  questionModal.style.display="none";
+ pendingMunicipio=null;
  finishTurn();
 };
 
@@ -441,8 +506,9 @@ rollBtn.onclick=async()=>{
  const p=players[current];
 
  let target=p.pos+r;
- if(target>=SPACES.length-1)
+ if(target>=SPACES.length-1){
   target=(SPACES.length-1)-(target-(SPACES.length-1));
+ }
 
  while(p.pos!==target){
   p.pos+=p.pos<target?1:-1;
@@ -450,30 +516,24 @@ rollBtn.onclick=async()=>{
   await new Promise(res=>setTimeout(res,200));
  }
 
- const cell=SPECIAL_CELLS[p.pos];
- if(cell) triggerQuestion(cell);
- else finishTurn();
+ const kmHit=MUNICIPIOS_KM.find(k=>kmToIndex(k)===p.pos);
+ if(kmHit!==undefined && MUNICIPIOS[kmHit].tokensLeft>0){
+  triggerQuestion(kmHit);
+ }else{
+  finishTurn();
+ }
 };
 
 function finishTurn(){
+ const p=players[current];
+ if(p.pos===SPACES.length-1 &&
+    p.objective.items.every(it=>p.objectivesDone[it.km])){
+  p.finished=true;
+ }
  rollBtn.disabled=false;
  current=(current+1)%players.length;
  updateTurn();
 }
-
-/* FIM DO JOGO */
-function endGame(){
- game.classList.add("hidden");
- let winner=[...players].sort((a,b)=>{
-   const oa=Object.keys(a.objectivesDone).length;
-   const ob=Object.keys(b.objectivesDone).length;
-   if(ob!==oa) return ob-oa;
-   return a.finishRank-b.finishRank;
- })[0];
- alert("🏆 Vencedor: "+winner.name);
-}
-
-});
 </script>
 
 </body>
