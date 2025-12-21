@@ -255,20 +255,33 @@ function placePawn(p,i){
 }
 
 // -------- SETUP --------
-startBtn.onclick=()=>{
+startBtn.onclick = () => {
+  // 🔥 LIMPEZA TOTAL DE FASES ANTERIORES
+  pawnSelect.innerHTML = "";
+  pawnSelect.classList.add("hidden");
+
+  // esconder peões no tabuleiro
+  pawns.forEach(p => p.style.display = "none");
+
+  // reset estado
+  current = 0;
+  players = [];
+
+  // avançar para nomes
   setup.classList.add("hidden");
   names.classList.remove("hidden");
-  names.innerHTML="";
-  players=[];
-  for(let i=0;i<playerCount.value;i++){
-    const inp=document.createElement("input");
-    inp.placeholder="Nome do Jogador "+(i+1);
+  names.innerHTML = "";
+
+  for (let i = 0; i < playerCount.value; i++) {
+    const inp = document.createElement("input");
+    inp.placeholder = "Nome do Jogador " + (i + 1);
     names.appendChild(inp);
     names.appendChild(document.createElement("br"));
   }
-  const btn=document.createElement("button");
-  btn.textContent="Confirmar";
-  btn.onclick=confirmNames;
+
+  const btn = document.createElement("button");
+  btn.textContent = "Confirmar";
+  btn.onclick = confirmNames;
   names.appendChild(btn);
 };
 
