@@ -22,103 +22,67 @@ body{
 }
 h1{text-align:center;margin:20px 0;}
 
-.main{
-  display:flex;
-  justify-content:center;
-  gap:24px;
-}
+.main{display:flex;justify-content:center;gap:24px}
 
 /* TABULEIRO */
 .board-frame{
-  width:1000px;
-  height:750px;
-  position:relative;
-  overflow:hidden;
-  border-radius:10px;
+  width:1000px;height:750px;position:relative;
+  overflow:hidden;border-radius:10px
 }
 .board-img{
-  position:absolute;
-  inset:0;
-  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
+  position:absolute;inset:0;
+  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat
 }
 .pawn{
   position:absolute;
   transform:translate(-50%,-50%);
   font-size:22px;
   pointer-events:none;
-  display:none;
+  display:none
 }
 
 /* CONTROLOS */
-.controls{text-align:center;margin:20px 0;}
+.controls{text-align:center;margin:20px 0}
 button{
-  border:none;
-  padding:10px 18px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
+  border:none;padding:10px 18px;
+  border-radius:10px;font-weight:bold;cursor:pointer
 }
 button:disabled{opacity:.4;cursor:not-allowed}
 .hidden{display:none}
 
 /* OBJECTIVOS */
 #objectivePanel{
-  width:340px;
-  background:var(--panel);
-  border-radius:16px;
-  padding:16px;
+  width:340px;background:var(--panel);
+  border-radius:16px;padding:16px;
   border:2px dashed #555;
-  height:auto;              /* 🔧 AJUSTE */
-  align-self:flex-start;    /* 🔧 AJUSTE */
+  align-self:flex-start
 }
-.objective-title{
-  font-weight:bold;
-  color:#ff9800;
-  margin-bottom:12px;
-}
-.obj-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.obj-item{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+.objective-title{font-weight:bold;color:#ff9800;margin-bottom:12px}
+.obj-list{display:flex;flex-direction:column;gap:10px}
+.obj-item{display:flex;align-items:center;gap:12px}
 .marco{
-  padding:6px 12px;
-  border-radius:8px;
-  background:var(--grey);   /* 🔧 MAIS ESCURO */
-  font-weight:bold;
-  color:#fff;               /* 🔧 TEXTO BRANCO */
-  min-width:70px;
-  text-align:center;
+  padding:6px 12px;border-radius:8px;
+  background:var(--grey);color:#fff;
+  font-weight:bold;min-width:70px;text-align:center
 }
-.marco.done{background:var(--green);}
+.marco.done{background:var(--green)}
 
-/* SELEÇÃO DE PEÕES */
+/* PEÕES */
 .pawn-select button{margin:6px;color:#111}
 .car{background:red}
 .bike{background:orange}
 .moto{background:#444;color:#fff}
 .walk{background:lime}
 
-/* PERGUNTA */
+/* PERGUNTAS */
 #questionModal{
-  position:fixed;
-  inset:0;
+  position:fixed;inset:0;
   background:rgba(0,0,0,.7);
-  display:none;
-  align-items:center;
-  justify-content:center;
+  display:none;align-items:center;justify-content:center
 }
 #questionBox{
-  background:#222;
-  padding:20px;
-  border-radius:12px;
-  width:320px;
-  text-align:center;
+  background:#222;padding:20px;
+  border-radius:12px;width:320px;text-align:center
 }
 #questionBox button{margin:6px}
 </style>
@@ -136,7 +100,6 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div class="pawn" id="pawn2">🏍️</div>
     <div class="pawn" id="pawn3">🚶</div>
   </div>
-
   <div id="objectivePanel" class="hidden"></div>
 </div>
 
@@ -148,9 +111,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     </select>
     <button id="startBtn">COMEÇAR</button>
   </div>
-
   <div id="names" class="hidden"></div>
-
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
@@ -158,17 +119,18 @@ button:disabled{opacity:.4;cursor:not-allowed}
   </div>
 </div>
 
-<!-- MODAL PERGUNTA -->
 <div id="questionModal">
   <div id="questionBox">
-    <p id="questionText">Pergunta</p>
+    <p id="questionText"></p>
     <button id="answerRight">Resposta Certa</button>
     <button id="answerWrong">Resposta Errada</button>
   </div>
 </div>
 
 <script>
-/* === DOM === */
+document.addEventListener("DOMContentLoaded",()=>{
+
+/* DOM */
 const setup=document.getElementById("setup");
 const names=document.getElementById("names");
 const game=document.getElementById("game");
@@ -180,12 +142,19 @@ const turn=document.getElementById("turn");
 const objectivePanel=document.getElementById("objectivePanel");
 const board=document.getElementById("board");
 
+const pawns=[
+ document.getElementById("pawn0"),
+ document.getElementById("pawn1"),
+ document.getElementById("pawn2"),
+ document.getElementById("pawn3")
+];
+
 const questionModal=document.getElementById("questionModal");
 const questionText=document.getElementById("questionText");
 const answerRight=document.getElementById("answerRight");
 const answerWrong=document.getElementById("answerWrong");
 
-/* TABULEIRO (placeholder técnico) */
+/* TABULEIRO */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -279,7 +248,7 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* MUNICÍPIOS (VERDES) */
+/* MUNICÍPIOS */
 const MUNICIPIOS_KM=[
 0,35,64,69,81,88,104,136,152,171,200,213,225,238,248,262,272,324,345,366,369,
 386,400,435,466,475,494,500,518,551,565,595,619,640,663,666,688,722,738,738.5
@@ -287,90 +256,13 @@ const MUNICIPIOS_KM=[
 const MUNICIPIOS={};
 MUNICIPIOS_KM.forEach(km=>MUNICIPIOS[km]={tokensLeft:2});
 
-/* OBJETIVOS (exemplo funcional) */
-const OBJECTIVES = [
+/* OBJETIVO TESTE */
+const OBJECTIVE={items:[
+ {km:0,text:"Partir de Chaves"},
+ {km:369,text:"Chegar ao Meio da Estrada"},
+ {km:738,text:"Chegar a Faro"}
+]};
 
-  { items:[
-    {km:0,text:"Visitar Chaves"},
-    {km:88,text:"Visitar Peso da Régua"},
-    {km:238,text:"Visitar Penacova"},
-    {km:619,text:"Visitar Aljustrel"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:0,text:"Visitar Chaves"},
-    {km:104,text:"Visitar Lamego"},
-    {km:248,text:"Visitar Vila Nova de Poiares"},
-    {km:640,text:"Visitar Castro Verde"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:35,text:"Visitar Vila Pouca de Aguiar"},
-    {km:172,text:"Visitar Viseu"},
-    {km:271,text:"Visitar Góis"},
-    {km:551,text:"Visitar Alcáçovas"},
-    {km:722,text:"Visitar São Brás de Alportel"}
-  ]},
-
-  { items:[
-    {km:64,text:"Visitar Vila Real"},
-    {km:213,text:"Visitar Santa Comba Dão"},
-    {km:345,text:"Visitar Sertã"},
-    {km:565,text:"Visitar Torrão"},
-    {km:688,text:"Visitar Ameixial"}
-  ]},
-
-  { items:[
-    {km:81,text:"Visitar Santa Marta de Penaguião"},
-    {km:225,text:"Visitar Mortágua"},
-    {km:345,text:"Visitar Sertã"},
-    {km:595,text:"Visitar Ferreira do Alentejo"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:88,text:"Visitar Peso da Régua"},
-    {km:238,text:"Visitar Penacova"},
-    {km:366,text:"Visitar Vila de Rei"},
-    {km:619,text:"Visitar Aljustrel"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:104,text:"Visitar Lamego"},
-    {km:248,text:"Visitar Vila Nova de Poiares"},
-    {km:386,text:"Visitar Sardoal"},
-    {km:640,text:"Visitar Castro Verde"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:136,text:"Visitar Castro Daire"},
-    {km:260,text:"Visitar Lousã"},
-    {km:430,text:"Visitar Ponte de Sôr"},
-    {km:666,text:"Passar pelo Km 666"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:0,text:"Partir de Chaves"},
-    {km:369,text:"Chegar ao Meio da Estrada"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:69,text:"Passar pelo Km 69"},
-    {km:369,text:"Chegar ao Meio da Estrada"},
-    {km:476,text:"Visitar Mora"},
-    {km:494,text:"Visitar Coruche"},
-    {km:738,text:"Chegar a Faro"}
-  ]}
-];
-
-/* PEÕES */
-const pawns=[pawn0,pawn1,pawn2,pawn3];
 const pawnData=[
  {id:0,label:"🚗 Carro",cls:"car"},
  {id:1,label:"🚴 Bicicleta",cls:"bike"},
@@ -402,83 +294,6 @@ startBtn.onclick=()=>{
 function nextSetup(){
  names.innerHTML="";
  if(setupIndex>=playerCount.value){
-  players.forEach(p=>p.objective=OBJECTIVES[0]);
+  players.forEach(p=>p.objective=OBJECTIVE);
   names.classList.add("hidden");
-  game.classList.remove("hidden");
-  objectivePanel.classList.remove("hidden");
-  updateTurn();
-  return;
- }
- const h=document.createElement("h3");
- h.textContent="Jogador "+(setupIndex+1);
- names.appendChild(h);
-
- const input=document.createElement("input");
- input.placeholder="Nome do Jogador";
- names.appendChild(input);
-
- const sel=document.createElement("div");
- sel.className="pawn-select";
- pawnData.forEach(p=>{
-  if(usedPawns.includes(p.id))return;
-  const b=document.createElement("button");
-  b.textContent=p.label;b.className=p.cls;
-  b.onclick=()=>{
-   usedPawns.push(p.id);
-   players.push({name:input.value||("Jogador "+(setupIndex+1)),pawn:p.id,pos:0,finished:false,objectivesDone:{},tokens:[]});
-   pawns[p.id].style.display="block";
-   placePawn(pawns[p.id],0);
-   setupIndex++;nextSetup();
-  };
-  sel.appendChild(b);
- });
- names.appendChild(sel);
-}
-
-/* TURNO */
-function updateTurn(){
- while(players[current].finished) current=(current+1)%players.length;
- turn.textContent="Vez de "+players[current].name;
- renderObjective(players[current]);
-}
-
-/* OBJETIVO */
-function renderObjective(p){
- objectivePanel.innerHTML=
- `<div class="objective-title">🎯 Objetivo de ${p.name}</div>
-  <div class="obj-list">
-   ${p.objective.items.map(it=>`
-    <div class="obj-item">
-      <div class="marco ${p.objectivesDone[it.km]?"done":""}">Km ${it.km}</div>
-      <div>${it.text}</div>
-    </div>`).join("")}
-  </div>`;
-}
-
-/* PERGUNTAS (TESTE) */
-function triggerQuestion(km){
- pendingMunicipio=km;
- questionText.textContent="Pergunta do Município Km "+km;
- questionModal.style.display="flex";
-}
-answerRight.onclick=()=>{
- const p=players[current];
- const m=MUNICIPIOS[pendingMunicipio];
- questionModal.style.display="none";
- if(m.tokensLeft>0 && confirm("Aceitar ficha?")){
-  m.tokensLeft--;
-  p.tokens.push(pendingMunicipio);
-  if(p.objective.items.some(it=>it.km===pendingMunicipio))
-    p.objectivesDone[pendingMunicipio]=true;
- }
- finishTurn();
-};
-answerWrong.onclick=()=>{
- questionModal.style.display="none";
- finishTurn();
-};
-
-/* JOGAR */
-rollBtn.onclick=async()=>{
- rollBtn.disabled=true;
- const r=Math.f
+  game.classList.r
