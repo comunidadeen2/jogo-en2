@@ -112,17 +112,23 @@ button{
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
 <div class="main">
+
+  <!-- TABULEIRO -->
   <div class="board-frame" id="board">
     <div class="board-img"></div>
+
     <div class="pawn" id="pawn0">🚗</div>
     <div class="pawn" id="pawn1">🚴</div>
     <div class="pawn" id="pawn2">🏍️</div>
     <div class="pawn" id="pawn3">🚶</div>
   </div>
 
+  <!-- CARTA DE OBJETIVO -->
   <div id="objectivePanel" class="hidden"></div>
+
 </div>
 
+<!-- CONTROLOS -->
 <div class="controls">
 
   <!-- SETUP: Nº DE JOGADORES -->
@@ -140,7 +146,7 @@ button{
   <!-- NOMES DOS JOGADORES -->
   <div id="names" class="hidden"></div>
 
-  <!-- ESCOLHA DE PEÃO (ISTO FALTAVA) -->
+  <!-- ESCOLHA DE PEÃO -->
   <div id="pawnSelect" class="hidden">
     <p id="pawnQuestion"></p>
     <div id="pawnButtons"></div>
@@ -154,6 +160,9 @@ button{
   </div>
 
 </div>
+
+</body>
+
 <script>
 
 const SPACES = [
