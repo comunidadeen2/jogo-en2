@@ -58,17 +58,23 @@ button:disabled{opacity:.4;cursor:not-allowed}
 
 /* OBJECTIVOS */
 #objectivePanel{
-  width:340px;background:var(--panel);
-  border-radius:16px;padding:16px;
+  width:300px;
+  background:var(--panel);
+  border-radius:16px;
+  padding:12px;
   border:2px dashed #555;
   align-self:flex-start
 }
-.objective-title{color:#ff9800;font-weight:bold;margin-bottom:12px}
-.obj-item{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.objective-title{color:#ff9800;font-weight:bold;margin-bottom:10px}
+.obj-item{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 .marco{
-  background:var(--grey);color:#fff;
-  padding:6px 12px;border-radius:8px;
-  min-width:70px;text-align:center;font-weight:bold
+  background:var(--grey);
+  color:#fff;
+  padding:4px 10px;
+  border-radius:8px;
+  min-width:64px;
+  text-align:center;
+  font-weight:bold
 }
 .marco.done{background:var(--green)}
 
@@ -87,7 +93,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 }
 #questionBox{
   background:#222;padding:20px;
-  border-radius:12px;width:320px;text-align:center
+  border-radius:12px;width:340px;text-align:center
 }
 #questionBox button{margin:6px}
 </style>
@@ -257,19 +263,55 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-
-/* MUNICÍPIOS CONFIRMADOS (mínimo, seguro) */
+/* MUNICÍPIOS + FARO DUPLO */
 const SPECIAL_CELLS={
-  0:{type:"municipio",km:0,tokensLeft:2},
-  43:{type:"municipio",km:369,tokensLeft:2},
-  89:{type:"municipio",km:738,tokensLeft:2}
+  3:{type:"municipio",km:0,tokensLeft:2},
+  5:{type:"municipio",km:35,tokensLeft:2},
+  7:{type:"municipio",km:64,tokensLeft:2},
+  8:{type:"municipio",km:69,tokensLeft:2},
+  11:{type:"municipio",km:81,tokensLeft:2},
+  13:{type:"municipio",km:88,tokensLeft:2},
+  16:{type:"municipio",km:104,tokensLeft:2},
+  19:{type:"municipio",km:136,tokensLeft:2},
+  21:{type:"municipio",km:152,tokensLeft:2},
+  23:{type:"municipio",km:171,tokensLeft:2},
+  25:{type:"municipio",km:200,tokensLeft:2},
+  27:{type:"municipio",km:213,tokensLeft:2},
+  29:{type:"municipio",km:225,tokensLeft:2},
+  31:{type:"municipio",km:238,tokensLeft:2},
+  33:{type:"municipio",km:248,tokensLeft:2},
+  35:{type:"municipio",km:262,tokensLeft:2},
+  37:{type:"municipio",km:272,tokensLeft:2},
+  39:{type:"municipio",km:324,tokensLeft:2},
+  41:{type:"municipio",km:345,tokensLeft:2},
+  43:{type:"municipio",km:366,tokensLeft:2},
+  44:{type:"municipio",km:369,tokensLeft:2},
+  46:{type:"municipio",km:386,tokensLeft:2},
+  48:{type:"municipio",km:400,tokensLeft:2},
+  50:{type:"municipio",km:435,tokensLeft:2},
+  52:{type:"municipio",km:466,tokensLeft:2},
+  54:{type:"municipio",km:475,tokensLeft:2},
+  57:{type:"municipio",km:494,tokensLeft:2},
+  58:{type:"municipio",km:500,tokensLeft:2},
+  60:{type:"municipio",km:518,tokensLeft:2},
+  63:{type:"municipio",km:551,tokensLeft:2},
+  66:{type:"municipio",km:565,tokensLeft:2},
+  68:{type:"municipio",km:595,tokensLeft:2},
+  70:{type:"municipio",km:619,tokensLeft:2},
+  73:{type:"municipio",km:640,tokensLeft:2},
+  75:{type:"municipio",km:663,tokensLeft:2},
+  77:{type:"municipio",km:666,tokensLeft:2},
+  80:{type:"municipio",km:688,tokensLeft:2},
+  83:{type:"municipio",km:722,tokensLeft:2},
+  85:{type:"municipio",km:738,tokensLeft:2},
+  89:{type:"faroFinal",km:738.5,tokensLeft:99}
 };
 
 /* OBJETIVO TESTE */
 const OBJECTIVE={items:[
- {km:0,text:"Partir de Chaves"},
+ {km:0,text:"Visitar Chaves"},
  {km:369,text:"Chegar ao Meio da Estrada"},
- {km:738,text:"Chegar a Faro"}
+ {km:738.5,text:"Visitar Faro"}
 ]};
 
 /* PEÕES */
@@ -281,13 +323,13 @@ const pawnData=[
 ];
 
 let players=[],current=0,usedPawns=[],setupIndex=0;
-let pendingMunicipio=null;
+let pendingCell=null;
+let finishOrder=0;
 
-/* POSICIONAR PEÃO — OFFSET FINO INTEGRADO */
+/* POSICIONAR PEÃO */
 function placePawn(pawn,index){
  const s=SPACES[index];
- const offsetX=-6;
- const offsetY=-8;
+ const offsetX=-6, offsetY=-8;
  pawn.style.left=(s.x*board.clientWidth+offsetX)+"px";
  pawn.style.top =(s.y*board.clientHeight+offsetY)+"px";
  debugIndex.textContent="Index: "+index;
@@ -327,7 +369,12 @@ function nextSetup(){
   b.textContent=p.label;b.className=p.cls;
   b.onclick=()=>{
    usedPawns.push(p.id);
-   players.push({name:input.value||("Jogador "+(setupIndex+1)),pawn:p.id,pos:0,finished:false,objectivesDone:{},tokens:[]});
+   players.push({
+     name:input.value||("Jogador "+(setupIndex+1)),
+     pawn:p.id,pos:0,finished:false,
+     objectivesDone:{},tokens:[],
+     finishRank:null
+   });
    pawns[p.id].style.display="block";
    placePawn(pawns[p.id],0);
    setupIndex++;nextSetup();
@@ -339,7 +386,12 @@ function nextSetup(){
 
 /* TURNO */
 function updateTurn(){
- while(players[current].finished)current=(current+1)%players.length;
+ if(players.every(p=>p.finished)){
+   endGame();
+   return;
+ }
+ while(players[current].finished)
+   current=(current+1)%players.length;
  turn.textContent="Vez de "+players[current].name;
  renderObjective(players[current]);
 }
@@ -356,20 +408,23 @@ function renderObjective(p){
 }
 
 /* PERGUNTAS */
-function triggerQuestion(km){
- pendingMunicipio=km;
- questionText.textContent="Pergunta do Município Km "+km;
+function triggerQuestion(cell){
+ pendingCell=cell;
+ questionText.textContent="Pergunta do Km "+cell.km;
  questionModal.style.display="flex";
 }
 answerRight.onclick=()=>{
  const p=players[current];
- const cell=SPECIAL_CELLS[p.pos];
+ const cell=pendingCell;
  questionModal.style.display="none";
- if(cell.tokensLeft>0 && confirm("Aceitar ficha?")){
-  cell.tokensLeft--;
+ if(confirm("Aceitar ficha?")){
   p.tokens.push(cell.km);
   if(p.objective.items.some(it=>it.km===cell.km))
-   p.objectivesDone[cell.km]=true;
+    p.objectivesDone[cell.km]=true;
+  if(cell.type==="faroFinal"){
+    p.finished=true;
+    p.finishRank=++finishOrder;
+  }
  }
  finishTurn();
 };
@@ -396,7 +451,7 @@ rollBtn.onclick=async()=>{
  }
 
  const cell=SPECIAL_CELLS[p.pos];
- if(cell && cell.type==="municipio") triggerQuestion(cell.km);
+ if(cell) triggerQuestion(cell);
  else finishTurn();
 };
 
@@ -404,6 +459,18 @@ function finishTurn(){
  rollBtn.disabled=false;
  current=(current+1)%players.length;
  updateTurn();
+}
+
+/* FIM DO JOGO */
+function endGame(){
+ game.classList.add("hidden");
+ let winner=[...players].sort((a,b)=>{
+   const oa=Object.keys(a.objectivesDone).length;
+   const ob=Object.keys(b.objectivesDone).length;
+   if(ob!==oa) return ob-oa;
+   return a.finishRank-b.finishRank;
+ })[0];
+ alert("🏆 Vencedor: "+winner.name);
 }
 
 });
