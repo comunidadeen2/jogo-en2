@@ -139,7 +139,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 </div>
 
 <script>
-/* ===== LIGAÇÃO AO DOM (FIX CRÍTICO) ===== */
+/* ===== DOM ===== */
 const setup = document.getElementById("setup");
 const names = document.getElementById("names");
 const game = document.getElementById("game");
@@ -151,7 +151,7 @@ const turn = document.getElementById("turn");
 const objectivePanel = document.getElementById("objectivePanel");
 const board = document.getElementById("board");
 
-/* ===== DADOS ===== */
+/* ===== TABULEIRO ===== */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -246,20 +246,92 @@ const SPACES = [
 ];
 
 
-const OBJECTIVES=[
- {items:[{km:0,text:"Visitar Chaves"},{km:88,text:"Visitar Peso da Régua"},{km:238,text:"Visitar Penacova"},{km:619,text:"Visitar Aljustrel"},{km:738,text:"Chegar a Faro"}]},
- {items:[{km:0,text:"Visitar Chaves"},{km:104,text:"Visitar Lamego"},{km:248,text:"Visitar Vila Nova de Poiares"},{km:640,text:"Visitar Castro Verde"},{km:738,text:"Chegar a Faro"}]},
- {items:[{km:35,text:"Vila Pouca de Aguiar"},{km:172,text:"Viseu"},{km:271,text:"Góis"},{km:551,text:"Alcáçovas"},{km:722,text:"São Brás de Alportel"}]},
- {items:[{km:64,text:"Vila Real"},{km:213,text:"Santa Comba Dão"},{km:345,text:"Sertã"},{km:565,text:"Torrão"},{km:688,text:"Ameixial"}]}
+/* ===== OBJETIVOS (COMPLETOS) ===== */
+const OBJECTIVES = [
+
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:35,text:"Visitar Vila Pouca de Aguiar"},
+    {km:172,text:"Visitar Viseu"},
+    {km:271,text:"Visitar Góis"},
+    {km:551,text:"Visitar Alcáçovas"},
+    {km:722,text:"Visitar São Brás de Alportel"}
+  ]},
+
+  { items:[
+    {km:64,text:"Visitar Vila Real"},
+    {km:213,text:"Visitar Santa Comba Dão"},
+    {km:345,text:"Visitar Sertã"},
+    {km:565,text:"Visitar Torrão"},
+    {km:688,text:"Visitar Ameixial"}
+  ]},
+
+  { items:[
+    {km:81,text:"Visitar Santa Marta de Penaguião"},
+    {km:225,text:"Visitar Mortágua"},
+    {km:345,text:"Visitar Sertã"},
+    {km:595,text:"Visitar Ferreira do Alentejo"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:366,text:"Visitar Vila de Rei"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:386,text:"Visitar Sardoal"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:136,text:"Visitar Castro Daire"},
+    {km:260,text:"Visitar Lousã"},
+    {km:430,text:"Visitar Ponte de Sôr"},
+    {km:666,text:"Passar pelo Km 666"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:0,text:"Partir de Chaves"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:69,text:"Passar pelo Km 69"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:476,text:"Visitar Mora"},
+    {km:494,text:"Visitar Coruche"},
+    {km:738,text:"Chegar a Faro"}
+  ]}
 ];
 
+/* ===== PEÕES ===== */
 const pawns=[
- document.getElementById("pawn0"),
- document.getElementById("pawn1"),
- document.getElementById("pawn2"),
- document.getElementById("pawn3")
+ pawn0,pawn1,pawn2,pawn3
 ];
-
 const pawnData=[
  {id:0,label:"🚗 Carro",cls:"car"},
  {id:1,label:"🚴 Bicicleta",cls:"bike"},
@@ -282,9 +354,9 @@ function placePawn(pawn,i){
 startBtn.onclick=()=>{
  setup.classList.add("hidden");
  names.classList.remove("hidden");
- setupIndex=0;
  players=[];
  usedPawns=[];
+ setupIndex=0;
  nextSetup();
 };
 
@@ -300,9 +372,9 @@ function nextSetup(){
   return;
  }
 
- const title=document.createElement("h3");
- title.textContent="Jogador "+(setupIndex+1);
- names.appendChild(title);
+ const h=document.createElement("h3");
+ h.textContent="Jogador "+(setupIndex+1);
+ names.appendChild(h);
 
  const input=document.createElement("input");
  input.placeholder="Nome do Jogador";
