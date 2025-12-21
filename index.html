@@ -45,7 +45,6 @@ h1{text-align:center;margin:20px 0;}
   transform:translate(-50%,-50%);
   font-size:22px;
   pointer-events:none;
-  display:none;
 }
 
 .controls{text-align:center;margin:20px 0;}
@@ -57,20 +56,19 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
-button:disabled{opacity:.5;cursor:not-allowed}
 .hidden{display:none}
 
 /* OBJECTIVO */
 #objectivePanel{
-  width:320px;
-  background:#1c1c1c;
+  width:340px;
+  background:var(--panel);
   border-radius:16px;
   padding:16px;
   border:2px dashed #555;
 }
 .objective-title{
   font-weight:bold;
-  color:#ff9f1c;
+  color:var(--accent);
   margin-bottom:12px;
 }
 .obj-list{
@@ -84,18 +82,17 @@ button:disabled{opacity:.5;cursor:not-allowed}
   gap:12px;
 }
 .marco{
-  width:52px;
-  height:52px;
-  border-radius:12px;
-  background:#666;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:var(--grey);
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight:bold;
-  color:#fff;
-  font-size:13px;
+  color:#111;
 }
-.marco::before{content:"Km "}
+.marco.done{background:var(--green);}
 </style>
 </head>
 
@@ -116,7 +113,6 @@ button:disabled{opacity:.5;cursor:not-allowed}
 </div>
 
 <div class="controls">
-
   <div id="setup">
     Jogadores:
     <select id="playerCount">
@@ -127,18 +123,15 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
   <div id="names" class="hidden"></div>
 
-  <div id="pawnSelect" class="hidden"></div>
-
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
     <p id="turn"></p>
   </div>
-
 </div>
 
 <script>
-// -------- SPACES --------
+
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -231,189 +224,88 @@ const SPACES = [
 {"x":0.9078014184397163,"y":0.8478941136671179},
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
-
-
-// -------- OBJETIVOS --------
+// ===== OBJETIVOS (NÃO REPETEM) =====
 const OBJECTIVES = [
-  {items:[{km:0,text:"Visitar Chaves"},{km:88,text:"Visitar Peso da Régua"},{km:238,text:"Visitar Penacova"},{km:619,text:"Visitar Aljustrel"},{km:738,text:"Chegar a Faro"}]},
-  {items:[{km:0,text:"Visitar Chaves"},{km:104,text:"Visitar Lamego"},{km:248,text:"Visitar Vila Nova de Poiares"},{km:640,text:"Visitar Castro Verde"},{km:738,text:"Chegar a Faro"}]},
-  {items:[{km:35,text:"Vila Pouca de Aguiar"},{km:172,text:"Viseu"},{km:271,text:"Góis"},{km:551,text:"Alcáçovas"},{km:722,text:"São Brás de Alportel"}]},
-  {items:[{km:64,text:"Vila Real"},{km:213,text:"Santa Comba Dão"},{km:345,text:"Sertã"},{km:565,text:"Torrão"},{km:688,text:"Ameixial"}]}
+  {items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+  {items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+  {items:[
+    {km:35,text:"Vila Pouca de Aguiar"},
+    {km:172,text:"Viseu"},
+    {km:271,text:"Góis"},
+    {km:551,text:"Alcáçovas"},
+    {km:722,text:"São Brás de Alportel"}
+  ]},
+  {items:[
+    {km:64,text:"Vila Real"},
+    {km:213,text:"Santa Comba Dão"},
+    {km:345,text:"Sertã"},
+    {km:565,text:"Torrão"},
+    {km:688,text:"Ameixial"}
+  ]}
 ];
 
-// -------- ELEMENTOS --------
+// ===== ELEMENTOS =====
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 const board=document.getElementById("board");
 
-let players=[],current=0;
+let players=[];
+let positions=[0,0,0,0];
+let current=0;
 
-// -------- POSICIONAR --------
-function placePawn(p,i){
+// ===== POSICIONAR PEÃO =====
+function placePawn(pawn,i){
   const s=SPACES[i];
-  p.style.left=(s.x*board.clientWidth-6)+"px";
-  p.style.top=(s.y*board.clientHeight-8)+"px";
+  pawn.style.left=(s.x*board.clientWidth)+"px";
+  pawn.style.top=(s.y*board.clientHeight)+"px";
 }
 
-// -------- SETUP --------
-startBtn.onclick = () => {
-  const n = Number(playerCount.value);
-
-  players = [];
-  names.innerHTML = "";
+// ===== SETUP =====
+startBtn.onclick=()=>{
   setup.classList.add("hidden");
-
-  // 🔹 MOSTRAR ECRÃ DOS NOMES
   names.classList.remove("hidden");
-
-  for (let i = 0; i < n; i++) {
-    const input = document.createElement("input");
-    input.placeholder = "Nome do Jogador " + (i + 1);
-    input.style.display = "block";
-    input.style.margin = "6px auto";
-    names.appendChild(input);
-  }
-
-  const confirmBtn = document.createElement("button");
-  confirmBtn.textContent = "Confirmar nomes";
-  confirmBtn.style.marginTop = "12px";
-
-  confirmBtn.onclick = () => {
-    const inputs = names.querySelectorAll("input");
-
-    players = [];
-    inputs.forEach((inp, i) => {
-      players.push({
-        name: inp.value || "Jogador " + (i + 1),
-        pawn: null,
-        pos: 0,
-        finished: false,
-        objective: null
-      });
-    });
-
-    // 🔹 ESCONDE NOMES (NÃO APAGA)
-    names.classList.add("hidden");
-
-    // 🔹 MOSTRA ESCOLHA DE PEÕES
-    pawnSelect.classList.remove("hidden");
-
-    startPawnSelection();
-  };
-
-  names.appendChild(confirmBtn);
-};
-
-  players = [];
-
-  for (let i = 0; i < Number(playerCount.value); i++) {
-    const input = document.createElement("input");
-    input.placeholder = "Nome do Jogador " + (i + 1);
+  names.innerHTML="";
+  players=[];
+  for(let i=0;i<playerCount.value;i++){
+    const input=document.createElement("input");
+    input.placeholder="Nome do Jogador "+(i+1);
     names.appendChild(input);
     names.appendChild(document.createElement("br"));
   }
-
-  const confirmBtn = document.createElement("button");
-  confirmBtn.textContent = "Confirmar nomes";
-
-  confirmBtn.onclick = () => {
-  const inputs = names.querySelectorAll("input");
-
-  players = [];
-  inputs.forEach((inp, i) => {
-    players.push({
-      name: inp.value || "Jogador " + (i + 1),
-      pawn: null,
-      pos: 0,
-      finished: false
+  const b=document.createElement("button");
+  b.textContent="Confirmar";
+  b.onclick=()=>{
+    const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+    [...names.querySelectorAll("input")].forEach((inp,i)=>{
+      players.push({
+        name:inp.value||("Jogador "+(i+1)),
+        pawn:i,
+        pos:0,
+        finished:false,
+        objective:deck.pop()
+      });
+      placePawn(pawns[i],0);
     });
-  });
-
-  // 🔒 APENAS ESCONDER A ÁREA DOS NOMES
-  names.classList.add("hidden");
-
-  // ❌ NÃO APAGAR O HTML
-  // names.innerHTML = "";   ← ISTO CAUSAVA O DESAPARECIMENTO
-
-  // ✅ MOSTRAR ESCOLHA DE PEÕES
-  pawnSelect.classList.remove("hidden");
-
-  startPawnSelection();
-};
-
-  names.appendChild(confirmBtn);
-};
-
-function confirmNames() {
-  players = [];
-  current = 0;
-
-  const deck = [...OBJECTIVES].sort(() => Math.random() - 0.5);
-
-  [...names.querySelectorAll("input")].forEach((inp, i) => {
-    players.push({
-      name: inp.value || ("Jogador " + (i + 1)),
-      pawn: null,
-      pos: 0,
-      finished: false,
-      objective: deck.pop()
-    });
-  });
-
-  // 🔥 FECHAR COMPLETAMENTE A FASE DOS NOMES
-   names.classList.add("hidden");
-
-  // 🔥 ABRIR ESCOLHA DE PEÕES NO SÍTIO CERTO
-  pawnSelect.classList.remove("hidden");
-  startPawnSelection();
-}
-
-// -------- PEÕES --------
-function startPawnSelection() {
-  pawnSelect.innerHTML = "";
-
-  let idx = players.findIndex(p => p.pawn === null);
-  if (idx === -1) {
-    pawnSelect.classList.add("hidden");
+    names.classList.add("hidden");
     game.classList.remove("hidden");
     objectivePanel.classList.remove("hidden");
     updateTurn();
-    return;
-  }
+  };
+  names.appendChild(b);
+};
 
-  const p = players[idx];
-  pawnQuestion.textContent = `${p.name}, escolhe o teu peão:`;
-
-  const types = [
-    { i: 0, label: "🚗 Carro", color: "#d62828" },
-    { i: 1, label: "🚴 Bicicleta", color: "#f5c400", text:"#111" },
-    { i: 2, label: "🏍️ Mota", color: "#000" },
-    { i: 3, label: "🚶 A pé", color: "#2ecc71" }
-  ];
-
-  types.forEach(t => {
-    if (players.some(pl => pl.pawn === t.i)) return;
-
-    const b = document.createElement("button");
-    b.textContent = t.label;
-    b.style.background = t.color;
-    b.style.color = t.text || "#fff";
-    b.style.margin = "6px";
-    b.style.padding = "10px 16px";
-    b.style.borderRadius = "10px";
-    b.style.fontWeight = "bold";
-
-    b.onclick = () => {
-      p.pawn = t.i;
-      pawns[t.i].style.display = "block";
-      placePawn(pawns[t.i], 0);
-      startPawnSelection();
-    };
-
-    pawnSelect.appendChild(b);
-  });
-}
-
-// -------- TURNO --------
+// ===== TURNO =====
 function updateTurn(){
   while(players[current].finished){
     current=(current+1)%players.length;
@@ -422,6 +314,7 @@ function updateTurn(){
   renderObjective(players[current]);
 }
 
+// ===== CARTA OBJETIVO =====
 function renderObjective(p){
   objectivePanel.innerHTML=
     `<div class="objective-title">🎯 Objetivo de ${p.name}</div>
@@ -434,33 +327,31 @@ function renderObjective(p){
      </div>`;
 }
 
-// -------- JOGAR --------
+// ===== JOGAR =====
 rollBtn.onclick=async()=>{
-  rollBtn.disabled=true;
   const r=Math.floor(Math.random()*6)+1;
   dice.textContent=r;
   const p=players[current];
-  const pawn=pawns[p.pawn];
 
   let target=p.pos+r;
-  if(target>=SPACES.length){
-    target=SPACES.length-1-(target-(SPACES.length-1));
+  if(target>=SPACES.length-1){
+    target=(SPACES.length-1)-(target-(SPACES.length-1));
   }
 
   while(p.pos!==target){
     p.pos+=p.pos<target?1:-1;
-    placePawn(pawn,p.pos);
-    await new Promise(r=>setTimeout(r,250));
+    placePawn(pawns[p.pawn],p.pos);
+    await new Promise(res=>setTimeout(res,200));
   }
 
-  if(p.pos===SPACES.length-1)p.finished=true;
+  if(p.pos===SPACES.length-1){
+    p.finished=true;
+  }
 
   current=(current+1)%players.length;
-  rollBtn.disabled=false;
   updateTurn();
 };
 </script>
 
 </body>
 </html>
-
