@@ -198,21 +198,21 @@ const SPACES = Array.from({length:100},(_,i)=>({
 
 // ================= OBJETIVOS (ÚNICOS) =================
 const OBJECTIVES = [
-  {
-    kms: [
-      { value: 81, label: "Santa Marta de Penaguião", index: 10, done:false },
-      { value: 225, label: "Mortágua", index: 30, done:false },
-      { value: 345, label: "Sertã", index: 45, done:false },
-      { value: 595, label: "Ferreira do Alentejo", index: 78, done:false },
-      { value: 738, label: "Faro", index: 95, done:false }
-    ]
-  }
+  { text:"O teu objectivo é ser o primeiro a chegar a Faro (Km 738,5)." },
+  { text:"O teu objectivo é ser o último a chegar a Faro." },
+  { text:"Visitar Peso da Régua (Km 88)." },
+  { text:"Visitar Lamego (Km 104)." }
 ];
 
 // ================= ELEMENTOS =================
 const board=document.getElementById("boardFrame");
-const pawns=[pawn0,pawn1,pawn2,pawn3];
-const startBtn=document.getElementById("startBtn");
+const pawns = [
+  document.getElementById("pawn0"),
+  document.getElementById("pawn1"),
+  document.getElementById("pawn2"),
+  document.getElementById("pawn3")
+];
+const startBtn = document.getElementById("startBtn");
 const pawnSelect=document.getElementById("pawnSelect");
 const pawnButtons=document.getElementById("pawnButtons");
 const pawnQuestion=document.getElementById("pawnQuestion");
@@ -288,7 +288,10 @@ function startGame(){
   const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
   players.forEach(p=>p.objective=deck.pop());
 
-  updateTurn();
+const deck = [...OBJECTIVES].sort(() => Math.random() - 0.5);
+players.forEach(p => p.objective = deck.pop());
+  
+updateTurn();
 }
 
 function updateTurn(){
