@@ -274,27 +274,29 @@ startBtn.onclick = () => {
   confirmBtn.textContent = "Confirmar nomes";
 
   confirmBtn.onclick = () => {
-    const inputs = names.querySelectorAll("input");
+  const inputs = names.querySelectorAll("input");
 
-    players = [];
-    inputs.forEach((inp, i) => {
-      players.push({
-        name: inp.value || "Jogador " + (i + 1),
-        pawn: null,
-        pos: 0,
-        finished: false
-      });
+  players = [];
+  inputs.forEach((inp, i) => {
+    players.push({
+      name: inp.value || "Jogador " + (i + 1),
+      pawn: null,
+      pos: 0,
+      finished: false
     });
+  });
 
-    // ⛔ ESCONDER APENAS OS NOMES
-    names.classList.add("hidden");
-    names.innerHTML = "";
+  // 🔒 APENAS ESCONDER A ÁREA DOS NOMES
+  names.classList.add("hidden");
 
-    // ✅ MOSTRAR ESCOLHA DE PEÕES
-    pawnSelect.classList.remove("hidden");
+  // ❌ NÃO APAGAR O HTML
+  // names.innerHTML = "";   ← ISTO CAUSAVA O DESAPARECIMENTO
 
-    startPawnSelection();
-  };
+  // ✅ MOSTRAR ESCOLHA DE PEÕES
+  pawnSelect.classList.remove("hidden");
+
+  startPawnSelection();
+};
 
   names.appendChild(confirmBtn);
 };
@@ -316,8 +318,7 @@ function confirmNames() {
   });
 
   // 🔥 FECHAR COMPLETAMENTE A FASE DOS NOMES
-  names.innerHTML = "";
-  names.classList.add("hidden");
+   names.classList.add("hidden");
 
   // 🔥 ABRIR ESCOLHA DE PEÕES NO SÍTIO CERTO
   pawnSelect.classList.remove("hidden");
