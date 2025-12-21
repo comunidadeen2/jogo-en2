@@ -98,6 +98,45 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .marco::before{content:"Km "}
 </style>
 </head>
+
+<body>
+
+<h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
+
+<div class="main">
+  <div class="board-frame" id="board">
+    <div class="board-img"></div>
+    <div class="pawn" id="pawn0">🚗</div>
+    <div class="pawn" id="pawn1">🚴</div>
+    <div class="pawn" id="pawn2">🏍️</div>
+    <div class="pawn" id="pawn3">🚶</div>
+  </div>
+
+  <div id="objectivePanel" class="hidden"></div>
+</div>
+
+<div class="controls">
+
+  <div id="setup">
+    Jogadores:
+    <select id="playerCount">
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+    </select>
+    <button id="startBtn">COMEÇAR</button>
+  </div>
+
+  <div id="names" class="hidden"></div>
+
+  <div id="pawnSelect" class="hidden"></div>
+
+  <div id="game" class="hidden">
+    <button id="rollBtn">JOGAR</button>
+    🎲 <span id="dice">—</span>
+    <p id="turn"></p>
+  </div>
+
+</div>
+
 <script>
 // -------- SPACES --------
 const SPACES = [
@@ -424,44 +463,4 @@ rollBtn.onclick=async()=>{
 
 </body>
 </html>
-
-
-
-<body>
-
-<h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
-
-<div class="main">
-  <div class="board-frame" id="board">
-    <div class="board-img"></div>
-    <div class="pawn" id="pawn0">🚗</div>
-    <div class="pawn" id="pawn1">🚴</div>
-    <div class="pawn" id="pawn2">🏍️</div>
-    <div class="pawn" id="pawn3">🚶</div>
-  </div>
-
-  <div id="objectivePanel" class="hidden"></div>
-</div>
-
-<div class="controls">
-
-  <div id="setup">
-    Jogadores:
-    <select id="playerCount">
-      <option>1</option><option>2</option><option>3</option><option>4</option>
-    </select>
-    <button id="startBtn">COMEÇAR</button>
-  </div>
-
-  <div id="names" class="hidden"></div>
-
-  <div id="pawnSelect" class="hidden"></div>
-
-  <div id="game" class="hidden">
-    <button id="rollBtn">JOGAR</button>
-    🎲 <span id="dice">—</span>
-    <p id="turn"></p>
-  </div>
-
-</div>
 
