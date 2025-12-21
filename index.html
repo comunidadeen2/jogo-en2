@@ -92,13 +92,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 }
 .marco.done{background:var(--green);}
 
-/* PEÕES */
-.pawn.car{color:red}
-.pawn.bike{color:orange}
-.pawn.moto{color:black}
-.pawn.walk{color:lime}
-
-/* SELEÇÃO DE PEÕES */
+/* seleção de peões */
 .pawn-select button{
   margin:6px;
   color:#111;
@@ -117,10 +111,10 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <div class="main">
   <div class="board-frame" id="board">
     <div class="board-img"></div>
-    <div class="pawn car" id="pawn0">🚗</div>
-    <div class="pawn bike" id="pawn1">🚴</div>
-    <div class="pawn moto" id="pawn2">🏍️</div>
-    <div class="pawn walk" id="pawn3">🚶</div>
+    <div class="pawn" id="pawn0">🚗</div>
+    <div class="pawn" id="pawn1">🚴</div>
+    <div class="pawn" id="pawn2">🏍️</div>
+    <div class="pawn" id="pawn3">🚶</div>
   </div>
 
   <div id="objectivePanel" class="hidden"></div>
@@ -245,8 +239,6 @@ const OBJECTIVES=[
  {items:[{km:64,text:"Vila Real"},{km:213,text:"Santa Comba Dão"},{km:345,text:"Sertã"},{km:565,text:"Torrão"},{km:688,text:"Ameixial"}]}
 ];
 
-const KM_TO_INDEX=km=>Math.round((km/738)*(SPACES.length-1));
-
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 const pawnData=[
  {id:0,label:"🚗 Carro",cls:"car"},
@@ -257,6 +249,8 @@ const pawnData=[
 
 let players=[];
 let current=0;
+let usedPawns=[];
+let setupIndex=0;
 
 function placePawn(pawn,i){
  const s=SPACES[i];
@@ -267,50 +261,59 @@ function placePawn(pawn,i){
 startBtn.onclick=()=>{
  setup.classList.add("hidden");
  names.classList.remove("hidden");
- names.innerHTML="";
+ setupIndex=0;
  players=[];
- for(let i=0;i<playerCount.value;i++){
-  const div=document.createElement("div");
-  const input=document.createElement("input");
-  input.placeholder="Nome do Jogador "+(i+1);
-  div.appendChild(input);
+ usedPawns=[];
+ nextSetup();
+};
 
-  const sel=document.createElement("div");
-  sel.className="pawn-select";
-
-  pawnData.forEach(p=>{
-   const b=document.createElement("button");
-   b.textContent=p.label;
-   b.className=p.cls;
-   b.onclick=()=>{
-    b.remove();
-    players[i].pawn=p.id;
-    pawns[p.id].style.display="block";
-    placePawn(pawns[p.id],0);
-   };
-   sel.appendChild(b);
-  });
-
-  names.appendChild(div);
-  names.appendChild(sel);
-
-  players.push({name:"",pos:0,finished:false,pawn:null});
- }
- const b=document.createElement("button");
- b.textContent="Confirmar";
- b.onclick=()=>{
+function nextSetup(){
+ names.innerHTML="";
+ if(setupIndex>=playerCount.value){
   const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
-  players.forEach((p,i)=>{
-   p.name=names.querySelectorAll("input")[i].value||("Jogador "+(i+1));
-   p.objective=deck.pop();
-  });
+  players.forEach(p=>p.objective=deck.pop());
   names.classList.add("hidden");
   game.classList.remove("hidden");
   objectivePanel.classList.remove("hidden");
   updateTurn();
- };
- names.appendChild(b);
-};
+  return;
+ }
+
+ const title=document.createElement("h3");
+ title.textContent="Jogador "+(setupIndex+1);
+ names.appendChild(title);
+
+ const input=document.createElement("input");
+ input.placeholder="Nome do Jogador";
+ names.appendChild(input);
+
+ const sel=document.createElement("div");
+ sel.className="pawn-select";
+
+ pawnData.forEach(p=>{
+  if(usedPawns.includes(p.id)) return;
+  const b=document.createElement("button");
+  b.textContent=p.label;
+  b.className=p.cls;
+  b.onclick=()=>{
+   usedPawns.push(p.id);
+   players.push({
+    name:input.value||("Jogador "+(setupIndex+1)),
+    pawn:p.id,
+    pos:0,
+    finished:false,
+    objectivesDone:{}
+   });
+   pawns[p.id].style.display="block";
+   placePawn(pawns[p.id],0);
+   setupIndex++;
+   nextSetup();
+  };
+  sel.appendChild(b);
+ });
+
+ names.appendChild(sel);
+}
 
 function updateTurn(){
  while(players[current].finished){
@@ -325,42 +328,10 @@ function renderObjective(p){
  `<div class="objective-title">🎯 Objetivo de ${p.name}</div>
   <div class="obj-list">
    ${p.objective.items.map(it=>{
-    const done=p.pos>=KM_TO_INDEX(it.km);
+    const done=p.objectivesDone[it.km];
     return `<div class="obj-item">
      <div class="marco ${done?"done":""}">Km ${it.km}</div>
      <div>${it.text}</div>
     </div>`;
    }).join("")}
   </div>`;
-}
-
-rollBtn.onclick=async()=>{
- rollBtn.disabled=true;
- const r=Math.floor(Math.random()*6)+1;
- dice.textContent=r;
- const p=players[current];
-
- let target=p.pos+r;
- if(target>=SPACES.length-1){
-  target=(SPACES.length-1)-(target-(SPACES.length-1));
- }
-
- while(p.pos!==target){
-  p.pos+=p.pos<target?1:-1;
-  placePawn(pawns[p.pawn],p.pos);
-  await new Promise(res=>setTimeout(res,200));
- }
-
- if(p.pos===SPACES.length-1){
-  p.finished=true;
- }
-
- rollBtn.disabled=false;
- current=(current+1)%players.length;
- updateTurn();
-};
-</script>
-
-</body>
-</html>
-
