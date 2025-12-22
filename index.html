@@ -116,6 +116,7 @@ const QUESTIONS=[
  "Qual é a capital do Algarve?"
 ];
 
+/* SPACES — mantém os teus (não alterados) */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -209,16 +210,9 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* MUNICÍPIOS (CASAS VERDES) */
-const MUNICIPIOS_KM=[
-0,35,64,69,81,88,104,136,152,171,200,213,225,238,248,262,272,324,345,366,369,
-386,400,435,466,475,494,500,518,551,565,595,619,640,663,666,688,722,738,738.5
-];
-
-const MUNICIPIOS={};
-MUNICIPIOS_KM.forEach(km=>{
-  MUNICIPIOS[km]={tokensLeft:2};
-});
+/* MUNICÍPIOS */
+const SPECIAL_CELLS={89:{km:738.5,final:true}};
+Object.values(SPECIAL_CELLS).forEach(c=>c.tokensLeft=2);
 
 /* OBJETIVOS (exemplo) */
 const OBJECTIVES = [
