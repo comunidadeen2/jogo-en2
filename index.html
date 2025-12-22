@@ -72,6 +72,22 @@ button:disabled{opacity:.5}
 #modalBox button{margin:6px}
 .accept{background:var(--green);color:#000}
 .decline{background:var(--red);color:#fff}
+
+/* FINAL */
+#endScreen{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+#endBox{
+  background:#1c1c1c;
+  padding:24px;
+  border-radius:16px;
+  width:460px;
+}
 </style>
 </head>
 
@@ -112,6 +128,13 @@ button:disabled{opacity:.5}
   <div id="modalBox">
     <p id="modalText"></p>
     <div id="modalButtons"></div>
+  </div>
+</div>
+
+<div id="endScreen">
+  <div id="endBox">
+    <h2>🏁 Classificação Final</h2>
+    <ol id="ranking"></ol>
   </div>
 </div>
 
@@ -212,23 +235,8 @@ const SPACES = [
 
 /* ================= MUNICÍPIOS ================= */
 const SPECIAL_CELLS={
-  3:{km:0},5:{km:35},7:{km:64},8:{km:69},11:{km:81},13:{km:88},
-  16:{km:104},19:{km:136},21:{km:152},23:{km:171},25:{km:200},
-  27:{km:213},29:{km:225},31:{km:238},33:{km:248},35:{km:262},
-  37:{km:272},39:{km:324},41:{km:345},43:{km:366},44:{km:369},
-  46:{km:386},48:{km:400},50:{km:435},52:{km:466},54:{km:475},
-  57:{km:494},58:{km:500},60:{km:518},63:{km:551},66:{km:565},
-  68:{km:595},70:{km:619},73:{km:640},75:{km:663},77:{km:666},
-  80:{km:688},83:{km:722},85:{km:738},89:{km:738.5,final:true}
+  85:{km:738},89:{km:738.5,final:true}
 };
-
-/* ================= EVENTOS ================= */
-const EVENTS=[
- {text:"Bons momentos! Avança +1 casa.",move:1},
- {text:"Bons momentos! Avança +2 casas.",move:2},
- {text:"Contratempo! Recua 1 casa.",move:-1},
- {text:"Contratempo! Recua 2 casas.",move:-2}
-];
 
 /* ================= PERGUNTAS ================= */
 const QUESTIONS=[
@@ -321,11 +329,10 @@ const OBJECTIVES = [
   ]}
 ];
 
-/* ================= ESTADO ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
-let players=[],current=0,pendingCell=null,ignoreNext=false;
+let players=[],current=0,finishOrder=0;
 
-/* ================= POSICIONAR (AJUSTE FINO) ================= */
+/* ================= POSICIONAR ================= */
 function placePawn(pawn,i){
  const s=SPACES[i];
  let ox=-8,oy=-10;
@@ -368,7 +375,14 @@ startBtn.onclick=()=>{
     b.className=p.cls;b.textContent=p.txt;
     b.onclick=()=>{
       used.push(p.id);
-      players.push({name:input.value||("Jogador "+(i+1)),pawn:p.id,pos:0,done:{},extra:[],finished:false,rank:null});
+      players.push({
+        name:input.value||("Jogador "+(i+1)),
+        pawn:p.id,pos:0,done:{},extra:[],
+        finished:false,rank:null,
+        municipiosVisitados:0,
+        questionsCorrect:0,
+        questionsWrong:0
+      });
       pawns[p.id].style.display="block";
       placePawn(pawns[p.id],0);
       i++;next();
@@ -381,6 +395,7 @@ startBtn.onclick=()=>{
 
 /* ================= TURNO ================= */
 function updateTurn(){
+ if(players.every(p=>p.finished)){endGame();return;}
  while(players[current].finished){
   current=(current+1)%players.length;
  }
@@ -398,16 +413,6 @@ function renderObjective(p){
     <div>${it.text}</div>
    </div>`;
  });
- if(p.extra.length){
-  objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
-  p.extra.forEach(k=>{
-    objectivePanel.innerHTML+=`
-     <div class="obj-item">
-      <div class="marco">Km ${k}</div>
-      <div>Ficha de Município</div>
-     </div>`;
-  });
- }
 }
 
 /* ================= MODAL ================= */
@@ -427,27 +432,38 @@ function closeModal(){modal.style.display="none";}
 
 /* ================= PERGUNTA ================= */
 function askQuestion(cell){
- pendingCell=cell;
  showModal(
   QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
   [
-   {text:"Resposta Certa",action:()=>{closeModal();askAccept(cell);}},
-   {text:"Resposta Errada",action:()=>{closeModal();current=(current+1)%players.length;updateTurn();}}
+   {text:"Resposta Certa",action:()=>{
+     players[current].questionsCorrect++;
+     closeModal();
+     acceptFicha(cell);
+   }},
+   {text:"Resposta Errada",action:()=>{
+     players[current].questionsWrong++;
+     closeModal();
+     current=(current+1)%players.length;
+     updateTurn();
+   }}
   ]
  );
 }
 
-/* ================= ACEITAR FICHA ================= */
-function askAccept(cell){
+/* ================= FICHA ================= */
+function acceptFicha(cell){
  showModal(
-  `${players[current].name} ganhou uma Ficha do Município (Km ${cell.km}). Pretende aceitar?`,
+  `Ganhou uma ficha do Km ${cell.km}. Aceita?`,
   [
-   {text:"Aceitar Ficha",cls:"accept",action:()=>{
+   {text:"Aceitar",cls:"accept",action:()=>{
      closeModal();
      const p=players[current];
-     if(!p.done[cell.km] && !p.extra.includes(cell.km)){
-       if(p.objective.items.some(it=>it.km===cell.km)) p.done[cell.km]=true;
-       else p.extra.push(cell.km);
+     p.municipiosVisitados++;
+     if(p.objective.items.some(it=>it.km===cell.km)) p.done[cell.km]=true;
+     if(cell.final){
+       p.finished=true;
+       p.rank=++finishOrder;
+       current=(current+1)%players.length;
      }
      updateTurn();
    }},
@@ -457,21 +473,6 @@ function askAccept(cell){
      updateTurn();
    }}
   ]
- );
-}
-
-/* ================= EVENTO ================= */
-function doEvent(){
- const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
- showModal(
-  ev.text,
-  [{text:"OK",action:()=>{
-    closeModal();
-    players[current].pos=Math.max(0,Math.min(players[current].pos+ev.move,SPACES.length-1));
-    placePawn(pawns[players[current].pawn],players[current].pos);
-    current=(current+1)%players.length;
-    updateTurn();
-  }}]
  );
 }
 
@@ -489,15 +490,40 @@ rollBtn.onclick=async()=>{
  while(p.pos!==target){
   p.pos+=p.pos<target?1:-1;
   placePawn(pawns[p.pawn],p.pos);
-  await new Promise(res=>setTimeout(res,200));
+  await new Promise(res=>setTimeout(res,350));
  }
 
  const cell=SPECIAL_CELLS[p.pos];
  if(cell) askQuestion(cell);
- else doEvent();
+ else{
+  current=(current+1)%players.length;
+  updateTurn();
+ }
 
  rollBtn.disabled=false;
 };
+
+/* ================= FIM ================= */
+function endGame(){
+ endScreen.style.display="flex";
+ const list=document.getElementById("ranking");
+ list.innerHTML="";
+ const sorted=[...players].sort((a,b)=>{
+   const da=Object.keys(a.done).length;
+   const db=Object.keys(b.done).length;
+   return db-da||a.rank-b.rank;
+ });
+ sorted.forEach(p=>{
+  const li=document.createElement("li");
+  li.innerHTML=`
+   <strong>${p.name}</strong><br>
+   🏘️ Municípios: ${p.municipiosVisitados}<br>
+   ❓ Perguntas: ${p.questionsCorrect+p.questionsWrong}
+   (${p.questionsCorrect}✔️ / ${p.questionsWrong}❌)
+  `;
+  list.appendChild(li);
+ });
+}
 </script>
 
 </body>
