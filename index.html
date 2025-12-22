@@ -53,7 +53,7 @@ button:disabled{opacity:.5}
 .moto{background:#222;color:#fff}
 .walk{background:#2ecc71;color:#000}
 
-/* MODAL (não tapa objetivos) */
+/* MODAL */
 #modal{
   position:fixed;
   inset:0;
@@ -72,22 +72,6 @@ button:disabled{opacity:.5}
 #modalBox button{margin:6px}
 .accept{background:var(--green);color:#000}
 .decline{background:var(--red);color:#fff}
-
-/* PÓDIO */
-#endScreen{
-  position:fixed;
-  inset:0;
-  background:#000;
-  display:none;
-  align-items:center;
-  justify-content:center;
-}
-#endBox{
-  background:#1c1c1c;
-  padding:24px;
-  border-radius:16px;
-  width:420px;
-}
 </style>
 </head>
 
@@ -128,13 +112,6 @@ button:disabled{opacity:.5}
   <div id="modalBox">
     <p id="modalText"></p>
     <div id="modalButtons"></div>
-  </div>
-</div>
-
-<div id="endScreen">
-  <div id="endBox">
-    <h2>🏆 Classificação Final</h2>
-    <ol id="ranking"></ol>
   </div>
 </div>
 
@@ -245,6 +222,14 @@ const SPECIAL_CELLS={
   80:{km:688},83:{km:722},85:{km:738},89:{km:738.5,final:true}
 };
 
+/* ================= EVENTOS ================= */
+const EVENTS=[
+ {text:"Bons momentos! Avança +1 casa.",move:1},
+ {text:"Bons momentos! Avança +2 casas.",move:2},
+ {text:"Contratempo! Recua 1 casa.",move:-1},
+ {text:"Contratempo! Recua 2 casas.",move:-2}
+];
+
 /* ================= PERGUNTAS ================= */
 const QUESTIONS=[
  "Qual é o prato típico mais famoso de Portugal?",
@@ -338,13 +323,15 @@ const OBJECTIVES = [
 
 /* ================= ESTADO ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
-let players=[],current=0,finishCount=0,pendingCell=null;
+let players=[],current=0,pendingCell=null,ignoreNext=false;
 
-/* ================= POSICIONAR (CENTRO FINO) ================= */
+/* ================= POSICIONAR (AJUSTE FINO) ================= */
 function placePawn(pawn,i){
  const s=SPACES[i];
- pawn.style.left=(s.x*board.clientWidth-8)+"px";
- pawn.style.top =(s.y*board.clientHeight-10)+"px";
+ let ox=-8,oy=-10;
+ if(i>=75){ox=-10;oy=-12;}
+ pawn.style.left=(s.x*board.clientWidth+ox)+"px";
+ pawn.style.top =(s.y*board.clientHeight+oy)+"px";
 }
 
 /* ================= SETUP ================= */
@@ -394,9 +381,8 @@ startBtn.onclick=()=>{
 
 /* ================= TURNO ================= */
 function updateTurn(){
- if(players.every(p=>p.finished)){endGame();return;}
  while(players[current].finished){
-   current=(current+1)%players.length;
+  current=(current+1)%players.length;
  }
  turn.textContent="Vez de "+players[current].name;
  renderObjective(players[current]);
@@ -463,11 +449,6 @@ function askAccept(cell){
        if(p.objective.items.some(it=>it.km===cell.km)) p.done[cell.km]=true;
        else p.extra.push(cell.km);
      }
-     if(cell.final){
-       p.finished=true;
-       p.rank=++finishCount;
-       current=(current+1)%players.length;
-     }
      updateTurn();
    }},
    {text:"Recusar",cls:"decline",action:()=>{
@@ -476,6 +457,21 @@ function askAccept(cell){
      updateTurn();
    }}
   ]
+ );
+}
+
+/* ================= EVENTO ================= */
+function doEvent(){
+ const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+ showModal(
+  ev.text,
+  [{text:"OK",action:()=>{
+    closeModal();
+    players[current].pos=Math.max(0,Math.min(players[current].pos+ev.move,SPACES.length-1));
+    placePawn(pawns[players[current].pawn],players[current].pos);
+    current=(current+1)%players.length;
+    updateTurn();
+  }}]
  );
 }
 
@@ -498,25 +494,10 @@ rollBtn.onclick=async()=>{
 
  const cell=SPECIAL_CELLS[p.pos];
  if(cell) askQuestion(cell);
- else{current=(current+1)%players.length;updateTurn();}
+ else doEvent();
 
  rollBtn.disabled=false;
 };
-
-/* ================= FIM DE JOGO ================= */
-function endGame(){
- endScreen.style.display="flex";
- const ranking=[...players].sort((a,b)=>{
-   const da=Object.keys(a.done).length;
-   const db=Object.keys(b.done).length;
-   return db-da||a.rank-b.rank;
- });
- ranking.forEach(p=>{
-   const li=document.createElement("li");
-   li.textContent=`${p.name} — ${Object.keys(p.done).length} objetivos`;
-   document.getElementById("ranking").appendChild(li);
- });
-}
 </script>
 
 </body>
