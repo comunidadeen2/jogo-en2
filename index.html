@@ -14,18 +14,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:Arial}
 h1{text-align:center;margin:20px 0}
 .main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
 
-/* TABULEIRO */
 .board-frame{width:1000px;height:750px;position:relative;overflow:hidden;border-radius:10px}
 .board-img{position:absolute;inset:0;background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat}
 .pawn{position:absolute;transform:translate(-50%,-50%);font-size:22px;pointer-events:none;display:none}
 
-/* CONTROLOS */
 .controls{text-align:center;margin:20px}
 button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
 .hidden{display:none}
 
-/* OBJETIVOS */
 #objectivePanel{
   width:300px;background:var(--panel);
   border-radius:16px;padding:12px;
@@ -41,15 +38,13 @@ button:disabled{opacity:.5}
 .marco.done{background:var(--green)}
 .extra-title{margin-top:8px;color:#aaa;font-size:13px}
 
-/* PEÕES */
 .car{background:#e53935;color:#fff}
 .bike{background:#fb8c00;color:#fff}
 .moto{background:#222;color:#fff}
 .walk{background:#2ecc71;color:#000}
 
-/* MODAL */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
-#modalBox{background:#222;padding:20px;border-radius:14px;width:380px;text-align:center}
+#modalBox{background:#222;padding:20px;border-radius:14px;width:400px;text-align:center}
 #modalBox button{margin:6px}
 </style>
 </head>
@@ -90,13 +85,12 @@ button:disabled{opacity:.5}
 <div id="modal">
   <div id="modalBox">
     <p id="modalText"></p>
-    <button id="acceptBtn">Aceitar Ficha</button>
-    <button id="declineBtn">Recusar</button>
+    <div id="modalButtons"></div>
   </div>
 </div>
 
 <script>
-/* ---------- SPACES (MANTÉM O TEU ARRAY COMPLETO) ---------- */
+/* ===== SPACES ===== */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -190,19 +184,18 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ---------- MUNICÍPIOS (INDEX → KM) ---------- */
-const SPECIAL_CELLS={
-  3:{km:0},5:{km:35},7:{km:64},8:{km:69},11:{km:81},13:{km:88},
-  16:{km:104},19:{km:136},21:{km:152},23:{km:171},25:{km:200},
-  27:{km:213},29:{km:225},31:{km:238},33:{km:248},35:{km:262},
-  37:{km:272},39:{km:324},41:{km:345},43:{km:366},44:{km:369},
-  46:{km:386},48:{km:400},50:{km:435},52:{km:466},54:{km:475},
-  57:{km:494},58:{km:500},60:{km:518},63:{km:551},66:{km:565},
-  68:{km:595},70:{km:619},73:{km:640},75:{km:663},77:{km:666},
-  80:{km:688},83:{km:722},85:{km:738},89:{km:738.5}
+/* ===== MUNICÍPIOS ===== */
+const SPECIAL_CELLS={3:{km:0},5:{km:35},7:{km:64},8:{km:69},11:{km:81},13:{km:88},
+16:{km:104},19:{km:136},21:{km:152},23:{km:171},25:{km:200},
+27:{km:213},29:{km:225},31:{km:238},33:{km:248},35:{km:262},
+37:{km:272},39:{km:324},41:{km:345},43:{km:366},44:{km:369},
+46:{km:386},48:{km:400},50:{km:435},52:{km:466},54:{km:475},
+57:{km:494},58:{km:500},60:{km:518},63:{km:551},66:{km:565},
+68:{km:595},70:{km:619},73:{km:640},75:{km:663},77:{km:666},
+80:{km:688},83:{km:722},85:{km:738},89:{km:738.5}
 };
 
-/* ---------- PERGUNTAS ---------- */
+/* ===== PERGUNTAS ===== */
 const QUESTIONS=[
  "Qual é o prato típico mais famoso de Portugal?",
  "Em que ano foi inaugurada a EN2?",
@@ -211,7 +204,7 @@ const QUESTIONS=[
  "Qual é a capital do Algarve?"
 ];
 
-/* ---------- OBJETIVOS ---------- */
+/* ===== OBJETIVOS ===== */
 const OBJECTIVES = [
 
   { items:[
@@ -279,7 +272,7 @@ const OBJECTIVES = [
   ]},
 
   { items:[
-    {km:0,text:"Partir de Chaves"},
+    {km:0,text:"Visitar Chaves"},
     {km:369,text:"Chegar ao Meio da Estrada"},
     {km:738,text:"Chegar a Faro"}
   ]},
@@ -293,28 +286,27 @@ const OBJECTIVES = [
   ]}
 ];
 
-/* ---------- ESTADO ---------- */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
-let players=[],current=0;
+let players=[],current=0,pendingCell=null;
 
-/* ---------- POSICIONAR ---------- */
+/* ===== POSICIONAR ===== */
 function placePawn(pawn,i){
  const s=SPACES[i];
  pawn.style.left=(s.x*board.clientWidth-6)+"px";
  pawn.style.top =(s.y*board.clientHeight-8)+"px";
 }
 
-/* ---------- SETUP ---------- */
+/* ===== SETUP ===== */
 startBtn.onclick=()=>{
  setup.classList.add("hidden");
  names.classList.remove("hidden");
 
- const totalPlayers=Number(playerCount.value);
+ const total=Number(playerCount.value);
  let used=[],i=0;
 
  function next(){
   names.innerHTML="";
-  if(i>=totalPlayers){
+  if(i>=total){
     const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
     players.forEach(p=>p.objective=deck.pop());
     names.classList.add("hidden");
@@ -339,11 +331,7 @@ startBtn.onclick=()=>{
     b.textContent=p.txt;
     b.onclick=()=>{
       used.push(p.id);
-      players.push({
-        name:input.value||("Jogador "+(i+1)),
-        pawn:p.id,pos:0,
-        done:{},extra:[]
-      });
+      players.push({name:input.value||("Jogador "+(i+1)),pawn:p.id,pos:0,done:{},extra:[]});
       pawns[p.id].style.display="block";
       placePawn(pawns[p.id],0);
       i++; next();
@@ -354,13 +342,13 @@ startBtn.onclick=()=>{
  next();
 };
 
-/* ---------- TURNO ---------- */
+/* ===== TURNO ===== */
 function updateTurn(){
  turn.textContent="Vez de "+players[current].name;
  renderObjective(players[current]);
 }
 
-/* ---------- OBJETIVOS ---------- */
+/* ===== OBJETIVOS ===== */
 function renderObjective(p){
  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
  p.objective.items.forEach(it=>{
@@ -382,35 +370,56 @@ function renderObjective(p){
  }
 }
 
-/* ---------- PERGUNTA + FICHA ---------- */
-let pendingCell=null;
-
-function ask(cell){
- pendingCell=cell;
- modalText.textContent=
-  `${players[current].name} ganhou uma Ficha do Município (Km ${cell.km}). Pretende aceitar?`;
+/* ===== MODAIS ===== */
+function showModal(text,buttons){
+ modalText.textContent=text;
+ modalButtons.innerHTML="";
+ buttons.forEach(b=>{
+  const btn=document.createElement("button");
+  btn.textContent=b.text;
+  btn.onclick=b.action;
+  modalButtons.appendChild(btn);
+ });
  modal.style.display="flex";
 }
+function closeModal(){modal.style.display="none";}
 
-acceptBtn.onclick=()=>{
- modal.style.display="none";
- const p=players[current];
- if(!p.done[pendingCell.km] && !p.extra.includes(pendingCell.km)){
-   if(p.objective.items.some(it=>it.km===pendingCell.km))
-     p.done[pendingCell.km]=true;
-   else
-     p.extra.push(pendingCell.km);
- }
- updateTurn(); // joga outra vez
-};
+/* ===== PERGUNTA ===== */
+function askQuestion(cell){
+ pendingCell=cell;
+ showModal(
+  QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
+  [
+   {text:"Resposta Certa",action:()=>{closeModal();askAccept(cell);}},
+   {text:"Resposta Errada",action:()=>{closeModal();current=(current+1)%players.length;updateTurn();}}
+  ]
+ );
+}
 
-declineBtn.onclick=()=>{
- modal.style.display="none";
- current=(current+1)%players.length;
- updateTurn();
-};
+/* ===== ACEITAR FICHA ===== */
+function askAccept(cell){
+ showModal(
+  `${players[current].name} ganhou uma Ficha do Município (Km ${cell.km}). Pretende aceitar?`,
+  [
+   {text:"Aceitar Ficha",action:()=>{
+     closeModal();
+     const p=players[current];
+     if(!p.done[cell.km] && !p.extra.includes(cell.km)){
+       if(p.objective.items.some(it=>it.km===cell.km)) p.done[cell.km]=true;
+       else p.extra.push(cell.km);
+     }
+     updateTurn(); // joga outra vez
+   }},
+   {text:"Recusar",action:()=>{
+     closeModal();
+     current=(current+1)%players.length;
+     updateTurn();
+   }}
+  ]
+ );
+}
 
-/* ---------- JOGAR ---------- */
+/* ===== JOGAR ===== */
 rollBtn.onclick=async()=>{
  rollBtn.disabled=true;
  const r=Math.floor(Math.random()*6)+1;
@@ -428,11 +437,8 @@ rollBtn.onclick=async()=>{
  }
 
  const cell=SPECIAL_CELLS[p.pos];
- if(cell) ask(cell);
- else{
-  current=(current+1)%players.length;
-  updateTurn();
- }
+ if(cell) askQuestion(cell);
+ else{current=(current+1)%players.length;updateTurn();}
 
  rollBtn.disabled=false;
 };
