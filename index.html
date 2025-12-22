@@ -9,20 +9,30 @@
 :root{
   --bg:#111;--text:#eee;--panel:#1c1c1c;
   --accent:#ff9800;--grey:#555;--green:#2ecc71;--red:#e53935;
+  --gold:#f5c400;--silver:#cfd8dc;--bronze:#cd7f32;
 }
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial}
 h1{text-align:center;margin:20px 0}
 .main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
 
+/* TABULEIRO */
 .board-frame{width:1000px;height:750px;position:relative;overflow:hidden;border-radius:10px}
 .board-img{position:absolute;inset:0;background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat}
 .pawn{position:absolute;transform:translate(-50%,-50%);font-size:22px;pointer-events:none;display:none}
 
+/* CONTROLOS */
 .controls{text-align:center;margin:20px}
 button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
 .hidden{display:none}
 
+/* BOTÕES PEÕES */
+.car{background:#e53935;color:#fff}
+.bike{background:#fb8c00;color:#fff}
+.moto{background:#222;color:#fff}
+.walk{background:#2ecc71;color:#000}
+
+/* OBJETIVOS */
 #objectivePanel{
   width:300px;background:var(--panel);
   border-radius:16px;padding:12px;
@@ -34,16 +44,42 @@ button:disabled{opacity:.5}
 .marco.done{background:var(--green)}
 .extra-title{margin-top:8px;color:#aaa;font-size:13px}
 
+/* MODAL */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center}
 #modalBox{background:#222;padding:22px;border-radius:14px;width:420px;text-align:center}
 #modalBox button{margin:6px}
 .accept{background:var(--green);color:#000}
 .decline{background:var(--red);color:#fff}
-.eventGood{background:#1b5e20;color:#fff}
-.eventBad{background:#b71c1c;color:#fff}
 
-#endScreen{position:fixed;inset:0;background:#000;display:none;align-items:center;justify-content:center}
-#endBox{background:#1c1c1c;padding:24px;border-radius:16px;width:460px}
+/* FINAL */
+#endScreen{
+  position:fixed;inset:0;background:#000;
+  display:none;overflow:auto;padding:40px;
+}
+#podium{
+  display:flex;justify-content:center;align-items:flex-end;
+  gap:24px;margin-bottom:40px;
+}
+.podium-step{
+  width:140px;border-radius:16px;text-align:center;
+  padding:12px;box-shadow:0 8px 0 rgba(0,0,0,.4);
+}
+.first{height:220px;background:var(--gold)}
+.second{height:180px;background:var(--silver)}
+.third{height:150px;background:var(--bronze)}
+.podium-step .emoji{font-size:32px}
+.podium-step .name{font-weight:bold;margin-top:6px}
+.podium-step .score{font-size:13px}
+
+#finalCards{
+  display:flex;flex-wrap:wrap;gap:16px;justify-content:center;
+}
+.finalCard{
+  width:260px;background:var(--panel);
+  border-radius:14px;padding:12px;border:2px solid #444;
+}
+.finalCard h3{margin:0 0 8px 0;color:var(--accent)}
+.stats{font-size:13px;color:#ccc;margin-top:6px}
 </style>
 </head>
 
@@ -79,14 +115,12 @@ button:disabled{opacity:.5}
 <div id="modal"><div id="modalBox"><p id="modalText"></p><div id="modalButtons"></div></div></div>
 
 <div id="endScreen">
-  <div id="endBox">
-    <h2>🏆 Classificação Final</h2>
-    <ol id="ranking"></ol>
-  </div>
+  <div id="podium"></div>
+  <div id="finalCards"></div>
 </div>
 
 <script>
-/* SPACES */
+/* ===== SPACES ===== */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -180,7 +214,7 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* MUNICÍPIOS */
+/* ===== MUNICÍPIOS ===== */
 const KM_BY_INDEX={
 3:0,5:35,7:64,8:69,11:81,13:88,16:104,19:136,21:152,23:171,
 25:200,27:213,29:225,31:238,33:248,35:262,37:272,39:324,
@@ -193,15 +227,7 @@ Object.keys(KM_BY_INDEX).forEach(i=>{
  SPECIAL_CELLS[i]={km:KM_BY_INDEX[i],final:i==89};
 });
 
-/* EVENTOS */
-const EVENTS=[
- {text:"Bons momentos! Avança +1 casa.",move:1,cls:"eventGood"},
- {text:"Bons momentos! Avança +2 casas.",move:2,cls:"eventGood"},
- {text:"Contratempo! Recua 1 casa.",move:-1,cls:"eventBad"},
- {text:"Contratempo! Recua 2 casas.",move:-2,cls:"eventBad"}
-];
-
-/* PERGUNTAS */
+/* ===== PERGUNTAS ===== */
 const QUESTIONS=[
  "Qual é o prato típico mais famoso de Portugal?",
  "Em que ano foi inaugurada a EN2?",
@@ -210,7 +236,7 @@ const QUESTIONS=[
  "Qual é a capital do Algarve?"
 ];
 
-/* OBJETIVOS */
+/* ===== OBJETIVOS ===== */
 const OBJECTIVES = [
 
   { items:[
@@ -295,15 +321,16 @@ const OBJECTIVES = [
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0,finishOrder=0;
 
-/* POSIÇÃO */
+/* ===== POSIÇÃO (AJUSTE FINO) ===== */
 function placePawn(pawn,i){
- const s=SPACES[i];let ox=-8,oy=-10;
- if(i>=75){ox=-10;oy=-12;}
+ const s=SPACES[i];
+ let ox=-8,oy=-10;
+ if(i>=80){ox=-12;oy=-14;}
  pawn.style.left=(s.x*board.clientWidth+ox)+"px";
  pawn.style.top =(s.y*board.clientHeight+oy)+"px";
 }
 
-/* MODAL */
+/* ===== MODAL ===== */
 function showModal(text,buttons){
  modalText.textContent=text;
  modalButtons.innerHTML="";
@@ -318,7 +345,7 @@ function showModal(text,buttons){
 }
 function closeModal(){modal.style.display="none";}
 
-/* SETUP */
+/* ===== SETUP ===== */
 startBtn.onclick=()=>{
  setup.classList.add("hidden");
  names.classList.remove("hidden");
@@ -334,15 +361,24 @@ startBtn.onclick=()=>{
   const input=document.createElement("input");
   input.placeholder="Nome do Jogador";
   names.append("Jogador "+(i+1),document.createElement("br"),input,document.createElement("br"));
-  ["🚗","🚴","🏍️","🚶"].forEach((e,id)=>{
-   if(used.includes(id))return;
+  [
+   {id:0,cls:"car",txt:"🚗 Carro"},
+   {id:1,cls:"bike",txt:"🚴 Bicicleta"},
+   {id:2,cls:"moto",txt:"🏍️ Mota"},
+   {id:3,cls:"walk",txt:"🚶 A pé"}
+  ].forEach(p=>{
+   if(used.includes(p.id))return;
    const b=document.createElement("button");
-   b.textContent=e;
+   b.className=p.cls;b.textContent=p.txt;
    b.onclick=()=>{
-    used.push(id);
-    players.push({name:input.value||("Jogador "+(i+1)),pawn:id,pos:0,done:{},extra:[],
-      finished:false,rank:null,municipiosVisitados:0,questionsCorrect:0,questionsWrong:0});
-    pawns[id].style.display="block";placePawn(pawns[id],0);
+    used.push(p.id);
+    players.push({
+     name:input.value||("Jogador "+(i+1)),
+     pawn:p.id,pos:0,done:{},extra:[],
+     finished:false,rank:null,
+     municipiosVisitados:0,questionsCorrect:0,questionsWrong:0
+    });
+    pawns[p.id].style.display="block";placePawn(pawns[p.id],0);
     i++;next();
    };
    names.appendChild(b);
@@ -351,7 +387,7 @@ startBtn.onclick=()=>{
  next();
 };
 
-/* TURNO */
+/* ===== TURNO ===== */
 function updateTurn(){
  if(players.every(p=>p.finished)){endGame();return;}
  while(players[current].finished){current=(current+1)%players.length;}
@@ -359,23 +395,26 @@ function updateTurn(){
  renderObjective(players[current]);
 }
 
-/* OBJETIVOS */
+/* ===== OBJETIVOS ===== */
 function renderObjective(p){
  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
  p.objective.items.forEach(it=>{
-  objectivePanel.innerHTML+=`<div class="obj-item">
-   <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-   <div>${it.text}</div></div>`;
+  objectivePanel.innerHTML+=`
+   <div class="obj-item">
+    <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+    <div>${it.text}</div>
+   </div>`;
  });
  if(p.extra.length){
   objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
   p.extra.forEach(k=>{
-   objectivePanel.innerHTML+=`<div class="obj-item"><div class="marco">Km ${k}</div><div>Ficha</div></div>`;
+   objectivePanel.innerHTML+=`
+    <div class="obj-item"><div class="marco">Km ${k}</div><div>Ficha</div></div>`;
   });
  }
 }
 
-/* PERGUNTA */
+/* ===== PERGUNTA ===== */
 function askQuestion(cell){
  showModal(
   QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
@@ -391,7 +430,7 @@ function askQuestion(cell){
  );
 }
 
-/* FICHA */
+/* ===== FICHA ===== */
 function askFicha(cell){
  showModal(
   `${players[current].name} ganhou uma ficha do Km ${cell.km}. Aceita?`,
@@ -415,32 +454,15 @@ function askFicha(cell){
  );
 }
 
-/* EVENTO */
-function doEvent(){
- const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
- showModal(ev.text,[{text:"OK",cls:ev.cls,action:()=>{
-  closeModal();
-  const p=players[current];
-  let target=Math.max(0,Math.min(p.pos+ev.move,SPACES.length-1));
-  (async()=>{
-   while(p.pos!==target){
-    p.pos+=p.pos<target?1:-1;
-    placePawn(pawns[p.pawn],p.pos);
-    await new Promise(r=>setTimeout(r,350));
-   }
-   current=(current+1)%players.length;updateTurn();
-  })();
- }}]);
-}
-
-/* JOGAR */
+/* ===== JOGAR ===== */
 rollBtn.onclick=async()=>{
  rollBtn.disabled=true;
  const r=Math.floor(Math.random()*6)+1;
  dice.textContent=r;
  const p=players[current];
  let target=p.pos+r;
- if(target>=SPACES.length-1) target=(SPACES.length-1)-(target-(SPACES.length-1));
+ if(target>=SPACES.length-1)
+  target=(SPACES.length-1)-(target-(SPACES.length-1));
  while(p.pos!==target){
   p.pos+=p.pos<target?1:-1;
   placePawn(pawns[p.pawn],p.pos);
@@ -448,28 +470,59 @@ rollBtn.onclick=async()=>{
  }
  const cell=SPECIAL_CELLS[p.pos];
  if(cell) askQuestion(cell);
- else if(p.pos<85) doEvent();
  else{current=(current+1)%players.length;updateTurn();}
  rollBtn.disabled=false;
 };
 
-/* FIM */
+/* ===== FIM ===== */
 function endGame(){
- endScreen.style.display="flex";
- ranking.innerHTML="";
+ endScreen.style.display="block";
+
  const sorted=[...players].sort((a,b)=>{
   const da=Object.keys(a.done).length;
   const db=Object.keys(b.done).length;
   return db-da||a.rank-b.rank;
  });
+
+ const podium=document.getElementById("podium");
+ podium.innerHTML="";
+ const podiumMap=[
+  {cls:"first",idx:0},
+  {cls:"second",idx:1},
+  {cls:"third",idx:2}
+ ];
+ podiumMap.forEach(p=>{
+  if(!sorted[p.idx])return;
+  const pl=sorted[p.idx];
+  const d=document.createElement("div");
+  d.className=`podium-step ${p.cls}`;
+  d.innerHTML=`
+   <div class="emoji">${["🚗","🚴","🏍️","🚶"][pl.pawn]}</div>
+   <div class="name">${pl.name}</div>
+   <div class="score">${Object.keys(pl.done).length} objetivos</div>`;
+  podium.appendChild(d);
+ });
+
+ const cards=document.getElementById("finalCards");
+ cards.innerHTML="";
  sorted.forEach(p=>{
-  const li=document.createElement("li");
-  li.innerHTML=`<strong>${p.name}</strong><br>
-   Objetivos: ${Object.keys(p.done).length}<br>
-   Municípios: ${p.municipiosVisitados}<br>
-   Perguntas: ${p.questionsCorrect+p.questionsWrong}
-   (${p.questionsCorrect}✔️ / ${p.questionsWrong}❌)`;
-  ranking.appendChild(li);
+  const c=document.createElement("div");
+  c.className="finalCard";
+  c.innerHTML=`<h3>${p.name}</h3>`;
+  p.objective.items.forEach(it=>{
+   c.innerHTML+=`
+    <div class="obj-item">
+     <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+     <div>${it.text}</div>
+    </div>`;
+  });
+  c.innerHTML+=`
+   <div class="stats">
+    🏘️ Municípios: ${p.municipiosVisitados}<br>
+    ❓ Perguntas: ${p.questionsCorrect+p.questionsWrong}
+    (${p.questionsCorrect}✔️ / ${p.questionsWrong}❌)
+   </div>`;
+  cards.appendChild(c);
  });
 }
 </script>
