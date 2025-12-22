@@ -7,12 +7,8 @@
 
 <style>
 :root{
-  --bg:#111;
-  --text:#eee;
-  --panel:#1c1c1c;
-  --accent:#ff9800;
-  --grey:#555;
-  --green:#2ecc71;
+  --bg:#111;--text:#eee;--panel:#1c1c1c;
+  --accent:#ff9800;--grey:#555;--green:#2ecc71;
 }
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial}
 h1{text-align:center;margin:20px 0}
@@ -31,22 +27,16 @@ button:disabled{opacity:.5}
 
 /* OBJETIVOS */
 #objectivePanel{
-  width:300px;
-  background:var(--panel);
-  border-radius:16px;
-  padding:12px;
+  width:300px;background:var(--panel);
+  border-radius:16px;padding:12px;
   border:2px dashed #555;
 }
 .objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
 .obj-item{display:flex;gap:10px;margin-bottom:6px}
 .marco{
-  background:var(--grey);
-  color:#fff;
-  padding:4px 10px;
-  border-radius:8px;
-  min-width:64px;
-  text-align:center;
-  font-weight:bold;
+  background:var(--grey);color:#fff;
+  padding:4px 10px;border-radius:8px;
+  min-width:64px;text-align:center;font-weight:bold
 }
 .marco.done{background:var(--green)}
 .extra-title{margin-top:8px;color:#aaa;font-size:13px}
@@ -59,7 +49,7 @@ button:disabled{opacity:.5}
 
 /* MODAL */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
-#modalBox{background:#222;padding:20px;border-radius:12px;width:360px;text-align:center}
+#modalBox{background:#222;padding:20px;border-radius:14px;width:380px;text-align:center}
 #modalBox button{margin:6px}
 </style>
 </head>
@@ -100,13 +90,13 @@ button:disabled{opacity:.5}
 <div id="modal">
   <div id="modalBox">
     <p id="modalText"></p>
-    <button id="rightBtn">Resposta Certa</button>
-    <button id="wrongBtn">Resposta Errada</button>
+    <button id="acceptBtn">Aceitar Ficha</button>
+    <button id="declineBtn">Recusar</button>
   </div>
 </div>
 
 <script>
-/* ---------- SPACES (INALTERADO) ---------- */
+/* ---------- SPACES (MANTÉM O TEU ARRAY COMPLETO) ---------- */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -211,7 +201,6 @@ const SPECIAL_CELLS={
   68:{km:595},70:{km:619},73:{km:640},75:{km:663},77:{km:666},
   80:{km:688},83:{km:722},85:{km:738},89:{km:738.5}
 };
-Object.values(SPECIAL_CELLS).forEach(c=>c.tokensLeft=2);
 
 /* ---------- PERGUNTAS ---------- */
 const QUESTIONS=[
@@ -350,7 +339,11 @@ startBtn.onclick=()=>{
     b.textContent=p.txt;
     b.onclick=()=>{
       used.push(p.id);
-      players.push({name:input.value||("Jogador "+(i+1)),pawn:p.id,pos:0,done:{},extra:[]});
+      players.push({
+        name:input.value||("Jogador "+(i+1)),
+        pawn:p.id,pos:0,
+        done:{},extra:[]
+      });
       pawns[p.id].style.display="block";
       placePawn(pawns[p.id],0);
       i++; next();
@@ -383,37 +376,39 @@ function renderObjective(p){
     objectivePanel.innerHTML+=`
      <div class="obj-item">
       <div class="marco">Km ${k}</div>
-      <div>Ficha extra</div>
+      <div>Ficha de Município</div>
      </div>`;
   });
  }
 }
 
-/* ---------- PERGUNTA ---------- */
+/* ---------- PERGUNTA + FICHA ---------- */
+let pendingCell=null;
+
 function ask(cell){
- modalText.textContent=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+ pendingCell=cell;
+ modalText.textContent=
+  `${players[current].name} ganhou uma Ficha do Município (Km ${cell.km}). Pretende aceitar?`;
  modal.style.display="flex";
-
- rightBtn.onclick=()=>{
-  modal.style.display="none";
-  if(cell.tokensLeft>0 && confirm("Aceitar ficha?")){
-    cell.tokensLeft--;
-    if(players[current].objective.items.some(it=>it.km===cell.km))
-      players[current].done[cell.km]=true;
-    else players[current].extra.push(cell.km);
-    updateTurn(); // joga outra vez
-  }else{
-    current=(current+1)%players.length;
-    updateTurn();
-  }
- };
-
- wrongBtn.onclick=()=>{
-  modal.style.display="none";
-  current=(current+1)%players.length;
-  updateTurn();
- };
 }
+
+acceptBtn.onclick=()=>{
+ modal.style.display="none";
+ const p=players[current];
+ if(!p.done[pendingCell.km] && !p.extra.includes(pendingCell.km)){
+   if(p.objective.items.some(it=>it.km===pendingCell.km))
+     p.done[pendingCell.km]=true;
+   else
+     p.extra.push(pendingCell.km);
+ }
+ updateTurn(); // joga outra vez
+};
+
+declineBtn.onclick=()=>{
+ modal.style.display="none";
+ current=(current+1)%players.length;
+ updateTurn();
+};
 
 /* ---------- JOGAR ---------- */
 rollBtn.onclick=async()=>{
@@ -433,7 +428,7 @@ rollBtn.onclick=async()=>{
  }
 
  const cell=SPECIAL_CELLS[p.pos];
- if(cell && cell.tokensLeft>0) ask(cell);
+ if(cell) ask(cell);
  else{
   current=(current+1)%players.length;
   updateTurn();
