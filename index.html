@@ -93,6 +93,11 @@ button:disabled{opacity:.5}
   background:#1c1c1c;border:2px dashed #555;
   border-radius:14px;padding:12px;width:260px
 }
+.stats{
+  margin-top:10px;
+  font-size:13px;
+  color:#ccc;
+}
 </style>
 </head>
 
@@ -229,7 +234,7 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ================= MAPA MUNICÍPIOS ================= */
+/* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME={
 0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Peso da Régua",
 81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
@@ -241,7 +246,7 @@ const MUNICIPIO_NOME={
 551:"Alcáçovas",565:"Torrão",595:"Ferreira do Alentejo",
 619:"Aljustrel",640:"Castro Verde",663:"Almodôvar",
 666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
-738:"Faro",738.5:"Faro"
+738:"Faro",738.5:"Faro (Final)"
 };
 
 /* ================= MUNICÍPIOS POR ÍNDICE ================= */
@@ -464,7 +469,7 @@ function renderObjective(p){
    objectivePanel.innerHTML+=`
     <div class="obj-item">
      <div class="marco">Km ${km}</div>
-     <div>Visitar ${MUNICIPIO_NOME[km]||km}</div>
+     <div>Visitar ${MUNICIPIO_NOME[km]}</div>
     </div>`;
   });
  }
@@ -492,8 +497,9 @@ function askQuestion(cell){
 
 /* ================= FICHA ================= */
 function askFicha(cell){
+ const nome=MUNICIPIO_NOME[cell.km];
  showModal(
-  `${players[current].name} ganhou uma ficha de ${MUNICIPIO_NOME[cell.km]}. Aceita?`,
+  `${players[current].name} ganhou a ficha ${nome}. Aceita?`,
   [
    {text:"Aceitar",cls:"accept",action:()=>{
     closeModal();
@@ -582,7 +588,7 @@ function showPodium(){
  rollBtn.disabled=true;
  game.classList.add("hidden");
 
- const sorted=[...players].sort((a,b)=>{
+ const ranked=[...players].sort((a,b)=>{
   const oa=Object.keys(a.done).length;
   const ob=Object.keys(b.done).length;
   if(ob!==oa)return ob-oa;
@@ -591,12 +597,12 @@ function showPodium(){
 
  podium.innerHTML=`
  <div class="podium-box">
-  ${sorted[1]?`<div class="step silver"><div class="emoji">${pawns[sorted[1].pawn].textContent}</div><div class="name">${sorted[1].name}</div></div>`:""}
-  <div class="step gold"><div class="emoji">${pawns[sorted[0].pawn].textContent}</div><div class="name">${sorted[0].name}</div></div>
-  ${sorted[2]?`<div class="step bronze"><div class="emoji">${pawns[sorted[2].pawn].textContent}</div><div class="name">${sorted[2].name}</div></div>`:""}
+  ${ranked[1]?`<div class="step silver"><div class="emoji">${pawns[ranked[1].pawn].textContent}</div><div class="name">${ranked[1].name}</div></div>`:""}
+  <div class="step gold"><div class="emoji">${pawns[ranked[0].pawn].textContent}</div><div class="name">${ranked[0].name}</div></div>
+  ${ranked[2]?`<div class="step bronze"><div class="emoji">${pawns[ranked[2].pawn].textContent}</div><div class="name">${ranked[2].name}</div></div>`:""}
  </div>
  <div class="cards">
-  ${sorted.map(p=>`
+  ${ranked.map(p=>`
    <div class="card">
     <div class="objective-title">🎯 ${p.name}</div>
     ${p.objective.items.map(it=>`
@@ -604,6 +610,11 @@ function showPodium(){
         <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
         <div>${it.text}</div>
       </div>`).join("")}
+    <div class="stats">
+      🏘️ Municípios: ${p.municipiosVisitados}<br>
+      ❓ Certas: ${p.questionsCorrect}<br>
+      ❌ Erradas: ${p.questionsWrong}
+    </div>
    </div>
   `).join("")}
  </div>`;
