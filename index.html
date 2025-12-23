@@ -107,7 +107,6 @@ button:disabled{opacity:.5}
 
 <script>
 /* ================= SPACES ================= */
-/* USA O TEU ARRAY COMPLETO AQUI */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -316,13 +315,14 @@ const OBJECTIVES = [
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 
-/* ================= POSIÇÃO (AJUSTE FINO) ================= */
+/* ================= POSIÇÃO (AJUSTE FINO POR ÍNDICE) ================= */
 function placePawn(pawn,i){
  const s=SPACES[i];
  let ox=-8,oy=-10;
- if(i>=75 && i<80){ox=-10;oy=-12;}
- if(i>=80 && i<84){ox=-14;oy=-16;}
- if(i>=84){ox=-12;oy=-18;}
+ if(i===80){ox=-18;oy=-14;}      // 688
+ if(i===83){ox=-16;oy=-18;}      // 722
+ if(i===85){ox=-12;oy=-20;}      // 738
+ if(i===89){ox=-10;oy=-22;}      // 738.5
  pawn.style.left=(s.x*board.clientWidth+ox)+"px";
  pawn.style.top =(s.y*board.clientHeight+oy)+"px";
 }
@@ -393,6 +393,10 @@ startBtn.onclick=()=>{
 
 /* ================= TURNO ================= */
 function updateTurn(){
+ if(players.every(p=>p.finished)){
+   alert("Fim do jogo!");
+   return;
+ }
  while(players[current].finished){
   current=(current+1)%players.length;
  }
@@ -430,7 +434,7 @@ function askQuestion(cell){
    {text:"Resposta Certa",cls:"accept",action:()=>{
     players[current].questionsCorrect++;
     closeModal();
-    askFicha(cell);
+    askFicha(cell);   // NÃO PASSA A VEZ
    }},
    {text:"Resposta Errada",cls:"decline",action:()=>{
     players[current].questionsWrong++;
@@ -456,7 +460,10 @@ function askFicha(cell){
     }else{
       p.extra.push(cell.km);
     }
-    current=(current+1)%players.length;
+    if(cell.final){
+      p.finished=true;
+    }
+    // CONTINUA A JOGAR
     updateTurn();
    }},
    {text:"Recusar",cls:"decline",action:()=>{
