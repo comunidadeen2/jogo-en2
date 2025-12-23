@@ -66,6 +66,33 @@ button:disabled{opacity:.5}
 .decline{background:var(--red);color:#fff}
 .eventGood{background:#1b5e20;color:#fff}
 .eventBad{background:#b71c1c;color:#fff}
+
+/* PÓDIO */
+#podium{
+  position:fixed;inset:0;
+  background:#000c;
+  display:none;
+  overflow:auto;
+  padding:40px;
+}
+.podium-box{
+  display:flex;justify-content:center;align-items:flex-end;gap:30px;margin-bottom:40px
+}
+.step{
+  width:160px;border-radius:14px;text-align:center;padding:12px;color:#000
+}
+.gold{background:#f5c400;height:220px}
+.silver{background:#ccc;height:180px}
+.bronze{background:#c68642;height:150px}
+.step .emoji{font-size:30px}
+.step .name{font-weight:bold;margin-top:6px}
+.cards{
+  display:flex;gap:20px;justify-content:center;flex-wrap:wrap
+}
+.card{
+  background:#1c1c1c;border:2px dashed #555;
+  border-radius:14px;padding:12px;width:260px
+}
 </style>
 </head>
 
@@ -104,6 +131,8 @@ button:disabled{opacity:.5}
     <div id="modalButtons"></div>
   </div>
 </div>
+
+<div id="podium"></div>
 
 <script>
 /* ================= SPACES ================= */
@@ -200,7 +229,22 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ================= MUNICÍPIOS ================= */
+/* ================= MAPA MUNICÍPIOS ================= */
+const MUNICIPIO_NOME={
+0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Peso da Régua",
+81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
+136:"Castro Daire",152:"Mortágua",171:"Viseu",200:"Mortágua",
+213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
+262:"Lousã",272:"Góis",324:"Sertã",345:"Sertã",366:"Vila de Rei",
+369:"Meio da EN2",386:"Sardoal",400:"Ponte de Sôr",435:"Ponte de Sôr",
+466:"Avis",475:"Coruche",494:"Coruche",500:"Mora",518:"Ferreira do Alentejo",
+551:"Alcáçovas",565:"Torrão",595:"Ferreira do Alentejo",
+619:"Aljustrel",640:"Castro Verde",663:"Almodôvar",
+666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
+738:"Faro",738.5:"Faro"
+};
+
+/* ================= MUNICÍPIOS POR ÍNDICE ================= */
 const KM_BY_INDEX={
 3:0,5:35,7:64,8:69,11:81,13:88,16:104,19:136,21:152,23:171,
 25:200,27:213,29:225,31:238,33:248,35:262,37:272,39:324,
@@ -315,14 +359,14 @@ const OBJECTIVES = [
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 
-/* ================= POSIÇÃO (AJUSTE FINO POR ÍNDICE) ================= */
+/* ================= POSIÇÃO PEÃO ================= */
 function placePawn(pawn,i){
  const s=SPACES[i];
  let ox=-8,oy=-10;
- if(i===80){ox=-18;oy=-14;}      // 688
- if(i===83){ox=-16;oy=-18;}      // 722
- if(i===85){ox=-12;oy=-20;}      // 738
- if(i===89){ox=-10;oy=-22;}      // 738.5
+ if(i===80){ox=-18;oy=-14}
+ if(i===83){ox=-16;oy=-18}
+ if(i===85){ox=-12;oy=-20}
+ if(i===89){ox=-10;oy=-22}
  pawn.style.left=(s.x*board.clientWidth+ox)+"px";
  pawn.style.top =(s.y*board.clientHeight+oy)+"px";
 }
@@ -379,7 +423,7 @@ startBtn.onclick=()=>{
       municipiosVisitados:0,
       questionsCorrect:0,
       questionsWrong:0,
-      finished:false
+      finished:false,order:0
     });
     pawns[p.id].style.display="block";
     placePawn(pawns[p.id],0);
@@ -394,8 +438,8 @@ startBtn.onclick=()=>{
 /* ================= TURNO ================= */
 function updateTurn(){
  if(players.every(p=>p.finished)){
-   alert("Fim do jogo!");
-   return;
+  showPodium();
+  return;
  }
  while(players[current].finished){
   current=(current+1)%players.length;
@@ -420,7 +464,7 @@ function renderObjective(p){
    objectivePanel.innerHTML+=`
     <div class="obj-item">
      <div class="marco">Km ${km}</div>
-     <div>Visitar ${km}</div>
+     <div>Visitar ${MUNICIPIO_NOME[km]||km}</div>
     </div>`;
   });
  }
@@ -434,7 +478,7 @@ function askQuestion(cell){
    {text:"Resposta Certa",cls:"accept",action:()=>{
     players[current].questionsCorrect++;
     closeModal();
-    askFicha(cell);   // NÃO PASSA A VEZ
+    askFicha(cell);
    }},
    {text:"Resposta Errada",cls:"decline",action:()=>{
     players[current].questionsWrong++;
@@ -449,7 +493,7 @@ function askQuestion(cell){
 /* ================= FICHA ================= */
 function askFicha(cell){
  showModal(
-  `${players[current].name} ganhou uma ficha de ${cell.km}. Aceita?`,
+  `${players[current].name} ganhou uma ficha de ${MUNICIPIO_NOME[cell.km]}. Aceita?`,
   [
    {text:"Aceitar",cls:"accept",action:()=>{
     closeModal();
@@ -462,8 +506,8 @@ function askFicha(cell){
     }
     if(cell.final){
       p.finished=true;
+      p.order=players.filter(x=>x.finished).length;
     }
-    // CONTINUA A JOGAR
     updateTurn();
    }},
    {text:"Recusar",cls:"decline",action:()=>{
@@ -482,7 +526,9 @@ function doEvent(){
   text:"OK",cls:ev.cls,action:async()=>{
    closeModal();
    const p=players[current];
-   let target=Math.max(0,Math.min(p.pos+ev.move,SPACES.length-1));
+   let target=p.pos+ev.move;
+   if(target<0)target=0;
+   if(target>SPACES.length-1)target=SPACES.length-1;
    while(p.pos!==target){
     p.pos+=p.pos<target?1:-1;
     placePawn(pawns[p.pawn],p.pos);
@@ -501,35 +547,67 @@ rollBtn.onclick=async()=>{
  dice.textContent=r;
  const p=players[current];
  let target=p.pos+r;
- if(target>=SPACES.length-1){
-  target=(SPACES.length-1)-(target-(SPACES.length-1));
+ const LAST=SPACES.length-1;
+ if(target>LAST){
+  target=LAST-(target-LAST);
  }
  while(p.pos!==target){
   p.pos+=p.pos<target?1:-1;
   placePawn(pawns[p.pawn],p.pos);
   await new Promise(res=>setTimeout(res,350));
  }
-
  const idx=p.pos;
  const cell=SPECIAL_CELLS[idx];
 
  if(idx < 3){
-   current=(current+1)%players.length;
-   updateTurn();
+  current=(current+1)%players.length;
+  updateTurn();
  }
  else if(cell){
-   askQuestion(cell);
+  askQuestion(cell);
  }
  else if(idx < 85){
-   doEvent();
+  doEvent();
  }
  else{
-   current=(current+1)%players.length;
-   updateTurn();
+  current=(current+1)%players.length;
+  updateTurn();
  }
-
  rollBtn.disabled=false;
 };
+
+/* ================= PÓDIO ================= */
+function showPodium(){
+ podium.style.display="block";
+ rollBtn.disabled=true;
+ game.classList.add("hidden");
+
+ const sorted=[...players].sort((a,b)=>{
+  const oa=Object.keys(a.done).length;
+  const ob=Object.keys(b.done).length;
+  if(ob!==oa)return ob-oa;
+  return a.order-b.order;
+ });
+
+ podium.innerHTML=`
+ <div class="podium-box">
+  ${sorted[1]?`<div class="step silver"><div class="emoji">${pawns[sorted[1].pawn].textContent}</div><div class="name">${sorted[1].name}</div></div>`:""}
+  <div class="step gold"><div class="emoji">${pawns[sorted[0].pawn].textContent}</div><div class="name">${sorted[0].name}</div></div>
+  ${sorted[2]?`<div class="step bronze"><div class="emoji">${pawns[sorted[2].pawn].textContent}</div><div class="name">${sorted[2].name}</div></div>`:""}
+ </div>
+ <div class="cards">
+  ${sorted.map(p=>`
+   <div class="card">
+    <div class="objective-title">🎯 ${p.name}</div>
+    ${p.objective.items.map(it=>`
+      <div class="obj-item">
+        <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+        <div>${it.text}</div>
+      </div>`).join("")}
+   </div>
+  `).join("")}
+ </div>`;
+}
 </script>
 
 </body>
