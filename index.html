@@ -26,32 +26,24 @@ body{
   position:relative;
 }
 
-/* Overlay sazonal */
 body::before{
   content:"";
   position:fixed;
   inset:0;
   pointer-events:none;
   z-index:0;
-  opacity:.12;
+  opacity:.15;
   background:var(--season-overlay);
 }
 
 h1{
   text-align:center;
-  margin:20px 0;
+  margin:16px 0;
   position:relative;
   z-index:1;
 }
 
-/* Layout */
-.controls{
-  text-align:center;
-  margin:20px;
-  position:relative;
-  z-index:1;
-}
-
+/* layout */
 .main{
   display:flex;
   justify-content:center;
@@ -61,7 +53,7 @@ h1{
   z-index:1;
 }
 
-/* Tabuleiro */
+/* tabuleiro */
 .board-frame{
   width:1000px;
   height:750px;
@@ -81,44 +73,13 @@ h1{
   display:none;
 }
 
-/* Objetivos */
-#objectivePanel{
-  width:300px;
-  background:var(--panel);
-  border-radius:16px;
-  padding:12px;
-  border:2px dashed #555;
-}
-.objective-title{
-  color:var(--accent);
-  font-weight:bold;
-  margin-bottom:10px;
-}
-.obj-item{
-  display:flex;
-  gap:10px;
-  margin-bottom:6px;
-}
-.marco{
-  background:var(--grey);
-  color:#fff;
-  padding:4px 10px;
-  border-radius:8px;
-  min-width:64px;
+/* controlos */
+.controls{
   text-align:center;
-  font-weight:bold;
+  margin:20px;
+  position:relative;
+  z-index:1;
 }
-.marco.done{background:var(--green)}
-.extra-title{
-  margin:16px 0 8px;
-  text-align:center;
-  color:#bbb;
-  font-size:13px;
-  border-top:1px dashed #444;
-  padding-top:8px;
-}
-
-/* Botões */
 button{
   border:none;
   padding:10px 18px;
@@ -129,16 +90,37 @@ button{
 button:disabled{opacity:.5}
 .hidden{display:none}
 
-/* Peões */
+/* peões */
 .car{background:#e53935;color:#fff}
 .bike{background:#fb8c00;color:#fff}
 .moto{background:#222;color:#fff}
 .walk{background:#2ecc71;color:#000}
 
-/* Modal */
+/* objetivos */
+#objectivePanel{
+  width:300px;
+  background:var(--panel);
+  border-radius:16px;
+  padding:12px;
+  border:2px dashed #555;
+}
+.objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
+.obj-item{display:flex;gap:10px;margin-bottom:6px}
+.marco{
+  background:var(--grey);color:#fff;
+  padding:4px 10px;border-radius:8px;
+  min-width:64px;text-align:center;font-weight:bold
+}
+.marco.done{background:var(--green)}
+.extra-title{
+  margin:16px 0 8px 0;
+  text-align:center;color:#bbb;font-size:13px;
+  border-top:1px dashed #444;padding-top:8px;
+}
+
+/* modal */
 #modal{
-  position:fixed;
-  inset:0;
+  position:fixed;inset:0;
   background:rgba(0,0,0,.55);
   display:none;
   align-items:center;
@@ -158,7 +140,7 @@ button:disabled{opacity:.5}
 .eventGood{background:#1b5e20;color:#fff}
 .eventBad{background:#b71c1c;color:#fff}
 
-/* Pódio */
+/* pódio */
 #podium{
   position:fixed;
   inset:0;
@@ -173,7 +155,7 @@ button:disabled{opacity:.5}
   justify-content:center;
   align-items:flex-end;
   gap:30px;
-  margin-bottom:40px;
+  margin-bottom:40px
 }
 .step{
   width:160px;
@@ -187,19 +169,18 @@ button:disabled{opacity:.5}
 .bronze{background:#c68642;height:150px}
 .step .emoji{font-size:30px}
 .step .name{font-weight:bold;margin-top:6px}
-
 .cards{
   display:flex;
   gap:20px;
   justify-content:center;
-  flex-wrap:wrap;
+  flex-wrap:wrap
 }
 .card{
   background:#1c1c1c;
   border:2px dashed #555;
   border-radius:14px;
   padding:12px;
-  width:260px;
+  width:260px
 }
 .stats{
   margin-top:10px;
@@ -212,6 +193,17 @@ button:disabled{opacity:.5}
 <body>
 
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
+
+<div class="main">
+  <div class="board-frame" id="board">
+    <div class="board-img"></div>
+    <div class="pawn" id="pawn0">🚗</div>
+    <div class="pawn" id="pawn1">🚴</div>
+    <div class="pawn" id="pawn2">🏍️</div>
+    <div class="pawn" id="pawn3">🚶</div>
+  </div>
+  <div id="objectivePanel" class="hidden"></div>
+</div>
 
 <div class="controls">
   <div id="setup">
@@ -238,17 +230,6 @@ button:disabled{opacity:.5}
   </div>
 </div>
 
-<div class="main">
-  <div class="board-frame" id="board">
-    <div class="board-img"></div>
-    <div class="pawn" id="pawn0">🚗</div>
-    <div class="pawn" id="pawn1">🚴</div>
-    <div class="pawn" id="pawn2">🏍️</div>
-    <div class="pawn" id="pawn3">🚶</div>
-  </div>
-  <div id="objectivePanel" class="hidden"></div>
-</div>
-
 <div id="modal">
   <div id="modalBox">
     <p id="modalText"></p>
@@ -259,7 +240,8 @@ button:disabled{opacity:.5}
 <div id="podium"></div>
 
 <script>
-/* ================= TEMAS SAZONAIS ================= */
+
+/* ================= ESTAÇÕES ================= */
 const SEASON_OVERLAYS={
   primavera:[
     "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 60%)",
@@ -279,19 +261,7 @@ const SEASON_OVERLAYS={
   ]
 };
 
-/* ================= DADOS ================= */
-const QUESTIONS=[
- "Qual é o prato típico mais famoso de Portugal?",
- "Qual é o rio mais longo de Portugal?",
- "Portugal tem quantos distritos?",
- "Qual é a capital do Algarve?"
-];
-
-const EVENTS=[
- {text:"Bons momentos! Avança +1 casa.",move:1,cls:"eventGood"},
- {text:"Contratempo! Recua 1 casa.",move:-1,cls:"eventBad"}
-];
-
+/* ================= SPACES (REAIS) ================= */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -385,18 +355,132 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ================= JOGO ================= */
+/* ================= MUNICÍPIOS (CORRIGIDOS) ================= */
+const MUNICIPIO_NOME={
+  0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Km 69",
+  81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
+  136:"Castro Daire",152:"Mortágua",171:"Viseu",200:"Mortágua",
+  213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
+  262:"Lousã",272:"Góis",324:"Sertã",345:"Sertã",366:"Vila de Rei",
+  369:"Meio da EN2",386:"Sardoal",400:"Abrantes",435:"Ponte de Sôr",
+  466:"Avis",475:"Coruche",494:"Coruche",500:"Ciborro",
+  518:"Montemor-o-Novo",551:"Alcáçovas",565:"Torrão",
+  595:"Ferreira do Alentejo",619:"Aljustrel",640:"Castro Verde",
+  663:"Almodôvar",666:"Km 666",688:"Ameixial",
+  722:"São Brás de Alportel",738:"Faro",738.5:"Faro (Final)"
+};
+
+/* ================= PERGUNTAS ================= */
+const QUESTIONS=[
+ "Qual é o prato típico mais famoso de Portugal?",
+ "Em que ano foi inaugurada a EN2?",
+ "Qual é o rio mais longo de Portugal?",
+ "Portugal tem quantos distritos?",
+ "Qual é a capital do Algarve?"
+];
+
+/* ================= EVENTOS ================= */
+const EVENTS=[
+ {text:"Bons momentos! Avança +1 casa.",move:1,cls:"eventGood"},
+ {text:"Bons momentos! Avança +2 casas.",move:2,cls:"eventGood"},
+ {text:"Contratempo! Recua 1 casa.",move:-1,cls:"eventBad"},
+ {text:"Contratempo! Recua 2 casas.",move:-2,cls:"eventBad"}
+];
+
+/* ================= OBJETIVOS ================= */
+const OBJECTIVES = [
+
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:35,text:"Visitar Vila Pouca de Aguiar"},
+    {km:172,text:"Visitar Viseu"},
+    {km:271,text:"Visitar Góis"},
+    {km:551,text:"Visitar Alcáçovas"},
+    {km:722,text:"Visitar São Brás de Alportel"}
+  ]},
+
+  { items:[
+    {km:64,text:"Visitar Vila Real"},
+    {km:213,text:"Visitar Santa Comba Dão"},
+    {km:345,text:"Visitar Sertã"},
+    {km:565,text:"Visitar Torrão"},
+    {km:688,text:"Visitar Ameixial"}
+  ]},
+
+  { items:[
+    {km:81,text:"Visitar Santa Marta de Penaguião"},
+    {km:225,text:"Visitar Mortágua"},
+    {km:345,text:"Visitar Sertã"},
+    {km:595,text:"Visitar Ferreira do Alentejo"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:366,text:"Visitar Vila de Rei"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:386,text:"Visitar Sardoal"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:136,text:"Visitar Castro Daire"},
+    {km:260,text:"Visitar Lousã"},
+    {km:430,text:"Visitar Ponte de Sôr"},
+    {km:666,text:"Passar pelo Km 666"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:0,text:"Partir de Chaves"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:69,text:"Passar pelo Km 69"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:476,text:"Visitar Mora"},
+    {km:494,text:"Visitar Coruche"},
+    {km:738,text:"Chegar a Faro"}
+  ]}
+];
+
+/* ================= LÓGICA DO JOGO ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 
-/* Posicionar peão */
+/* posicionar peão */
 function placePawn(pawn,i){
  const s=SPACES[i];
  pawn.style.left=(s.x*board.clientWidth)+"px";
  pawn.style.top =(s.y*board.clientHeight)+"px";
 }
 
-/* Modal */
+/* modal */
 function showModal(text,buttons){
  modalText.textContent=text;
  modalButtons.innerHTML="";
@@ -411,93 +495,97 @@ function showModal(text,buttons){
 }
 function closeModal(){modal.style.display="none";}
 
-/* Iniciar */
+/* setup */
 startBtn.onclick=()=>{
  const season=document.querySelector("input[name='season']:checked");
- if(!season){
-  alert("Escolhe a estação do ano 🌍");
-  return;
- }
- const o=SEASON_OVERLAYS[season.value];
- document.body.style.setProperty("--season-overlay",o[Math.floor(Math.random()*o.length)]);
+ if(!season){alert("Escolhe a estação.");return;}
+
+ const overlays=SEASON_OVERLAYS[season.value];
+ document.body.style.setProperty("--season-overlay",
+   overlays[Math.floor(Math.random()*overlays.length)]
+ );
 
  setup.classList.add("hidden");
  names.classList.remove("hidden");
 
- const total=Number(playerCount.value);
- let i=0,used=[];
-
+ let total=Number(playerCount.value),i=0,used=[];
  function next(){
   names.innerHTML="";
   if(i>=total){
-    names.classList.add("hidden");
-    game.classList.remove("hidden");
-    objectivePanel.classList.remove("hidden");
-    updateTurn();
-    return;
+   const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+   players.forEach(p=>p.objective=deck.pop());
+   names.classList.add("hidden");
+   game.classList.remove("hidden");
+   objectivePanel.classList.remove("hidden");
+   updateTurn();
+   return;
   }
-
   const input=document.createElement("input");
   input.placeholder="Nome do Jogador";
-
   names.append("Jogador "+(i+1),document.createElement("br"),input,document.createElement("br"));
-
-  ["car","bike","moto","walk"].forEach((cls,id)=>{
-    if(used.includes(id))return;
-    const b=document.createElement("button");
-    b.className=cls;
-    b.textContent=pawns[id].textContent;
-    b.onclick=()=>{
-      used.push(id);
-      players.push({
-        name:input.value||("Jogador "+(i+1)),
-        pawn:id,
-        pos:0,
-        finished:false,
-        correct:0,
-        wrong:0
-      });
-      pawns[id].style.display="block";
-      placePawn(pawns[id],0);
-      i++;next();
-    };
-    names.appendChild(b);
+  [
+   {id:0,cls:"car",txt:"🚗 Carro"},
+   {id:1,cls:"bike",txt:"🚴 Bicicleta"},
+   {id:2,cls:"moto",txt:"🏍️ Mota"},
+   {id:3,cls:"walk",txt:"🚶 A pé"}
+  ].forEach(p=>{
+   if(used.includes(p.id))return;
+   const b=document.createElement("button");
+   b.className=p.cls;
+   b.textContent=p.txt;
+   b.onclick=()=>{
+    used.push(p.id);
+    players.push({
+     name:input.value||("Jogador "+(i+1)),
+     pawn:p.id,pos:0,done:{},extra:[],
+     municipiosVisitados:0,questionsCorrect:0,questionsWrong:0,
+     finished:false,order:0
+    });
+    pawns[p.id].style.display="block";
+    placePawn(pawns[p.id],0);
+    i++;next();
+   };
+   names.appendChild(b);
   });
  }
  next();
 };
 
+/* turno */
 function updateTurn(){
  turn.textContent="Vez de "+players[current].name;
+ renderObjective(players[current]);
 }
 
-rollBtn.onclick=()=>{
+/* objetivos */
+function renderObjective(p){
+ objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
+ p.objective.items.forEach(it=>{
+  objectivePanel.innerHTML+=`
+   <div class="obj-item">
+    <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+    <div>${it.text}</div>
+   </div>`;
+ });
+}
+
+/* jogar */
+rollBtn.onclick=async()=>{
+ rollBtn.disabled=true;
  const r=Math.floor(Math.random()*6)+1;
  dice.textContent=r;
  const p=players[current];
- p.pos=Math.min(p.pos+r,SPACES.length-1);
- placePawn(pawns[p.pawn],p.pos);
-
- if(Math.random()<0.5){
-  showModal(
-   QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
-   [{text:"OK",cls:"accept",action:()=>{
-     closeModal();
-     current=(current+1)%players.length;
-     updateTurn();
-   }}]
-  );
- }else{
-  showModal(
-   EVENTS[Math.floor(Math.random()*EVENTS.length)].text,
-   [{text:"OK",cls:"eventGood",action:()=>{
-     closeModal();
-     current=(current+1)%players.length;
-     updateTurn();
-   }}]
-  );
+ let target=Math.min(p.pos+r,SPACES.length-1);
+ while(p.pos!==target){
+  p.pos++;
+  placePawn(pawns[p.pawn],p.pos);
+  await new Promise(r=>setTimeout(r,450));
  }
+ current=(current+1)%players.length;
+ updateTurn();
+ rollBtn.disabled=false;
 };
+
 </script>
 
 </body>
