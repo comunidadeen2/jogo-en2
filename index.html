@@ -14,39 +14,23 @@
   --grey:#555;
   --green:#2ecc71;
   --red:#e53935;
-  --season-overlay:none;
 }
-
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
   font-family:Arial, Helvetica, sans-serif;
-  position:relative;
-  overflow-x:hidden;
 }
-
-/* OVERLAY SAZONAL */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background:var(--season-overlay);
-  opacity:.12;
-  z-index:0;
-}
-
-h1{text-align:center;margin:20px 0;position:relative;z-index:1}
-.main{display:flex;justify-content:center;gap:24px;align-items:flex-start;position:relative;z-index:1}
+h1{text-align:center;margin:20px 0}
+.main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
 
 /* TABULEIRO */
 .board-frame{width:1000px;height:750px;position:relative;overflow:hidden;border-radius:10px}
 .board-img{position:absolute;inset:0;background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat}
-.pawn{position:absolute;transform:translate(-50%,-50%);font-size:22px;pointer-events:none;display:none}
+.pawn{position:absolute;transform:translate(-50%,-50%);font-size:22px;display:none}
 
 /* CONTROLOS */
-.controls{text-align:center;margin:20px;position:relative;z-index:1}
+.controls{text-align:center;margin:20px}
 button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
 .hidden{display:none}
@@ -82,7 +66,6 @@ button:disabled{opacity:.5}
   position:fixed;inset:0;
   background:rgba(0,0,0,.55);
   display:none;align-items:center;justify-content:center;
-  z-index:10;
 }
 #modalBox{
   background:#222;padding:22px;
@@ -101,11 +84,9 @@ button:disabled{opacity:.5}
   display:none;
   overflow:auto;
   padding:40px;
-  z-index:20;
 }
 .podium-box{
-  display:flex;justify-content:center;align-items:flex-end;
-  gap:30px;margin-bottom:40px
+  display:flex;justify-content:center;align-items:flex-end;gap:30px;margin-bottom:40px
 }
 .step{
   width:160px;border-radius:14px;text-align:center;padding:12px;color:#000
@@ -134,31 +115,6 @@ button:disabled{opacity:.5}
 
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
-<div class="controls">
-  <div id="setup">
-    Jogadores:
-    <select id="playerCount">
-      <option>1</option><option>2</option><option>3</option><option>4</option>
-    </select>
-
-    <p style="margin:14px 0 6px">Quando queres fazer a EN2?</p>
-    <label><input type="radio" name="season" value="primavera"> Primavera</label>
-    <label><input type="radio" name="season" value="verao"> Verão</label>
-    <label><input type="radio" name="season" value="outono"> Outono</label>
-    <label><input type="radio" name="season" value="inverno"> Inverno</label>
-    <br><br>
-
-    <button id="startBtn">COMEÇAR</button>
-  </div>
-
-  <div id="names" class="hidden"></div>
-  <div id="game" class="hidden">
-    <button id="rollBtn">JOGAR</button>
-    🎲 <span id="dice">—</span>
-    <p id="turn"></p>
-  </div>
-</div>
-
 <div class="main">
   <div class="board-frame" id="board">
     <div class="board-img"></div>
@@ -168,6 +124,22 @@ button:disabled{opacity:.5}
     <div class="pawn" id="pawn3">🚶</div>
   </div>
   <div id="objectivePanel" class="hidden"></div>
+</div>
+
+<div class="controls">
+  <div id="setup">
+    Jogadores:
+    <select id="playerCount">
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+    </select>
+    <button id="startBtn">COMEÇAR</button>
+  </div>
+  <div id="names" class="hidden"></div>
+  <div id="game" class="hidden">
+    <button id="rollBtn">JOGAR</button>
+    🎲 <span id="dice">—</span>
+    <p id="turn"></p>
+  </div>
 </div>
 
 <div id="modal">
@@ -180,28 +152,39 @@ button:disabled{opacity:.5}
 <div id="podium"></div>
 
 <script>
-/* ================= ESTAÇÕES ================= */
-const SEASON_OVERLAYS={
-  primavera:[
-    "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 60%)",
-    "linear-gradient(135deg, rgba(140,220,160,.5), transparent 70%)"
-  ],
-  verao:[
-    "radial-gradient(circle at top, rgba(255,200,80,.7), transparent 60%)",
-    "linear-gradient(135deg, rgba(255,170,60,.6), transparent 70%)"
-  ],
-  outono:[
-    "radial-gradient(circle at center, rgba(180,120,60,.6), transparent 65%)",
-    "linear-gradient(45deg, rgba(160,90,40,.6), transparent 70%)"
-  ],
-  inverno:[
-    "radial-gradient(circle at top, rgba(140,180,220,.6), transparent 65%)",
-    "linear-gradient(180deg, rgba(180,200,220,.6), transparent 70%)"
-  ]
+/* ================= DADOS ================= */
+
+const MUNICIPIO_NOME={
+  0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Km 69",
+  81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
+  136:"Castro Daire",152:"Mortágua",171:"Viseu",200:"Mortágua",
+  213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",
+  248:"Vila Nova de Poiares",262:"Lousã",272:"Góis",
+  324:"Sertã",345:"Sertã",366:"Vila de Rei",369:"Meio da EN2",
+  386:"Sardoal",400:"Abrantes",435:"Ponte de Sôr",466:"Avis",
+  475:"Coruche",494:"Coruche",500:"Ciborro",518:"Montemor-o-Novo",
+  551:"Alcáçovas",565:"Torrão",595:"Ferreira do Alentejo",
+  619:"Aljustrel",640:"Castro Verde",663:"Almodôvar",
+  666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
+  738:"Faro",738.5:"Faro (Final)"
 };
+
+const QUESTIONS=[
+ "Qual é o prato típico mais famoso de Portugal?",
+ "Em que ano foi inaugurada a EN2?",
+ "Qual é o rio mais longo de Portugal?",
+ "Portugal tem quantos distritos?",
+ "Qual é a capital do Algarve?"
+];
+
+const EVENTS=[
+ {text:"Bons momentos! Avança +1 casa.",move:1,cls:"eventGood"},
+ {text:"Contratempo! Recua 1 casa.",move:-1,cls:"eventBad"}
+];
 </script>
 
 <script>
+/* ================= SPACES ================= */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -680,18 +663,6 @@ function showPodium(){
   `).join("")}
  </div>`;
 }
-function askFicha(cell){
- const nome=MUNICIPIO_NOME[cell.km];
- showModal(
-  `${players[current].name} ganhou a ficha de ${nome} (Km ${cell.km}). Aceita?`,
-  [
-   {text:"Aceitar",cls:"accept",action:()=>{/* resto igual */}},
-   {text:"Recusar",cls:"decline",action:()=>{/* resto igual */}}
-  ]
- );
-}
-
-/* --------------------------------------------------------------------- */
 </script>
 
 </body>
