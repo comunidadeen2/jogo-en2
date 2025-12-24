@@ -32,46 +32,25 @@ body::before{
   inset:0;
   pointer-events:none;
   z-index:0;
-  opacity:.12;
+  opacity:.15;
   background:var(--season-overlay);
 }
 
-h1{
-  text-align:center;
-  margin:20px 0;
-  position:relative;
-  z-index:1;
-}
-
 /* Layout */
-.controls{
-  text-align:center;
-  margin:20px;
-  position:relative;
-  z-index:1;
-}
+h1{text-align:center;margin:20px 0;position:relative;z-index:2}
+.controls,.main{position:relative;z-index:2}
 
-.main{
-  display:flex;
-  justify-content:center;
-  gap:24px;
-  align-items:flex-start;
-  position:relative;
-  z-index:1;
-}
+.controls{text-align:center;margin:20px}
+.main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
 
 /* Tabuleiro */
 .board-frame{
-  width:1000px;
-  height:750px;
-  position:relative;
-  overflow:hidden;
-  border-radius:10px;
+  width:1000px;height:750px;
+  position:relative;overflow:hidden;border-radius:10px
 }
 .board-img{
-  position:absolute;
-  inset:0;
-  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
+  position:absolute;inset:0;
+  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat
 }
 .pawn{
   position:absolute;
@@ -122,6 +101,28 @@ button:disabled{opacity:.5}
 .bike{background:#fb8c00;color:#fff}
 .moto{background:#222;color:#fff}
 .walk{background:#2ecc71;color:#000}
+
+/* MODAL */
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:3;
+}
+.modal{
+  background:#222;
+  padding:24px;
+  border-radius:14px;
+  max-width:420px;
+  text-align:center;
+}
+.modal h3{margin-top:0;color:var(--accent)}
+.modal button{margin:10px}
+.correct{background:var(--green);color:#000}
+.wrong{background:var(--red);color:#fff}
 </style>
 </head>
 
@@ -161,6 +162,16 @@ button:disabled{opacity:.5}
     <div class="pawn" id="pawn3">🚶</div>
   </div>
   <div id="objectivePanel" class="hidden"></div>
+</div>
+
+<!-- MODAL PERGUNTA -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>❓ Pergunta</h3>
+    <p id="questionText"></p>
+    <button class="correct" id="btnCorrect">Resposta Certa</button>
+    <button class="wrong" id="btnWrong">Resposta Errada</button>
+  </div>
 </div>
 
 <script>
@@ -259,19 +270,24 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ================= MUNICÍPIOS (ÍNDICES) ================= */
-/* índice do SPACES → km do município */
-const MUNICIPIOS_BY_INDEX = {
-  0: 0,
-  4: 35,
-  7: 64
+/* ================= MUNICÍPIOS ================= */
+const KM_BY_INDEX={
+3:0,5:35,7:64,8:69,11:81,13:88,16:104,19:136,21:152,23:171,
+25:200,27:213,29:225,31:238,33:248,35:262,37:272,39:324,
+41:345,43:366,44:369,46:386,48:400,50:435,52:466,54:475,
+57:494,58:500,60:518,63:551,66:565,68:595,70:619,73:640,
+75:663,77:666,80:688,83:722,85:738,89:738.5
 };
+const SPECIAL_CELLS={};
+Object.keys(KM_BY_INDEX).forEach(i=>{
+  SPECIAL_CELLS[i]={km:KM_BY_INDEX[i],final:i==89};
+});
 
-/* ================= PERGUNTAS (placeholder) ================= */
-const QUESTIONS = [
-  "Qual é o prato típico mais famoso de Portugal?",
-  "Qual é o rio mais longo de Portugal?",
-  "Quantos distritos tem Portugal?"
+/* ================= PERGUNTAS ================= */
+const QUESTIONS=[
+ "Qual é o rio mais longo de Portugal?",
+ "Qual é o prato típico mais famoso de Portugal?",
+ "Quantos distritos tem Portugal?"
 ];
 
 /* ================= OBJETIVOS ================= */
@@ -359,111 +375,127 @@ const OBJECTIVES = [
 /* ================= VARIÁVEIS ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
+let repeatTurn=false;
 
-/* ================= POSICIONAR PEÃO ================= */
+/* ================= POSIÇÃO ================= */
 function placePawn(pawn,i){
-  const s=SPACES[i];
-  pawn.style.left=(s.x*board.clientWidth-8)+"px";
-  pawn.style.top =(s.y*board.clientHeight-10)+"px";
+ const s=SPACES[i];
+ pawn.style.left=(s.x*board.clientWidth-8)+"px";
+ pawn.style.top =(s.y*board.clientHeight-10)+"px";
 }
 
-/* ================= INICIAR JOGO ================= */
+/* ================= MODAL ================= */
+function showQuestion(){
+ const q=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+ questionText.textContent=q;
+ modalBg.style.display="flex";
+}
+function closeQuestion(){
+ modalBg.style.display="none";
+}
+
+/* ================= INICIAR ================= */
 startBtn.onclick=()=>{
-  const choice=document.querySelector("input[name='season']:checked");
-  if(!choice){
-    alert("Escolhe a altura do ano para fazer a EN2 🌍");
-    return;
-  }
+ const choice=document.querySelector("input[name='season']:checked");
+ if(!choice){alert("Escolhe a estação 🌍");return;}
 
-  const overlays=SEASON_OVERLAYS[choice.value];
-  document.body.style.setProperty(
-    "--season-overlay",
-    overlays[Math.floor(Math.random()*overlays.length)]
-  );
+ const overlays=SEASON_OVERLAYS[choice.value];
+ document.body.style.setProperty("--season-overlay",
+  overlays[Math.floor(Math.random()*overlays.length)]
+ );
 
-  const total=Number(playerCount.value);
-  const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+ const total=Number(playerCount.value);
+ const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
 
-  setup.classList.add("hidden");
-  game.classList.remove("hidden");
-  objectivePanel.classList.remove("hidden");
+ setup.classList.add("hidden");
+ game.classList.remove("hidden");
+ objectivePanel.classList.remove("hidden");
 
-  players=[];
-  for(let i=0;i<total;i++){
-    players.push({
-      name:"Jogador "+(i+1),
-      pawn:i,
-      pos:0,
-      objective:deck.pop(),
-      done:{},
-      extra:[],
-      finished:false
-    });
-    pawns[i].style.display="block";
-    placePawn(pawns[i],0);
-  }
-  updateTurn();
+ players=[];
+ for(let i=0;i<total;i++){
+  players.push({
+   name:"Jogador "+(i+1),
+   pawn:i,pos:0,
+   objective:deck.pop(),
+   finished:false
+  });
+  pawns[i].style.display="block";
+  placePawn(pawns[i],0);
+ }
+ updateTurn();
 };
 
 /* ================= TURNO ================= */
 function updateTurn(){
-  turn.textContent="Vez de "+players[current].name;
-  renderObjective(players[current]);
+ turn.textContent="Vez de "+players[current].name;
+ renderObjective(players[current]);
 }
 
 /* ================= OBJETIVO ================= */
 function renderObjective(p){
-  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
-  p.objective.items.forEach(it=>{
-    objectivePanel.innerHTML+=`
-      <div class="obj-item">
-        <div class="marco">Km ${it.km}</div>
-        <div>${it.text}</div>
-      </div>`;
-  });
-}
-
-/* ================= PERGUNTA ================= */
-function askQuestion(){
-  const q=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
-  alert("❓ Pergunta:\n\n"+q);
+ objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
+ p.objective.items.forEach(it=>{
+  objectivePanel.innerHTML+=`
+   <div class="obj-item">
+    <div class="marco">Km ${it.km}</div>
+    <div>${it.text}</div>
+   </div>`;
+ });
 }
 
 /* ================= JOGAR ================= */
 rollBtn.onclick=()=>{
-  const r=Math.floor(Math.random()*6)+1;
-  dice.textContent=r;
+ const r=Math.floor(Math.random()*6)+1;
+ dice.textContent=r;
+ const p=players[current];
+ p.pos=Math.min(p.pos+r,SPACES.length-1);
+ placePawn(pawns[p.pawn],p.pos);
 
-  const p=players[current];
-  p.pos=Math.min(p.pos+r,SPACES.length-1);
-  placePawn(pawns[p.pawn],p.pos);
-
-  if(MUNICIPIOS_BY_INDEX[p.pos]!==undefined){
-    askQuestion();
-  }
-
-  current=(current+1)%players.length;
-  updateTurn();
+ if(MUNICIPIOS_BY_INDEX[p.pos]!==undefined){
+  showQuestion();
+ }else{
+  nextTurn();
+ }
 };
+
+/* ================= RESPOSTAS ================= */
+btnCorrect.onclick=()=>{
+ closeQuestion();
+ repeatTurn=true;
+ nextTurn();
+};
+btnWrong.onclick=()=>{
+ closeQuestion();
+ repeatTurn=false;
+ nextTurn();
+};
+
+function nextTurn(){
+ if(!repeatTurn){
+  current=(current+1)%players.length;
+ }
+ repeatTurn=false;
+ updateTurn();
+}
 
 /* ================= ESTAÇÕES ================= */
 const SEASON_OVERLAYS={
-  primavera:[
-    "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 60%)",
-    "linear-gradient(135deg, rgba(140,220,160,.5), transparent 70%)"
-  ],
-  verao:[
-    "radial-gradient(circle at top, rgba(255,200,80,.7), transparent 60%)",
-    "linear-gradient(135deg, rgba(255,170,60,.6), transparent 70%)"
-  ],
-  outono:[
-    "radial-gradient(circle at center, rgba(180,120,60,.6), transparent 65%)",
-    "linear-gradient(45deg, rgba(160,90,40,.6), transparent 70%)"
-  ],
-  inverno:[
-    "radial-gradient(circle at top, rgba(140,180,220,.6), transparent 65%)",
-    "linear-gradient(180deg, rgba(180,200,220,.6), transparent 70%)"
-  ]
+ primavera:[
+  "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 60%)",
+  "linear-gradient(135deg, rgba(140,220,160,.5), transparent 70%)"
+ ],
+ verao:[
+  "radial-gradient(circle at top, rgba(255,200,80,.7), transparent 60%)",
+  "linear-gradient(135deg, rgba(255,170,60,.6), transparent 70%)"
+ ],
+ outono:[
+  "radial-gradient(circle at center, rgba(180,120,60,.6), transparent 65%)",
+  "linear-gradient(45deg, rgba(160,90,40,.6), transparent 70%)"
+ ],
+ inverno:[
+  "radial-gradient(circle at top, rgba(140,180,220,.6), transparent 65%)",
+  "linear-gradient(180deg, rgba(180,200,220,.6), transparent 70%)"
+ ]
 };
 
 </script>
