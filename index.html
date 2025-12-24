@@ -259,6 +259,21 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
+/* ================= MUNICÍPIOS (ÍNDICES) ================= */
+/* índice do SPACES → km do município */
+const MUNICIPIOS_BY_INDEX = {
+  0: 0,
+  4: 35,
+  7: 64
+};
+
+/* ================= PERGUNTAS (placeholder) ================= */
+const QUESTIONS = [
+  "Qual é o prato típico mais famoso de Portugal?",
+  "Qual é o rio mais longo de Portugal?",
+  "Quantos distritos tem Portugal?"
+];
+
 /* ================= OBJETIVOS ================= */
 const OBJECTIVES = [
 
@@ -408,13 +423,25 @@ function renderObjective(p){
   });
 }
 
+/* ================= PERGUNTA ================= */
+function askQuestion(){
+  const q=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+  alert("❓ Pergunta:\n\n"+q);
+}
+
 /* ================= JOGAR ================= */
 rollBtn.onclick=()=>{
   const r=Math.floor(Math.random()*6)+1;
   dice.textContent=r;
+
   const p=players[current];
   p.pos=Math.min(p.pos+r,SPACES.length-1);
   placePawn(pawns[p.pawn],p.pos);
+
+  if(MUNICIPIOS_BY_INDEX[p.pos]!==undefined){
+    askQuestion();
+  }
+
   current=(current+1)%players.length;
   updateTurn();
 };
