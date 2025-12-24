@@ -85,6 +85,15 @@ h1{text-align:center;margin:20px 0;position:relative;z-index:2}
   border-radius:8px;
   font-weight:bold;
 }
+.marco.done{
+  background:var(--green);
+  color:#000;
+}
+.extra-title{
+  margin-top:12px;
+  font-weight:bold;
+  color:#aaa;
+}
 
 /* Botões */
 button{
@@ -123,6 +132,8 @@ button:disabled{opacity:.5}
 .modal button{margin:10px}
 .correct{background:var(--green);color:#000}
 .wrong{background:var(--red);color:#fff}
+.accept{background:var(--green);color:#000}
+.decline{background:var(--red);color:#fff}
 </style>
 </head>
 
@@ -164,13 +175,12 @@ button:disabled{opacity:.5}
   <div id="objectivePanel" class="hidden"></div>
 </div>
 
-<!-- MODAL PERGUNTA -->
+<!-- MODAL -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h3>❓ Pergunta</h3>
-    <p id="questionText"></p>
-    <button class="correct" id="btnCorrect">Resposta Certa</button>
-    <button class="wrong" id="btnWrong">Resposta Errada</button>
+    <h3 id="modalTitle"></h3>
+    <p id="modalText"></p>
+    <div id="modalButtons"></div>
   </div>
 </div>
 
@@ -271,6 +281,21 @@ const SPACES = [
 ];
 
 /* ================= MUNICÍPIOS ================= */
+const MUNICIPIO_NOME={
+0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Peso da Régua",
+81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
+136:"Castro Daire",152:"Mortágua",171:"Viseu",200:"Mortágua",
+213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
+262:"Lousã",272:"Góis",324:"Sertã",345:"Sertã",366:"Vila de Rei",
+369:"Meio da EN2",386:"Sardoal",400:"Ponte de Sôr",435:"Ponte de Sôr",
+466:"Avis",475:"Coruche",494:"Coruche",500:"Mora",518:"Ferreira do Alentejo",
+551:"Alcáçovas",565:"Torrão",595:"Ferreira do Alentejo",
+619:"Aljustrel",640:"Castro Verde",663:"Almodôvar",
+666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
+738:"Faro",738.5:"Faro (Final)"
+};
+
+/* ================= MUNICÍPIOS POR ÍNDICE ================= */
 const KM_BY_INDEX={
 3:0,5:35,7:64,8:69,11:81,13:88,16:104,19:136,21:152,23:171,
 25:200,27:213,29:225,31:238,33:248,35:262,37:272,39:324,
@@ -283,7 +308,7 @@ Object.keys(KM_BY_INDEX).forEach(i=>{
   SPECIAL_CELLS[i]={km:KM_BY_INDEX[i],final:i==89};
 });
 
-/* ================= PERGUNTAS ================= */
+  /* ================= PERGUNTAS ================= */
 const QUESTIONS=[
  "Qual é o rio mais longo de Portugal?",
  "Qual é o prato típico mais famoso de Portugal?",
@@ -372,7 +397,6 @@ const OBJECTIVES = [
   ]}
 ];
 
-/* ================= VARIÁVEIS ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 let repeatTurn=false;
@@ -385,14 +409,20 @@ function placePawn(pawn,i){
 }
 
 /* ================= MODAL ================= */
-function showQuestion(){
- const q=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
- questionText.textContent=q;
+function showModal(title,text,buttons){
+ modalTitle.textContent=title;
+ modalText.textContent=text;
+ modalButtons.innerHTML="";
+ buttons.forEach(b=>{
+  const btn=document.createElement("button");
+  btn.textContent=b.text;
+  btn.className=b.cls;
+  btn.onclick=b.action;
+  modalButtons.appendChild(btn);
+ });
  modalBg.style.display="flex";
 }
-function closeQuestion(){
- modalBg.style.display="none";
-}
+function closeModal(){modalBg.style.display="none";}
 
 /* ================= INICIAR ================= */
 startBtn.onclick=()=>{
@@ -417,7 +447,7 @@ startBtn.onclick=()=>{
    name:"Jogador "+(i+1),
    pawn:i,pos:0,
    objective:deck.pop(),
-   finished:false
+   done:{},extra:[]
   });
   pawns[i].style.display="block";
   placePawn(pawns[i],0);
@@ -437,10 +467,20 @@ function renderObjective(p){
  p.objective.items.forEach(it=>{
   objectivePanel.innerHTML+=`
    <div class="obj-item">
-    <div class="marco">Km ${it.km}</div>
+    <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
     <div>${it.text}</div>
    </div>`;
  });
+ if(p.extra.length){
+  objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
+  p.extra.forEach(km=>{
+   objectivePanel.innerHTML+=`
+    <div class="obj-item">
+     <div class="marco">Km ${km}</div>
+     <div>Visitar ${MUNICIPIO_NOME[km]}</div>
+    </div>`;
+  });
+ }
 }
 
 /* ================= JOGAR ================= */
@@ -451,24 +491,54 @@ rollBtn.onclick=()=>{
  p.pos=Math.min(p.pos+r,SPACES.length-1);
  placePawn(pawns[p.pawn],p.pos);
 
- if(MUNICIPIOS_BY_INDEX[p.pos]!==undefined){
-  showQuestion();
+ const km=MUNICIPIOS_BY_INDEX[p.pos];
+ if(km!==undefined){
+  askQuestion(km);
  }else{
   nextTurn();
  }
 };
 
-/* ================= RESPOSTAS ================= */
-btnCorrect.onclick=()=>{
- closeQuestion();
- repeatTurn=true;
- nextTurn();
-};
-btnWrong.onclick=()=>{
- closeQuestion();
- repeatTurn=false;
- nextTurn();
-};
+/* ================= PERGUNTA ================= */
+function askQuestion(km){
+ const q=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+ showModal("❓ Pergunta",q,[
+  {text:"Resposta Certa",cls:"correct",action:()=>{
+    closeModal();
+    askFicha(km);
+  }},
+  {text:"Resposta Errada",cls:"wrong",action:()=>{
+    closeModal();
+    repeatTurn=false;
+    nextTurn();
+  }}
+ ]);
+}
+
+/* ================= FICHA ================= */
+function askFicha(km){
+ const nome=MUNICIPIO_NOME[km];
+ showModal("🎫 Ficha de Município",
+  `Ganhaste a ficha de ${nome}. Aceitas?`,
+ [
+  {text:"Aceitar",cls:"accept",action:()=>{
+    const p=players[current];
+    if(p.objective.items.some(it=>it.km===km)){
+      p.done[km]=true;
+    }else{
+      p.extra.push(km);
+    }
+    closeModal();
+    repeatTurn=true;
+    updateTurn();
+  }},
+  {text:"Recusar",cls:"decline",action:()=>{
+    closeModal();
+    repeatTurn=false;
+    nextTurn();
+  }}
+ ]);
+}
 
 function nextTurn(){
  if(!repeatTurn){
