@@ -172,7 +172,7 @@ button:disabled{opacity:.5}
 
 <script>
 /* ================= SPACES ================= */
-const SPACES = [
+  const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
 {"x":0.0867430441898527,"y":0.2152824763193505},
@@ -270,13 +270,13 @@ const MUNICIPIO_NOME = {
   0:"Chaves",
   35:"Vila Pouca de Aguiar",
   64:"Vila Real",
+  69:"Km 69",
   81:"Santa Marta de Penaguião",
   88:"Peso da Régua",
   104:"Lamego",
   136:"Castro Daire",
 
   /* 🔧 CORREÇÕES */
-  69: "Km 69",
   152:"São Pedro do Sul",
   171:"Viseu",
   200:"Tondela",
@@ -285,13 +285,13 @@ const MUNICIPIO_NOME = {
   238:"Penacova",
   248:"Vila Nova de Poiares",
   262:"Lousã",
-  272:"Góis",
+  271:"Góis",
   324:"Pedrogão Grande",
   345:"Sertã",
   366:"Vila de Rei",
   369:"Meio da Estrada",
   386:"Sardoal",
-  400:Abrantes!,
+  400:"Abrantes",
   435:"Ponte de Sôr",
   466:"Avis",
   475:"Mora",
@@ -327,7 +327,7 @@ Object.keys(KM_BY_INDEX).forEach(i=>{
   SPECIAL_CELLS[i] = { km: KM_BY_INDEX[i], final: i==89 };
 });
 
-/* ================= EVENTOS ================= */
+  /* ================= EVENTOS ================= */
 const EVENTS = [
   {text:"Bons momentos! Avança +1 casa.",move:1,cls:"eventGood"},
   {text:"Bons momentos! Avança +2 casas.",move:2,cls:"eventGood"},
@@ -559,4 +559,5 @@ function showPodium(){
 </script>
 
 </body>
-</html>  
+</html>
+  
