@@ -674,11 +674,23 @@ function showPodium(){
 }
 </script>
 
+<script>
 function askFicha(cell){
- const nome=MUNICIPIO_NOME[cell.km];
+ const nome = MUNICIPIO_NOME[cell.km];
  showModal(
   `${players[current].name} ganhou a ficha de ${nome} (Km ${cell.km}). Aceita?`,
-  [...]
+  [
+    {
+      text:"Aceitar",
+      cls:"accept",
+      action:()=>{ /* lógica aqui */ }
+    },
+    {
+      text:"Recusar",
+      cls:"decline",
+      action:()=>{ /* lógica aqui */ }
+    }
+  ]
  );
 }
 </script>
