@@ -366,7 +366,36 @@ function showModal(text,buttons){
 function closeModal(){modal.style.display="none";}
 
 /* ================= SETUP ================= */
+const SEASON_OVERLAYS = {
+  primavera: [
+    "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 60%)",
+    "radial-gradient(circle at bottom right, rgba(100,180,140,.6), transparent 65%)",
+    "linear-gradient(135deg, rgba(140,220,160,.5), transparent 70%)"
+  ],
+  verao: [
+    "radial-gradient(circle at top, rgba(255,200,80,.7), transparent 60%)",
+    "linear-gradient(135deg, rgba(255,170,60,.6), transparent 70%)",
+    "radial-gradient(circle at center, rgba(255,220,120,.5), transparent 65%)"
+  ],
+  outono: [
+    "radial-gradient(circle at center, rgba(180,120,60,.6), transparent 65%)",
+    "linear-gradient(45deg, rgba(160,90,40,.6), transparent 70%)",
+    "radial-gradient(circle at top left, rgba(200,130,60,.5), transparent 60%)"
+  ],
+  inverno: [
+    "radial-gradient(circle at top, rgba(140,180,220,.6), transparent 65%)",
+    "linear-gradient(180deg, rgba(180,200,220,.6), transparent 70%)",
+    "radial-gradient(circle at center, rgba(200,220,240,.5), transparent 60%)"
+  ]
+};
+
 startBtn.onclick=()=>{
+const choice = document.querySelector("input[name='season']:checked");
+if(choice){
+  const overlays = SEASON_OVERLAYS[choice.value];
+  const overlay = overlays[Math.floor(Math.random() * overlays.length)];
+  document.body.style.setProperty("--season-overlay", overlay);
+}
 const seasonChoice=document.querySelector("input[name='season']:checked");
 if(!seasonChoice){
   alert("Escolhe a altura do ano 🌍");
