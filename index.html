@@ -541,14 +541,28 @@ function updateTurn(){
 
 /* ================= OBJETIVO ================= */
 function renderObjective(p){
- objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
- p.objective.items.forEach(it=>{
-  objectivePanel.innerHTML+=`
-   <div class="obj-item">
-    <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-    <div>${it.text}</div>
-   </div>`;
- });
+  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
+
+  // OBJETIVO ESPECIAL (primeiro / último)
+  if(p.objective.type){
+    objectivePanel.innerHTML+=`
+      <div class="obj-item">
+        <div class="marco">🎯</div>
+        <div>${p.objective.text}</div>
+      </div>
+    `;
+    return;
+  }
+
+  // OBJETIVOS NORMAIS
+  p.objective.items.forEach(it=>{
+    objectivePanel.innerHTML+=`
+      <div class="obj-item">
+        <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+        <div>${it.text}</div>
+      </div>
+    `;
+  });
 }
 
 /* ================= PERGUNTA ================= */
