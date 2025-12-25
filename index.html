@@ -7,21 +7,77 @@
 
 <style>
 :root{
-  --bg:#111;--text:#eee;--panel:#1c1c1c;
-  --accent:#ff9800;--grey:#555;--green:#2ecc71;--red:#e53935;
+  --bg:#111;
+  --text:#eee;
+  --panel:#1c1c1c;
+  --accent:#ff9800;
+  --grey:#555;
+  --green:#2ecc71;
+  --red:#e53935;
+  --season-overlay:none;
 }
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial}
-h1{text-align:center;margin:20px 0}
-.main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, Helvetica, sans-serif;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* Overlay sazonal */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.14;
+  background:var(--season-overlay);
+}
+
+h1{text-align:center;margin:20px 0;position:relative;z-index:1}
+
+.main{
+  display:flex;
+  justify-content:center;
+  gap:24px;
+  align-items:flex-start;
+  position:relative;
+  z-index:1;
+}
 
 /* TABULEIRO */
-.board-frame{width:1000px;height:750px;position:relative;overflow:hidden;border-radius:10px}
-.board-img{position:absolute;inset:0;background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat}
-.pawn{position:absolute;transform:translate(-50%,-50%);font-size:22px;pointer-events:none;display:none}
+.board-frame{
+  width:1000px;
+  height:750px;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+}
+.board-img{
+  position:absolute;
+  inset:0;
+  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
+}
+.pawn{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  font-size:22px;
+  pointer-events:none;
+  display:none;
+}
 
 /* CONTROLOS */
-.controls{text-align:center;margin:20px}
-button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
+.controls{text-align:center;margin:20px;position:relative;z-index:1}
+button{
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
 button:disabled{opacity:.5}
 .hidden{display:none}
 
@@ -33,33 +89,57 @@ button:disabled{opacity:.5}
 
 /* OBJETIVOS */
 #objectivePanel{
-  width:300px;background:var(--panel);
-  border-radius:16px;padding:12px;
+  width:300px;
+  background:var(--panel);
+  border-radius:16px;
+  padding:12px;
   border:2px dashed #555;
 }
-.objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
-.obj-item{display:flex;gap:10px;margin-bottom:6px}
+.objective-title{
+  color:var(--accent);
+  font-weight:bold;
+  margin-bottom:10px;
+}
+.obj-item{
+  display:flex;
+  gap:10px;
+  margin-bottom:6px;
+}
 .marco{
-  background:var(--grey);color:#fff;
-  padding:4px 10px;border-radius:8px;
-  min-width:64px;text-align:center;font-weight:bold
+  background:var(--grey);
+  color:#fff;
+  padding:4px 10px;
+  border-radius:8px;
+  min-width:64px;
+  text-align:center;
+  font-weight:bold;
 }
 .marco.done{background:var(--green)}
 .extra-title{
-  margin:16px 0 8px 0;
-  text-align:center;color:#bbb;font-size:13px;
-  border-top:1px dashed #444;padding-top:8px;
+  margin:16px 0 8px;
+  text-align:center;
+  color:#bbb;
+  font-size:13px;
+  border-top:1px dashed #444;
+  padding-top:8px;
 }
 
 /* MODAL */
 #modal{
-  position:fixed;inset:0;
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.55);
-  display:none;align-items:center;justify-content:center
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
 }
 #modalBox{
-  background:#222;padding:22px;
-  border-radius:14px;width:420px;text-align:center
+  background:#222;
+  padding:22px;
+  border-radius:14px;
+  width:420px;
+  text-align:center;
 }
 #modalBox button{margin:6px}
 .accept{background:var(--green);color:#000}
@@ -69,29 +149,46 @@ button:disabled{opacity:.5}
 
 /* PÓDIO */
 #podium{
-  position:fixed;inset:0;
+  position:fixed;
+  inset:0;
   background:#000c;
   display:none;
   overflow:auto;
   padding:40px;
+  z-index:20;
 }
 .podium-box{
-  display:flex;justify-content:center;align-items:flex-end;gap:30px;margin-bottom:40px
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:30px;
+  margin-bottom:40px;
 }
 .step{
-  width:160px;border-radius:14px;text-align:center;padding:12px;color:#000
+  width:160px;
+  border-radius:14px;
+  text-align:center;
+  padding:12px;
+  color:#000;
 }
 .gold{background:#f5c400;height:220px}
 .silver{background:#ccc;height:180px}
 .bronze{background:#c68642;height:150px}
 .step .emoji{font-size:30px}
 .step .name{font-weight:bold;margin-top:6px}
+
 .cards{
-  display:flex;gap:20px;justify-content:center;flex-wrap:wrap
+  display:flex;
+  gap:20px;
+  justify-content:center;
+  flex-wrap:wrap;
 }
 .card{
-  background:#1c1c1c;border:2px dashed #555;
-  border-radius:14px;padding:12px;width:260px
+  background:#1c1c1c;
+  border:2px dashed #555;
+  border-radius:14px;
+  padding:12px;
+  width:260px;
 }
 .stats{
   margin-top:10px;
@@ -119,10 +216,21 @@ button:disabled{opacity:.5}
 <div class="controls">
   <div id="setup">
     Jogadores:
-    <select id="playerCount"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+    <select id="playerCount">
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+    </select>
+
+    <p style="margin:12px 0 6px">Quando queres fazer a EN2?</p>
+    <label><input type="radio" name="season" value="primavera"> 🌸 Primavera</label>
+    <label><input type="radio" name="season" value="verao"> ☀️ Verão</label>
+    <label><input type="radio" name="season" value="outono"> 🍂 Outono</label>
+    <label><input type="radio" name="season" value="inverno"> ❄️ Inverno</label>
+    <br><br>
     <button id="startBtn">COMEÇAR</button>
   </div>
+
   <div id="names" class="hidden"></div>
+
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
@@ -140,149 +248,76 @@ button:disabled{opacity:.5}
 <div id="podium"></div>
 
 <script>
+/* ================= ESTAÇÕES ================= */
+const SEASON_OVERLAYS={
+  primavera:[
+    "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 60%)",
+    "linear-gradient(135deg, rgba(140,220,160,.5), transparent 70%)"
+  ],
+  verao:[
+    "radial-gradient(circle at top, rgba(255,200,80,.7), transparent 60%)",
+    "linear-gradient(135deg, rgba(255,170,60,.6), transparent 70%)"
+  ],
+  outono:[
+    "radial-gradient(circle at center, rgba(180,120,60,.6), transparent 65%)",
+    "linear-gradient(45deg, rgba(160,90,40,.6), transparent 70%)"
+  ],
+  inverno:[
+    "radial-gradient(circle at top, rgba(140,180,220,.6), transparent 65%)",
+    "linear-gradient(180deg, rgba(180,200,220,.6), transparent 70%)"
+  ]
+};
+
 /* ================= SPACES ================= */
-const SPACES = [
-{"x":0.09165302782324058,"y":0.11379397834912044},
-{"x":0.0867430441898527,"y":0.16250845737483086},
-{"x":0.0867430441898527,"y":0.2152824763193505},
-{"x":0.09165302782324058,"y":0.2700862652232747},
-{"x":0.127114020731042,"y":0.23558017591339647},
-{"x":0.15057283142389524,"y":0.18957205683355888},
-{"x":0.17621385706492088,"y":0.14356393775372125},
-{"x":0.21876704855428258,"y":0.11311738836265224},
-{"x":0.26513911620294595,"y":0.09417286874154264},
-{"x":0.30551009274413526,"y":0.10229194857916103},
-{"x":0.3458810692853246,"y":0.13003213802435723},
-{"x":0.35951991271140205,"y":0.17671684709066307},
-{"x":0.3246044735406437,"y":0.21595906630581868},
-{"x":0.287506819421713,"y":0.19227841677943167},
-{"x":0.24277141298417892,"y":0.17198071718538568},
-{"x":0.2198581560283688,"y":0.21798883626522328},
-{"x":0.23840698308783415,"y":0.2700862652232747},
-{"x":0.22804146208401527,"y":0.31880074424898514},
-{"x":0.18112384069830878,"y":0.3269198240866035},
-{"x":0.13911620294599017,"y":0.33571549391069017},
-{"x":0.11292962356792144,"y":0.38713633288227334},
-{"x":0.11947626841243862,"y":0.4372039918809202},
-{"x":0.15711947626841244,"y":0.4690037212449256},
-{"x":0.20021822149481724,"y":0.45005920162381596},
-{"x":0.23404255319148934,"y":0.41217016238159676},
-{"x":0.2613202400436443,"y":0.368868403247632},
-{"x":0.2940534642662302,"y":0.3275964140730717},
-{"x":0.3333333333333333,"y":0.2998562246278755},
-{"x":0.37861429350791054,"y":0.3181241542625169},
-{"x":0.4026186579378069,"y":0.3600727334235454},
-{"x":0.40698308783415166,"y":0.41961265223274696},
-{"x":0.3824331696672122,"y":0.4554719215155616},
-{"x":0.3376977632296781,"y":0.4893014208389716},
-{"x":0.2967812329514457,"y":0.5048629905277402},
-{"x":0.2509547190398254,"y":0.5190713802435725},
-{"x":0.20403709765411893,"y":0.5501945196211097},
-{"x":0.1756683033278778,"y":0.5887601488497971},
-{"x":0.18876159301691217,"y":0.6455937077131259},
-{"x":0.23349699945444624,"y":0.6652148173207038},
-{"x":0.27714129841789414,"y":0.6516830175913396},
-{"x":0.3175122749590834,"y":0.6313853179972937},
-{"x":0.35951991271140205,"y":0.6070280784844384},
-{"x":0.4004364429896345,"y":0.5725219891745602},
-{"x":0.42825968357883254,"y":0.5420754397834913},
-{"x":0.4653573376977632,"y":0.5014800405953992},
-{"x":0.4915439170758319,"y":0.46765054127198924},
-{"x":0.5237315875613747,"y":0.4290849120433018},
-{"x":0.5613747954173486,"y":0.40269790257104193},
-{"x":0.5990180032733223,"y":0.36345568335588635},
-{"x":0.6377523186033823,"y":0.34045162381596755},
-{"x":0.6824877250409165,"y":0.32489005412719896},
-{"x":0.7255864702673214,"y":0.33639208389715836},
-{"x":0.7408619749045281,"y":0.385783152909337},
-{"x":0.7097654118930714,"y":0.433144451962111},
-{"x":0.6715766503000545,"y":0.46359100135318},
-{"x":0.629569012547736,"y":0.4865950608930988},
-{"x":0.5881069285324604,"y":0.5116288903924222},
-{"x":0.552645935624659,"y":0.5434286197564276},
-{"x":0.5280960174577196,"y":0.5806410690121786},
-{"x":0.5302782324058919,"y":0.642210757780785},
-{"x":0.5575559192580469,"y":0.6861891069012179},
-{"x":0.5995635570103655,"y":0.6949847767253045},
-{"x":0.6415711947626841,"y":0.6713041271989174},
-{"x":0.668848881614839,"y":0.6246194181326117},
-{"x":0.6972176759410802,"y":0.5779347090663058},
-{"x":0.729950900163666,"y":0.5319265899864682},
-{"x":0.7665030005455538,"y":0.5068927604871448},
-{"x":0.8090561920349154,"y":0.534632949932341},
-{"x":0.8199672667757774,"y":0.5860537889039242},
-{"x":0.7948717948717948,"y":0.6408575778078485},
-{"x":0.7495908346972177,"y":0.6516830175913396},
-{"x":0.7054009819967266,"y":0.66656799729364},
-{"x":0.7092198581560283,"y":0.7132527063599459},
-{"x":0.7277686852154936,"y":0.7667033152909337},
-{"x":0.7026732133115112,"y":0.8194773342354534},
-{"x":0.6623022367703219,"y":0.801209404600812},
-{"x":0.6126568466993999,"y":0.7768521650879567},
-{"x":0.5859247135842881,"y":0.8194773342354534},
-{"x":0.6099290780141844,"y":0.8688684032476319},
-{"x":0.6486633933442444,"y":0.8898426928281462},
-{"x":0.6912165848336062,"y":0.8918724627875507},
-{"x":0.7424986361156574,"y":0.8715747631935048},
-{"x":0.7801418439716311,"y":0.8330091339648173},
-{"x":0.7997817785051827,"y":0.7863244248985116},
-{"x":0.8145117294053463,"y":0.7396397158322058},
-{"x":0.8521549372613202,"y":0.6902486468200271},
-{"x":0.8696126568466993,"y":0.7477587956698242},
-{"x":0.8908892525913802,"y":0.7897073748308525},
-{"x":0.9078014184397163,"y":0.8478941136671179},
-{"x":0.8979814511729405,"y":0.902697902571042}
-];
+const SPACES = [...]; /* mantém exatamente o SPACES que já tens */
 
 /* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME={
-0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Peso da Régua",
-81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
-136:"Castro Daire",152:"Mortágua",171:"Viseu",200:"Mortágua",
-213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
-262:"Lousã",272:"Góis",324:"Sertã",345:"Sertã",366:"Vila de Rei",
-369:"Meio da EN2",386:"Sardoal",400:"Ponte de Sôr",435:"Ponte de Sôr",
-466:"Avis",475:"Coruche",494:"Coruche",500:"Mora",518:"Ferreira do Alentejo",
-551:"Alcáçovas",565:"Torrão",595:"Ferreira do Alentejo",
-619:"Aljustrel",640:"Castro Verde",663:"Almodôvar",
-666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
-738:"Faro",738.5:"Faro (Final)"
+  0:"Chaves",
+  35:"Vila Pouca de Aguiar",
+  64:"Vila Real",
+  69:"Km 69",
+  81:"Santa Marta de Penaguião",
+  88:"Peso da Régua",
+  104:"Lamego",
+  152:"São Pedro do Sul",
+  172:"Viseu",
+  213:"Santa Comba Dão",
+  225:"Mortágua",
+  238:"Penacova",
+  248:"Vila Nova de Poiares",
+  260:"Lousã",
+  271:"Góis",
+  317:"Pedrógão Grande",
+  345:"Sertã",
+  366:"Vila de Rei",
+  369:"Meio da EN2",
+  386:"Sardoal",
+  400:"Abrantes",
+  430:"Ponte de Sôr",
+  466:"Avis",
+  476:"Mora",
+  494:"Coruche",
+  500:"Ciborro",
+  518:"Montemor-o-Novo",
+  551:"Alcáçovas",
+  565:"Torrão",
+  595:"Ferreira do Alentejo",
+  619:"Aljustrel",
+  640:"Castro Verde",
+  663:"Almodôvar",
+  666:"Km 666",
+  688:"Ameixial",
+  722:"São Brás de Alportel",
+  738:"Faro",
+  738.5:"Faro (Final)"
 };
 
-/* ================= MUNICÍPIOS POR ÍNDICE ================= */
-const KM_BY_INDEX={
-3:0,5:35,7:64,8:69,11:81,13:88,16:104,19:136,21:152,23:171,
-25:200,27:213,29:225,31:238,33:248,35:262,37:272,39:324,
-41:345,43:366,44:369,46:386,48:400,50:435,52:466,54:475,
-57:494,58:500,60:518,63:551,66:565,68:595,70:619,73:640,
-75:663,77:666,80:688,83:722,85:738,89:738.5
-};
-const SPECIAL_CELLS={};
-Object.keys(KM_BY_INDEX).forEach(i=>{
-  SPECIAL_CELLS[i]={km:KM_BY_INDEX[i],final:i==89};
-});
-
-/* ================= EVENTOS ================= */
-const EVENTS=[
- {text:"Bons momentos! Avança +1 casa.",move:1,cls:"eventGood"},
- {text:"Bons momentos! Avança +2 casas.",move:2,cls:"eventGood"},
- {text:"Contratempo! Recua 1 casa.",move:-1,cls:"eventBad"},
- {text:"Contratempo! Recua 2 casas.",move:-2,cls:"eventBad"}
-];
-
-/* ================= PERGUNTAS ================= */
-const QUESTIONS=[
- "Qual é o prato típico mais famoso de Portugal?",
- "Em que ano foi inaugurada a EN2?",
- "Qual é o rio mais longo de Portugal?",
- "Portugal tem quantos distritos?",
- "Qual é a capital do Algarve?"
-];
-
-/* ================= OBJETIVOS ================= */
-const OBJECTIVES = [
-
-  { items:[
+/* ================= OBJETIVOS (VERSÃO FINAL) ================= */
+const OBJECTIVES=[
+ {type:"first",text:"Ser o primeiro a chegar a Faro (Km 738,5)",items:[{km:738.5,text:"Chegar a Faro"}]},
+ {type:"last",text:"Ser o último a chegar a Faro (Km 738,5)",items:[{km:738.5,text:"Chegar a Faro por último"}]},
+ { items:[
     {km:0,text:"Visitar Chaves"},
     {km:88,text:"Visitar Peso da Régua"},
     {km:238,text:"Visitar Penacova"},
@@ -360,7 +395,6 @@ const OBJECTIVES = [
     {km:738,text:"Chegar a Faro"}
   ]}
 ];
-
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 
@@ -618,6 +652,15 @@ function showPodium(){
    </div>
   `).join("")}
  </div>`;
+}
+</script>
+
+function askFicha(cell){
+ const nome=MUNICIPIO_NOME[cell.km];
+ showModal(
+  `${players[current].name} ganhou a ficha de ${nome} (Km ${cell.km}). Aceita?`,
+  [...]
+ );
 }
 </script>
 
