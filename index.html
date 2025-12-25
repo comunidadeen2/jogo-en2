@@ -262,7 +262,20 @@ function renderObjective(p){
    </div>`;
  });
 }
+  rollBtn.onclick = () => {
+  const p = players[current];
+
+  // avança 1 casa (simples e seguro)
+  if (p.pos < SPACES.length - 1) {
+    p.pos++;
+  }
+
+  // muda de jogador
+  current = (current + 1) % players.length;
+  updateTurn();
+};
 </script>
 
 </body>
 </html>
+
