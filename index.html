@@ -268,6 +268,7 @@ const SEASON_OVERLAYS={
   ]
 };
 
+/* ================= SPACES ================= */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -407,85 +408,12 @@ const MUNICIPIO_NOME={
 const OBJECTIVES=[
  {type:"first",text:"Ser o primeiro a chegar a Faro (Km 738,5)",items:[{km:738.5,text:"Chegar a Faro"}]},
  {type:"last",text:"Ser o último a chegar a Faro (Km 738,5)",items:[{km:738.5,text:"Chegar a Faro por último"}]},
- { items:[
-    {km:0,text:"Visitar Chaves"},
-    {km:88,text:"Visitar Peso da Régua"},
-    {km:238,text:"Visitar Penacova"},
-    {km:619,text:"Visitar Aljustrel"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:0,text:"Visitar Chaves"},
-    {km:104,text:"Visitar Lamego"},
-    {km:248,text:"Visitar Vila Nova de Poiares"},
-    {km:640,text:"Visitar Castro Verde"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:35,text:"Visitar Vila Pouca de Aguiar"},
-    {km:172,text:"Visitar Viseu"},
-    {km:271,text:"Visitar Góis"},
-    {km:551,text:"Visitar Alcáçovas"},
-    {km:722,text:"Visitar São Brás de Alportel"}
-  ]},
-
-  { items:[
-    {km:64,text:"Visitar Vila Real"},
-    {km:213,text:"Visitar Santa Comba Dão"},
-    {km:345,text:"Visitar Sertã"},
-    {km:565,text:"Visitar Torrão"},
-    {km:688,text:"Visitar Ameixial"}
-  ]},
-
-  { items:[
-    {km:81,text:"Visitar Santa Marta de Penaguião"},
-    {km:225,text:"Visitar Mortágua"},
-    {km:345,text:"Visitar Sertã"},
-    {km:595,text:"Visitar Ferreira do Alentejo"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:88,text:"Visitar Peso da Régua"},
-    {km:238,text:"Visitar Penacova"},
-    {km:366,text:"Visitar Vila de Rei"},
-    {km:619,text:"Visitar Aljustrel"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:104,text:"Visitar Lamego"},
-    {km:248,text:"Visitar Vila Nova de Poiares"},
-    {km:386,text:"Visitar Sardoal"},
-    {km:640,text:"Visitar Castro Verde"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:136,text:"Visitar Castro Daire"},
-    {km:260,text:"Visitar Lousã"},
-    {km:430,text:"Visitar Ponte de Sôr"},
-    {km:666,text:"Passar pelo Km 666"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:0,text:"Partir de Chaves"},
-    {km:369,text:"Chegar ao Meio da Estrada"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:69,text:"Passar pelo Km 69"},
-    {km:369,text:"Chegar ao Meio da Estrada"},
-    {km:476,text:"Visitar Mora"},
-    {km:494,text:"Visitar Coruche"},
-    {km:738,text:"Chegar a Faro"}
-  ]}
+ {items:[{km:0,text:"Chaves"},{km:200,text:"Tondela"},{km:400,text:"Abrantes"},{km:500,text:"Ciborro"},{km:738,text:"Faro"}]},
+ {items:[{km:35,text:"Vila Pouca de Aguiar"},{km:172,text:"Viseu"},{km:271,text:"Góis"},{km:551,text:"Alcáçovas"},{km:722,text:"São Brás de Alportel"}]},
+ {items:[{km:64,text:"Vila Real"},{km:213,text:"Santa Comba Dão"},{km:345,text:"Sertã"},{km:565,text:"Torrão"},{km:688,text:"Ameixial"}]},
+ {items:[{km:152,text:"São Pedro do Sul"},{km:317,text:"Pedrógão Grande"},{km:466,text:"Avis"},{km:518,text:"Montemor-o-Novo"},{km:663,text:"Almodôvar"}]}
 ];
-  
+
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 
@@ -745,7 +673,7 @@ function showPodium(){
  </div>`;
 }
 </script>
-<script> 
+
 function askFicha(cell){
  const nome=MUNICIPIO_NOME[cell.km];
  showModal(
@@ -757,4 +685,3 @@ function askFicha(cell){
 
 </body>
 </html>
-
