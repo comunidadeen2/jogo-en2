@@ -7,113 +7,97 @@
 
 <style>
 :root{
-  --bg:#111;
-  --text:#eee;
-  --panel:#1c1c1c;
-  --accent:#ff9800;
-  --green:#2ecc71;
-  --red:#e53935;
-  --season-overlay:none;
+  --bg:#111;--text:#eee;--panel:#1c1c1c;
+  --accent:#ff9800;--grey:#555;--green:#2ecc71;--red:#e53935;
 }
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial}
+h1{text-align:center;margin:20px 0}
+.main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
 
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial, Helvetica, sans-serif;
-}
+/* TABULEIRO */
+.board-frame{width:1000px;height:750px;position:relative;overflow:hidden;border-radius:10px}
+.board-img{position:absolute;inset:0;background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat}
+.pawn{position:absolute;transform:translate(-50%,-50%);font-size:22px;pointer-events:none;display:none}
 
-/* Overlay sazonal VISÍVEL */
-.board-frame::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:var(--season-overlay);
-  opacity:.25;
-  z-index:0;
-}
-
-h1{
-  text-align:center;
-  margin:20px 0;
-}
-
-.main{
-  display:flex;
-  justify-content:center;
-  gap:24px;
-  align-items:flex-start;
-}
-
-/* Tabuleiro */
-.board-frame{
-  width:1000px;
-  height:750px;
-  position:relative;
-  overflow:hidden;
-  border-radius:12px;
-}
-.board-img{
-  position:absolute;
-  inset:0;
-  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
-  z-index:1;
-}
-.pawn{
-  position:absolute;
-  transform:translate(-50%,-50%);
-  font-size:22px;
-  z-index:2;
-  display:none;
-}
-
-/* Painel Objetivos */
-#objectivePanel{
-  width:300px;
-  background:var(--panel);
-  border-radius:16px;
-  padding:12px;
-  border:2px dashed #555;
-}
-.objective-title{
-  color:var(--accent);
-  font-weight:bold;
-  margin-bottom:10px;
-}
-.obj-item{
-  display:flex;
-  gap:10px;
-  margin-bottom:6px;
-}
-.marco{
-  background:#555;
-  color:#fff;
-  padding:4px 10px;
-  border-radius:8px;
-  min-width:70px;
-  text-align:center;
-  font-weight:bold;
-}
-
-/* Controlos */
-.controls{
-  text-align:center;
-  margin:20px;
-}
-button{
-  border:none;
-  padding:10px 18px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
+/* CONTROLOS */
+.controls{text-align:center;margin:20px}
+button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
 .hidden{display:none}
 
-/* Botões peões */
+/* BOTÕES PEÕES */
 .car{background:#e53935;color:#fff}
 .bike{background:#fb8c00;color:#fff}
 .moto{background:#222;color:#fff}
 .walk{background:#2ecc71;color:#000}
+
+/* OBJETIVOS */
+#objectivePanel{
+  width:300px;background:var(--panel);
+  border-radius:16px;padding:12px;
+  border:2px dashed #555;
+}
+.objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
+.obj-item{display:flex;gap:10px;margin-bottom:6px}
+.marco{
+  background:var(--grey);color:#fff;
+  padding:4px 10px;border-radius:8px;
+  min-width:64px;text-align:center;font-weight:bold
+}
+.marco.done{background:var(--green)}
+.extra-title{
+  margin:16px 0 8px 0;
+  text-align:center;color:#bbb;font-size:13px;
+  border-top:1px dashed #444;padding-top:8px;
+}
+
+/* MODAL */
+#modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;align-items:center;justify-content:center
+}
+#modalBox{
+  background:#222;padding:22px;
+  border-radius:14px;width:420px;text-align:center
+}
+#modalBox button{margin:6px}
+.accept{background:var(--green);color:#000}
+.decline{background:var(--red);color:#fff}
+.eventGood{background:#1b5e20;color:#fff}
+.eventBad{background:#b71c1c;color:#fff}
+
+/* PÓDIO */
+#podium{
+  position:fixed;inset:0;
+  background:#000c;
+  display:none;
+  overflow:auto;
+  padding:40px;
+}
+.podium-box{
+  display:flex;justify-content:center;align-items:flex-end;gap:30px;margin-bottom:40px
+}
+.step{
+  width:160px;border-radius:14px;text-align:center;padding:12px;color:#000
+}
+.gold{background:#f5c400;height:220px}
+.silver{background:#ccc;height:180px}
+.bronze{background:#c68642;height:150px}
+.step .emoji{font-size:30px}
+.step .name{font-weight:bold;margin-top:6px}
+.cards{
+  display:flex;gap:20px;justify-content:center;flex-wrap:wrap
+}
+.card{
+  background:#1c1c1c;border:2px dashed #555;
+  border-radius:14px;padding:12px;width:260px
+}
+.stats{
+  margin-top:10px;
+  font-size:13px;
+  color:#ccc;
+}
 </style>
 </head>
 
@@ -135,20 +119,10 @@ button{
 <div class="controls">
   <div id="setup">
     Jogadores:
-    <select id="playerCount">
-      <option>1</option><option>2</option><option>3</option><option>4</option>
-    </select>
-
-    <p>Quando queres fazer a EN2?</p>
-    <label><input type="radio" name="season" value="primavera"> Primavera</label>
-    <label><input type="radio" name="season" value="verao"> Verão</label>
-    <label><input type="radio" name="season" value="outono"> Outono</label>
-    <label><input type="radio" name="season" value="inverno"> Inverno</label>
-    <br><br>
-
+    <select id="playerCount"><option>1</option><option>2</option><option>3</option><option>4</option></select>
     <button id="startBtn">COMEÇAR</button>
   </div>
-
+  <div id="names" class="hidden"></div>
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
@@ -156,29 +130,18 @@ button{
   </div>
 </div>
 
-<script>
-/* ================= ESTAÇÕES ================= */
-const SEASON_OVERLAYS={
-  primavera:[
-    "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 60%)",
-    "linear-gradient(135deg, rgba(140,220,160,.5), transparent 70%)"
-  ],
-  verao:[
-    "radial-gradient(circle at top, rgba(255,200,80,.7), transparent 60%)",
-    "linear-gradient(135deg, rgba(255,170,60,.6), transparent 70%)"
-  ],
-  outono:[
-    "radial-gradient(circle at center, rgba(180,120,60,.6), transparent 65%)",
-    "linear-gradient(45deg, rgba(160,90,40,.6), transparent 70%)"
-  ],
-  inverno:[
-    "radial-gradient(circle at top, rgba(140,180,220,.6), transparent 65%)",
-    "linear-gradient(180deg, rgba(180,200,220,.6), transparent 70%)"
-  ]
-};
+<div id="modal">
+  <div id="modalBox">
+    <p id="modalText"></p>
+    <div id="modalButtons"></div>
+  </div>
+</div>
 
-/* ================= SPACES (COMPLETO) ================= */
-cconst SPACES = [
+<div id="podium"></div>
+
+<script>
+/* ================= SPACES ================= */
+const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
 {"x":0.0867430441898527,"y":0.2152824763193505},
@@ -271,11 +234,55 @@ cconst SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-  /* ================= OBJETIVOS (FINAIS) ================= */
+/* ================= MUNICÍPIOS ================= */
+const MUNICIPIO_NOME={
+0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Peso da Régua",
+81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
+136:"Castro Daire",152:"Mortágua",171:"Viseu",200:"Mortágua",
+213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
+262:"Lousã",272:"Góis",324:"Sertã",345:"Sertã",366:"Vila de Rei",
+369:"Meio da EN2",386:"Sardoal",400:"Ponte de Sôr",435:"Ponte de Sôr",
+466:"Avis",475:"Coruche",494:"Coruche",500:"Mora",518:"Ferreira do Alentejo",
+551:"Alcáçovas",565:"Torrão",595:"Ferreira do Alentejo",
+619:"Aljustrel",640:"Castro Verde",663:"Almodôvar",
+666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
+738:"Faro",738.5:"Faro (Final)"
+};
+
+/* ================= MUNICÍPIOS POR ÍNDICE ================= */
+const KM_BY_INDEX={
+3:0,5:35,7:64,8:69,11:81,13:88,16:104,19:136,21:152,23:171,
+25:200,27:213,29:225,31:238,33:248,35:262,37:272,39:324,
+41:345,43:366,44:369,46:386,48:400,50:435,52:466,54:475,
+57:494,58:500,60:518,63:551,66:565,68:595,70:619,73:640,
+75:663,77:666,80:688,83:722,85:738,89:738.5
+};
+const SPECIAL_CELLS={};
+Object.keys(KM_BY_INDEX).forEach(i=>{
+  SPECIAL_CELLS[i]={km:KM_BY_INDEX[i],final:i==89};
+});
+
+/* ================= EVENTOS ================= */
+const EVENTS=[
+ {text:"Bons momentos! Avança +1 casa.",move:1,cls:"eventGood"},
+ {text:"Bons momentos! Avança +2 casas.",move:2,cls:"eventGood"},
+ {text:"Contratempo! Recua 1 casa.",move:-1,cls:"eventBad"},
+ {text:"Contratempo! Recua 2 casas.",move:-2,cls:"eventBad"}
+];
+
+/* ================= PERGUNTAS ================= */
+const QUESTIONS=[
+ "Qual é o prato típico mais famoso de Portugal?",
+ "Em que ano foi inaugurada a EN2?",
+ "Qual é o rio mais longo de Portugal?",
+ "Portugal tem quantos distritos?",
+ "Qual é a capital do Algarve?"
+];
+
+/* ================= OBJETIVOS ================= */
 const OBJECTIVES = [
- {type:"first",text:"Ser o PRIMEIRO a chegar a Faro (Km 738,5)"},
- {type:"last",text:"Ser o ÚLTIMO a chegar a Faro (Km 738,5)"},
- { items:[
+
+  { items:[
     {km:0,text:"Visitar Chaves"},
     {km:88,text:"Visitar Peso da Régua"},
     {km:238,text:"Visitar Penacova"},
@@ -354,78 +361,264 @@ const OBJECTIVES = [
   ]}
 ];
 
-/* ================= JOGO BASE ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
-const START_INDEX=0;
 
+/* ================= POSIÇÃO PEÃO ================= */
 function placePawn(pawn,i){
  const s=SPACES[i];
- pawn.style.left=(s.x*board.clientWidth)+"px";
- pawn.style.top =(s.y*board.clientHeight)+"px";
+ let ox=-8,oy=-10;
+ if(i===80){ox=-18;oy=-14}
+ if(i===83){ox=-16;oy=-18}
+ if(i===85){ox=-12;oy=-20}
+ if(i===89){ox=-10;oy=-22}
+ pawn.style.left=(s.x*board.clientWidth+ox)+"px";
+ pawn.style.top =(s.y*board.clientHeight+oy)+"px";
 }
 
-startBtn.onclick=()=>{
- const season=document.querySelector("input[name='season']:checked");
- if(!season){alert("Escolhe a estação");return;}
- const overlays=SEASON_OVERLAYS[season.value];
- document.documentElement.style.setProperty(
-  "--season-overlay",
-  overlays[Math.floor(Math.random()*overlays.length)]
- );
-
- setup.classList.add("hidden");
- game.classList.remove("hidden");
- objectivePanel.classList.remove("hidden");
-
- players=[];
- const total=Number(playerCount.value);
- for(let i=0;i<total;i++){
-  players.push({name:"Jogador "+(i+1),pawn:i,pos:START_INDEX});
-  pawns[i].style.display="block";
-  placePawn(pawns[i],START_INDEX);
- }
-
- players.forEach(p=>{
-  p.objective=OBJECTIVES[Math.floor(Math.random()*OBJECTIVES.length)];
+/* ================= MODAL ================= */
+function showModal(text,buttons){
+ modalText.textContent=text;
+ modalButtons.innerHTML="";
+ buttons.forEach(b=>{
+  const btn=document.createElement("button");
+  btn.textContent=b.text;
+  btn.className=b.cls||"";
+  btn.onclick=b.action;
+  modalButtons.appendChild(btn);
  });
+ modal.style.display="flex";
+}
+function closeModal(){modal.style.display="none";}
 
- updateTurn();
+/* ================= SETUP ================= */
+startBtn.onclick=()=>{
+ setup.classList.add("hidden");
+ names.classList.remove("hidden");
+ let total=playerCount.value,i=0,used=[];
+ function next(){
+  names.innerHTML="";
+  if(i>=total){
+   const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+   players.forEach(p=>p.objective=deck.pop());
+   names.classList.add("hidden");
+   game.classList.remove("hidden");
+   objectivePanel.classList.remove("hidden");
+   updateTurn();
+   return;
+  }
+  const input=document.createElement("input");
+  input.placeholder="Nome do Jogador";
+  names.append("Jogador "+(i+1),document.createElement("br"),input,document.createElement("br"));
+  [
+   {id:0,cls:"car",txt:"🚗 Carro"},
+   {id:1,cls:"bike",txt:"🚴 Bicicleta"},
+   {id:2,cls:"moto",txt:"🏍️ Mota"},
+   {id:3,cls:"walk",txt:"🚶 A pé"}
+  ].forEach(p=>{
+   if(used.includes(p.id))return;
+   const b=document.createElement("button");
+   b.className=p.cls;b.textContent=p.txt;
+   b.onclick=()=>{
+    used.push(p.id);
+    players.push({
+      name:input.value||("Jogador "+(i+1)),
+      pawn:p.id,pos:0,
+      done:{},extra:[],
+      municipiosVisitados:0,
+      questionsCorrect:0,
+      questionsWrong:0,
+      finished:false,order:0
+    });
+    pawns[p.id].style.display="block";
+    placePawn(pawns[p.id],0);
+    i++;next();
+   };
+   names.appendChild(b);
+  });
+ }
+ next();
 };
 
+/* ================= TURNO ================= */
 function updateTurn(){
+ if(players.every(p=>p.finished)){
+  showPodium();
+  return;
+ }
+ while(players[current].finished){
+  current=(current+1)%players.length;
+ }
  turn.textContent="Vez de "+players[current].name;
  renderObjective(players[current]);
 }
 
+/* ================= OBJETIVOS ================= */
 function renderObjective(p){
- objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo</div>`;
- if(p.objective.type){
-  objectivePanel.innerHTML+=`<div>${p.objective.text}</div>`;
- }else{
-  p.objective.items.forEach(it=>{
+ objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
+ p.objective.items.forEach(it=>{
+  objectivePanel.innerHTML+=`
+   <div class="obj-item">
+    <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+    <div>${it.text}</div>
+   </div>`;
+ });
+ if(p.extra.length){
+  objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
+  p.extra.forEach(km=>{
    objectivePanel.innerHTML+=`
     <div class="obj-item">
-     <div class="marco">Km ${it.km}</div>
-     <div>${it.text}</div>
+     <div class="marco">Km ${km}</div>
+     <div>Visitar ${MUNICIPIO_NOME[km]}</div>
     </div>`;
   });
  }
 }
 
+/* ================= PERGUNTA ================= */
+function askQuestion(cell){
+ showModal(
+  QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
+  [
+   {text:"Resposta Certa",cls:"accept",action:()=>{
+    players[current].questionsCorrect++;
+    closeModal();
+    askFicha(cell);
+   }},
+   {text:"Resposta Errada",cls:"decline",action:()=>{
+    players[current].questionsWrong++;
+    closeModal();
+    current=(current+1)%players.length;
+    updateTurn();
+   }}
+  ]
+ );
+}
+
+/* ================= FICHA ================= */
+function askFicha(cell){
+ const nome=MUNICIPIO_NOME[cell.km];
+ showModal(
+  `${players[current].name} ganhou a ficha ${nome}. Aceita?`,
+  [
+   {text:"Aceitar",cls:"accept",action:()=>{
+    closeModal();
+    const p=players[current];
+    p.municipiosVisitados++;
+    if(p.objective.items.some(it=>it.km===cell.km)){
+      p.done[cell.km]=true;
+    }else{
+      p.extra.push(cell.km);
+    }
+    if(cell.final){
+      p.finished=true;
+      p.order=players.filter(x=>x.finished).length;
+    }
+    updateTurn();
+   }},
+   {text:"Recusar",cls:"decline",action:()=>{
+    closeModal();
+    current=(current+1)%players.length;
+    updateTurn();
+   }}
+  ]
+ );
+}
+
+/* ================= EVENTO ================= */
+function doEvent(){
+ const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+ showModal(ev.text,[{
+  text:"OK",cls:ev.cls,action:async()=>{
+   closeModal();
+   const p=players[current];
+   let target=p.pos+ev.move;
+   if(target<0)target=0;
+   if(target>SPACES.length-1)target=SPACES.length-1;
+   while(p.pos!==target){
+    p.pos+=p.pos<target?1:-1;
+    placePawn(pawns[p.pawn],p.pos);
+    await new Promise(r=>setTimeout(r,350));
+   }
+   current=(current+1)%players.length;
+   updateTurn();
+  }
+ }]);
+}
+
+/* ================= JOGAR ================= */
 rollBtn.onclick=async()=>{
+ rollBtn.disabled=true;
  const r=Math.floor(Math.random()*6)+1;
  dice.textContent=r;
  const p=players[current];
- let target=Math.min(p.pos+r,SPACES.length-1);
- while(p.pos!==target){
-  p.pos++;
-  placePawn(pawns[p.pawn],p.pos);
-  await new Promise(res=>setTimeout(res,450));
+ let target=p.pos+r;
+ const LAST=SPACES.length-1;
+ if(target>LAST){
+  target=LAST-(target-LAST);
  }
- current=(current+1)%players.length;
- updateTurn();
+ while(p.pos!==target){
+  p.pos+=p.pos<target?1:-1;
+  placePawn(pawns[p.pawn],p.pos);
+  await new Promise(res=>setTimeout(res,350));
+ }
+ const idx=p.pos;
+ const cell=SPECIAL_CELLS[idx];
+
+ if(idx < 3){
+  current=(current+1)%players.length;
+  updateTurn();
+ }
+ else if(cell){
+  askQuestion(cell);
+ }
+ else if(idx < 85){
+  doEvent();
+ }
+ else{
+  current=(current+1)%players.length;
+  updateTurn();
+ }
+ rollBtn.disabled=false;
 };
+
+/* ================= PÓDIO ================= */
+function showPodium(){
+ podium.style.display="block";
+ rollBtn.disabled=true;
+ game.classList.add("hidden");
+
+ const ranked=[...players].sort((a,b)=>{
+  const oa=Object.keys(a.done).length;
+  const ob=Object.keys(b.done).length;
+  if(ob!==oa)return ob-oa;
+  return a.order-b.order;
+ });
+
+ podium.innerHTML=`
+ <div class="podium-box">
+  ${ranked[1]?`<div class="step silver"><div class="emoji">${pawns[ranked[1].pawn].textContent}</div><div class="name">${ranked[1].name}</div></div>`:""}
+  <div class="step gold"><div class="emoji">${pawns[ranked[0].pawn].textContent}</div><div class="name">${ranked[0].name}</div></div>
+  ${ranked[2]?`<div class="step bronze"><div class="emoji">${pawns[ranked[2].pawn].textContent}</div><div class="name">${ranked[2].name}</div></div>`:""}
+ </div>
+ <div class="cards">
+  ${ranked.map(p=>`
+   <div class="card">
+    <div class="objective-title">🎯 ${p.name}</div>
+    ${p.objective.items.map(it=>`
+      <div class="obj-item">
+        <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+        <div>${it.text}</div>
+      </div>`).join("")}
+    <div class="stats">
+      🏘️ Municípios: ${p.municipiosVisitados}<br>
+      ❓ Certas: ${p.questionsCorrect}<br>
+      ❌ Erradas: ${p.questionsWrong}
+    </div>
+   </div>
+  `).join("")}
+ </div>`;
+}
 </script>
 
 </body>
