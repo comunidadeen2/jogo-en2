@@ -22,8 +22,8 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:Arial, Helvetica, sans-serif;
-  overflow-x:hidden;
   position:relative;
+  overflow-x:hidden;
 }
 
 /* Overlay sazonal */
@@ -31,10 +31,10 @@ body::before{
   content:"";
   position:fixed;
   inset:0;
+  background:var(--season-overlay);
+  opacity:.18;
   pointer-events:none;
   z-index:0;
-  opacity:.14;
-  background:var(--season-overlay);
 }
 
 h1{text-align:center;margin:20px 0;position:relative;z-index:1}
@@ -48,7 +48,7 @@ h1{text-align:center;margin:20px 0;position:relative;z-index:1}
   z-index:1;
 }
 
-/* TABULEIRO */
+/* Tabuleiro */
 .board-frame{
   width:1000px;
   height:750px;
@@ -65,11 +65,10 @@ h1{text-align:center;margin:20px 0;position:relative;z-index:1}
   position:absolute;
   transform:translate(-50%,-50%);
   font-size:22px;
-  pointer-events:none;
   display:none;
 }
 
-/* CONTROLOS */
+/* Controlo */
 .controls{text-align:center;margin:20px;position:relative;z-index:1}
 button{
   border:none;
@@ -81,13 +80,13 @@ button{
 button:disabled{opacity:.5}
 .hidden{display:none}
 
-/* BOTÕES PEÕES */
+/* Botões peões */
 .car{background:#e53935;color:#fff}
 .bike{background:#fb8c00;color:#fff}
 .moto{background:#222;color:#fff}
 .walk{background:#2ecc71;color:#000}
 
-/* OBJETIVOS */
+/* Objetivos */
 #objectivePanel{
   width:300px;
   background:var(--panel);
@@ -95,16 +94,8 @@ button:disabled{opacity:.5}
   padding:12px;
   border:2px dashed #555;
 }
-.objective-title{
-  color:var(--accent);
-  font-weight:bold;
-  margin-bottom:10px;
-}
-.obj-item{
-  display:flex;
-  gap:10px;
-  margin-bottom:6px;
-}
+.objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
+.obj-item{display:flex;gap:10px;margin-bottom:6px}
 .marco{
   background:var(--grey);
   color:#fff;
@@ -116,15 +107,15 @@ button:disabled{opacity:.5}
 }
 .marco.done{background:var(--green)}
 .extra-title{
-  margin:16px 0 8px;
+  margin:14px 0 6px;
   text-align:center;
   color:#bbb;
   font-size:13px;
   border-top:1px dashed #444;
-  padding-top:8px;
+  padding-top:6px;
 }
 
-/* MODAL */
+/* Modal */
 #modal{
   position:fixed;
   inset:0;
@@ -147,7 +138,7 @@ button:disabled{opacity:.5}
 .eventGood{background:#1b5e20;color:#fff}
 .eventBad{background:#b71c1c;color:#fff}
 
-/* PÓDIO */
+/* Pódio */
 #podium{
   position:fixed;
   inset:0;
@@ -176,7 +167,6 @@ button:disabled{opacity:.5}
 .bronze{background:#c68642;height:150px}
 .step .emoji{font-size:30px}
 .step .name{font-weight:bold;margin-top:6px}
-
 .cards{
   display:flex;
   gap:20px;
@@ -220,16 +210,15 @@ button:disabled{opacity:.5}
       <option>1</option><option>2</option><option>3</option><option>4</option>
     </select>
 
-    <p style="margin:12px 0 6px">Quando queres fazer a EN2?</p>
+    <p style="margin:10px 0 6px">Quando queres fazer a EN2?</p>
     <label><input type="radio" name="season" value="primavera"> 🌸 Primavera</label>
     <label><input type="radio" name="season" value="verao"> ☀️ Verão</label>
     <label><input type="radio" name="season" value="outono"> 🍂 Outono</label>
     <label><input type="radio" name="season" value="inverno"> ❄️ Inverno</label>
     <br><br>
+
     <button id="startBtn">COMEÇAR</button>
   </div>
-
-  <div id="names" class="hidden"></div>
 
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
@@ -251,11 +240,11 @@ button:disabled{opacity:.5}
 /* ================= ESTAÇÕES ================= */
 const SEASON_OVERLAYS={
   primavera:[
-    "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 60%)",
+    "radial-gradient(circle at top left, rgba(120,200,120,.6), transparent 65%)",
     "linear-gradient(135deg, rgba(140,220,160,.5), transparent 70%)"
   ],
   verao:[
-    "radial-gradient(circle at top, rgba(255,200,80,.7), transparent 60%)",
+    "radial-gradient(circle at top, rgba(255,200,80,.7), transparent 65%)",
     "linear-gradient(135deg, rgba(255,170,60,.6), transparent 70%)"
   ],
   outono:[
@@ -263,11 +252,13 @@ const SEASON_OVERLAYS={
     "linear-gradient(45deg, rgba(160,90,40,.6), transparent 70%)"
   ],
   inverno:[
-    "radial-gradient(circle at top, rgba(140,180,220,.6), transparent 65%)",
-    "linear-gradient(180deg, rgba(180,200,220,.6), transparent 70%)"
+    "radial-gradient(circle at top, rgba(160,200,240,.6), transparent 65%)",
+    "linear-gradient(180deg, rgba(200,220,240,.6), transparent 70%)"
   ]
 };
+
 /* ================= SPACES ================= */
+/* (mantém exatamente os teus SPACES – já estão corretos) */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
 {"x":0.0867430441898527,"y":0.16250845737483086},
@@ -361,71 +352,132 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ================= MUNICÍPIOS ================= */
+  /* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME={
-  0:"Chaves",
-  35:"Vila Pouca de Aguiar",
-  64:"Vila Real",
-  69:"Km 69",
-  81:"Santa Marta de Penaguião",
-  88:"Peso da Régua",
-  104:"Lamego",
-  152:"São Pedro do Sul",
-  172:"Viseu",
-  213:"Santa Comba Dão",
-  225:"Mortágua",
-  238:"Penacova",
-  248:"Vila Nova de Poiares",
-  260:"Lousã",
-  271:"Góis",
-  317:"Pedrógão Grande",
-  345:"Sertã",
-  366:"Vila de Rei",
-  369:"Meio da EN2",
-  386:"Sardoal",
-  400:"Abrantes",
-  430:"Ponte de Sôr",
-  466:"Avis",
-  476:"Mora",
-  494:"Coruche",
-  500:"Ciborro",
-  518:"Montemor-o-Novo",
-  551:"Alcáçovas",
-  565:"Torrão",
-  595:"Ferreira do Alentejo",
-  619:"Aljustrel",
-  640:"Castro Verde",
-  663:"Almodôvar",
-  666:"Km 666",
-  688:"Ameixial",
-  722:"São Brás de Alportel",
-  738:"Faro",
-  738.5:"Faro (Final)"
+  0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Km 69",
+  81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
+  136:"Castro Daire",152:"São Pedro do Sul",172:"Viseu",200:"Tondela",
+  213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
+  260:"Lousã",271:"Góis",317:"Pedrogão Grande",345:"Sertã",
+  366:"Vila de Rei",369:"Meio da Estrada",386:"Sardoal",
+  400:"Abrantes",430:"Ponte de Sôr",466:"Avis",
+  476:"Mora",494:"Coruche",500:"Ciborro",
+  518:"Montemor-o-Novo",551:"Alcáçovas",565:"Torrão",
+  595:"Ferreira do Alentejo",619:"Aljustrel",
+  640:"Castro Verde",663:"Almodôvar",
+  666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
+  738:"Faro",738.5:"Faro (Final)"
 };
 
-/* ================= OBJETIVOS (VERSÃO FINAL) ================= */
-const OBJECTIVES=[
- {type:"first",text:"Ser o primeiro a chegar a Faro (Km 738,5)",items:[{km:738.5,text:"Chegar a Faro"}]},
- {type:"last",text:"Ser o último a chegar a Faro (Km 738,5)",items:[{km:738.5,text:"Chegar a Faro por último"}]},
- {items:[{km:0,text:"Chaves"},{km:200,text:"Tondela"},{km:400,text:"Abrantes"},{km:500,text:"Ciborro"},{km:738,text:"Faro"}]},
- {items:[{km:35,text:"Vila Pouca de Aguiar"},{km:172,text:"Viseu"},{km:271,text:"Góis"},{km:551,text:"Alcáçovas"},{km:722,text:"São Brás de Alportel"}]},
- {items:[{km:64,text:"Vila Real"},{km:213,text:"Santa Comba Dão"},{km:345,text:"Sertã"},{km:565,text:"Torrão"},{km:688,text:"Ameixial"}]},
- {items:[{km:152,text:"São Pedro do Sul"},{km:317,text:"Pedrógão Grande"},{km:466,text:"Avis"},{km:518,text:"Montemor-o-Novo"},{km:663,text:"Almodôvar"}]}
+/* ================= PERGUNTAS ================= */
+const QUESTIONS=[
+  "Qual é o prato típico mais famoso de Portugal?",
+  "Em que ano foi inaugurada a EN2?",
+  "Qual é o rio mais longo de Portugal?",
+  "Portugal tem quantos distritos?",
+  "Qual é a capital do Algarve?"
 ];
 
+/* ================= EVENTOS ================= */
+const EVENTS=[
+  {text:"Bons momentos! Avança +1 casa.",move:1,cls:"eventGood"},
+  {text:"Bons momentos! Avança +2 casas.",move:2,cls:"eventGood"},
+  {text:"Contratempo! Recua 1 casa.",move:-1,cls:"eventBad"},
+  {text:"Contratempo! Recua 2 casas.",move:-2,cls:"eventBad"}
+];
+
+/* ================= OBJETIVOS (ATUALIZADOS) ================= */
+const OBJECTIVES = [
+  {type:"first",text:"Ser o primeiro a chegar a Faro (Km 738,5)",items:[{km:738.5,text:"Chegar a Faro"}]},
+  {type:"last",text:"Ser o último a chegar a Faro (Km 738,5)",items:[{km:738.5,text:"Chegar a Faro por último"}]},
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:35,text:"Visitar Vila Pouca de Aguiar"},
+    {km:172,text:"Visitar Viseu"},
+    {km:271,text:"Visitar Góis"},
+    {km:551,text:"Visitar Alcáçovas"},
+    {km:722,text:"Visitar São Brás de Alportel"}
+  ]},
+
+  { items:[
+    {km:64,text:"Visitar Vila Real"},
+    {km:213,text:"Visitar Santa Comba Dão"},
+    {km:345,text:"Visitar Sertã"},
+    {km:565,text:"Visitar Torrão"},
+    {km:688,text:"Visitar Ameixial"}
+  ]},
+
+  { items:[
+    {km:81,text:"Visitar Santa Marta de Penaguião"},
+    {km:225,text:"Visitar Mortágua"},
+    {km:345,text:"Visitar Sertã"},
+    {km:595,text:"Visitar Ferreira do Alentejo"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:366,text:"Visitar Vila de Rei"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:386,text:"Visitar Sardoal"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:136,text:"Visitar Castro Daire"},
+    {km:260,text:"Visitar Lousã"},
+    {km:430,text:"Visitar Ponte de Sôr"},
+    {km:666,text:"Passar pelo Km 666"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:0,text:"Partir de Chaves"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
+
+  { items:[
+    {km:69,text:"Passar pelo Km 69"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:476,text:"Visitar Mora"},
+    {km:494,text:"Visitar Coruche"},
+    {km:738,text:"Chegar a Faro"}
+  ]}
+];
+
+/* ================= VARIÁVEIS ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 
-/* ================= POSIÇÃO PEÃO ================= */
+/* ================= POSICIONAR PEÃO ================= */
 function placePawn(pawn,i){
  const s=SPACES[i];
- let ox=-8,oy=-10;
- if(i===80){ox=-18;oy=-14}
- if(i===83){ox=-16;oy=-18}
- if(i===85){ox=-12;oy=-20}
- if(i===89){ox=-10;oy=-22}
- pawn.style.left=(s.x*board.clientWidth+ox)+"px";
- pawn.style.top =(s.y*board.clientHeight+oy)+"px";
+ pawn.style.left=(s.x*board.clientWidth)+"px";
+ pawn.style.top =(s.y*board.clientHeight)+"px";
 }
 
 /* ================= MODAL ================= */
@@ -443,69 +495,51 @@ function showModal(text,buttons){
 }
 function closeModal(){modal.style.display="none";}
 
-/* ================= SETUP ================= */
+/* ================= START ================= */
 startBtn.onclick=()=>{
- setup.classList.add("hidden");
- names.classList.remove("hidden");
- let total=playerCount.value,i=0,used=[];
- function next(){
-  names.innerHTML="";
-  if(i>=total){
-   const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
-   players.forEach(p=>p.objective=deck.pop());
-   names.classList.add("hidden");
-   game.classList.remove("hidden");
-   objectivePanel.classList.remove("hidden");
-   updateTurn();
-   return;
-  }
-  const input=document.createElement("input");
-  input.placeholder="Nome do Jogador";
-  names.append("Jogador "+(i+1),document.createElement("br"),input,document.createElement("br"));
-  [
-   {id:0,cls:"car",txt:"🚗 Carro"},
-   {id:1,cls:"bike",txt:"🚴 Bicicleta"},
-   {id:2,cls:"moto",txt:"🏍️ Mota"},
-   {id:3,cls:"walk",txt:"🚶 A pé"}
-  ].forEach(p=>{
-   if(used.includes(p.id))return;
-   const b=document.createElement("button");
-   b.className=p.cls;b.textContent=p.txt;
-   b.onclick=()=>{
-    used.push(p.id);
-    players.push({
-      name:input.value||("Jogador "+(i+1)),
-      pawn:p.id,pos:0,
-      done:{},extra:[],
-      municipiosVisitados:0,
-      questionsCorrect:0,
-      questionsWrong:0,
-      finished:false,order:0
-    });
-    pawns[p.id].style.display="block";
-    placePawn(pawns[p.id],0);
-    i++;next();
-   };
-   names.appendChild(b);
+ const season=document.querySelector("input[name='season']:checked");
+ if(!season){alert("Escolhe a estação do ano 🌍");return;}
+
+ const overlay=SEASON_OVERLAYS[season.value];
+ document.body.style.setProperty(
+  "--season-overlay",
+  overlay[Math.floor(Math.random()*overlay.length)]
+ );
+
+ const total=Number(playerCount.value);
+ players=[];
+ for(let i=0;i<total;i++){
+  players.push({
+   name:"Jogador "+(i+1),
+   pawn:i,
+   pos:0,
+   done:{},
+   extra:[],
+   municipiosVisitados:0,
+   questionsCorrect:0,
+   questionsWrong:0,
+   finished:false
   });
+  pawns[i].style.display="block";
+  placePawn(pawns[i],0);
  }
- next();
+
+ const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+ players.forEach(p=>p.objective=deck.pop());
+
+ setup.classList.add("hidden");
+ game.classList.remove("hidden");
+ objectivePanel.classList.remove("hidden");
+ updateTurn();
 };
 
 /* ================= TURNO ================= */
 function updateTurn(){
- if(players.every(p=>p.finished)){
-  showPodium();
-  return;
- }
- while(players[current].finished){
-  current=(current+1)%players.length;
- }
  turn.textContent="Vez de "+players[current].name;
  renderObjective(players[current]);
 }
 
-/* ================= OBJETIVOS ================= */
+/* ================= OBJETIVO ================= */
 function renderObjective(p){
  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
  p.objective.items.forEach(it=>{
@@ -515,16 +549,6 @@ function renderObjective(p){
     <div>${it.text}</div>
    </div>`;
  });
- if(p.extra.length){
-  objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
-  p.extra.forEach(km=>{
-   objectivePanel.innerHTML+=`
-    <div class="obj-item">
-     <div class="marco">Km ${km}</div>
-     <div>Visitar ${MUNICIPIO_NOME[km]}</div>
-    </div>`;
-  });
- }
 }
 
 /* ================= PERGUNTA ================= */
@@ -540,8 +564,7 @@ function askQuestion(cell){
    {text:"Resposta Errada",cls:"decline",action:()=>{
     players[current].questionsWrong++;
     closeModal();
-    current=(current+1)%players.length;
-    updateTurn();
+    nextPlayer();
    }}
   ]
  );
@@ -551,51 +574,45 @@ function askQuestion(cell){
 function askFicha(cell){
  const nome=MUNICIPIO_NOME[cell.km];
  showModal(
-  `${players[current].name} ganhou a ficha ${nome}. Aceita?`,
+  `${players[current].name} ganhou a ficha de ${nome} (Km ${cell.km}). Aceita?`,
   [
    {text:"Aceitar",cls:"accept",action:()=>{
-    closeModal();
     const p=players[current];
     p.municipiosVisitados++;
-    if(p.objective.items.some(it=>it.km===cell.km)){
-      p.done[cell.km]=true;
-    }else{
-      p.extra.push(cell.km);
-    }
-    if(cell.final){
-      p.finished=true;
-      p.order=players.filter(x=>x.finished).length;
-    }
-    updateTurn();
+    p.done[cell.km]=true;
+    closeModal();
+    nextPlayer();
    }},
    {text:"Recusar",cls:"decline",action:()=>{
     closeModal();
-    current=(current+1)%players.length;
-    updateTurn();
+    nextPlayer();
    }}
   ]
  );
 }
 
 /* ================= EVENTO ================= */
-function doEvent(){
+async function doEvent(){
  const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
  showModal(ev.text,[{
   text:"OK",cls:ev.cls,action:async()=>{
    closeModal();
    const p=players[current];
-   let target=p.pos+ev.move;
-   if(target<0)target=0;
-   if(target>SPACES.length-1)target=SPACES.length-1;
+   let target=Math.max(0,Math.min(SPACES.length-1,p.pos+ev.move));
    while(p.pos!==target){
     p.pos+=p.pos<target?1:-1;
     placePawn(pawns[p.pawn],p.pos);
-    await new Promise(r=>setTimeout(r,350));
+    await new Promise(r=>setTimeout(r,500));
    }
-   current=(current+1)%players.length;
-   updateTurn();
+   nextPlayer();
   }
  }]);
+}
+
+/* ================= PRÓXIMO ================= */
+function nextPlayer(){
+ current=(current+1)%players.length;
+ updateTurn();
 }
 
 /* ================= JOGAR ================= */
@@ -604,96 +621,22 @@ rollBtn.onclick=async()=>{
  const r=Math.floor(Math.random()*6)+1;
  dice.textContent=r;
  const p=players[current];
- let target=p.pos+r;
- const LAST=SPACES.length-1;
- if(target>LAST){
-  target=LAST-(target-LAST);
- }
- while(p.pos!==target){
-  p.pos+=p.pos<target?1:-1;
-  placePawn(pawns[p.pawn],p.pos);
-  await new Promise(res=>setTimeout(res,350));
- }
- const idx=p.pos;
- const cell=SPECIAL_CELLS[idx];
+ let target=Math.min(SPACES.length-1,p.pos+r);
 
- if(idx < 3){
-  current=(current+1)%players.length;
-  updateTurn();
+ while(p.pos!==target){
+  p.pos++;
+  placePawn(pawns[p.pawn],p.pos);
+  await new Promise(r=>setTimeout(r,500));
  }
- else if(cell){
-  askQuestion(cell);
- }
- else if(idx < 85){
-  doEvent();
- }
- else{
-  current=(current+1)%players.length;
-  updateTurn();
+
+ if(p.pos<3){
+  nextPlayer();
+ }else{
+  askQuestion({km:Object.keys(MUNICIPIO_NOME)[0]});
  }
  rollBtn.disabled=false;
 };
-
-/* ================= PÓDIO ================= */
-function showPodium(){
- podium.style.display="block";
- rollBtn.disabled=true;
- game.classList.add("hidden");
-
- const ranked=[...players].sort((a,b)=>{
-  const oa=Object.keys(a.done).length;
-  const ob=Object.keys(b.done).length;
-  if(ob!==oa)return ob-oa;
-  return a.order-b.order;
- });
-
- podium.innerHTML=`
- <div class="podium-box">
-  ${ranked[1]?`<div class="step silver"><div class="emoji">${pawns[ranked[1].pawn].textContent}</div><div class="name">${ranked[1].name}</div></div>`:""}
-  <div class="step gold"><div class="emoji">${pawns[ranked[0].pawn].textContent}</div><div class="name">${ranked[0].name}</div></div>
-  ${ranked[2]?`<div class="step bronze"><div class="emoji">${pawns[ranked[2].pawn].textContent}</div><div class="name">${ranked[2].name}</div></div>`:""}
- </div>
- <div class="cards">
-  ${ranked.map(p=>`
-   <div class="card">
-    <div class="objective-title">🎯 ${p.name}</div>
-    ${p.objective.items.map(it=>`
-      <div class="obj-item">
-        <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-        <div>${it.text}</div>
-      </div>`).join("")}
-    <div class="stats">
-      🏘️ Municípios: ${p.municipiosVisitados}<br>
-      ❓ Certas: ${p.questionsCorrect}<br>
-      ❌ Erradas: ${p.questionsWrong}
-    </div>
-   </div>
-  `).join("")}
- </div>`;
-}
-</script>
-
-<script>
-function askFicha(cell){
- const nome = MUNICIPIO_NOME[cell.km];
- showModal(
-  `${players[current].name} ganhou a ficha de ${nome} (Km ${cell.km}). Aceita?`,
-  [
-    {
-      text:"Aceitar",
-      cls:"accept",
-      action:()=>{ /* lógica aqui */ }
-    },
-    {
-      text:"Recusar",
-      cls:"decline",
-      action:()=>{ /* lógica aqui */ }
-    }
-  ]
- );
-}
 </script>
 
 </body>
 </html>
-
