@@ -7,8 +7,13 @@
 
 <style>
 :root{
- --bg:#111;--text:#eee;--panel:#1c1c1c;
- --accent:#ff9800;--grey:#555;--green:#2ecc71;--red:#e53935;
+ --bg:#000;
+ --panel:#111;
+ --text:#eee;
+ --accent:#ff9800;
+ --grey:#555;
+ --green:#2ecc71;
+ --red:#e53935;
 }
 
 body{
@@ -20,24 +25,33 @@ body{
 
 h1{text-align:center;margin:20px 0}
 
-/* LAYOUT PRINCIPAL */
-.main{
+/* ================= ESTRUTURA GLOBAL ================= */
+#game-wrapper{
  display:flex;
  justify-content:center;
  align-items:flex-start;
  gap:24px;
- max-width:1400px;
- margin:0 auto;
+ padding:20px;
 }
 
-/* TABULEIRO */
+/* ================= PAINÉIS LATERAIS ================= */
+.side-panel{
+ width:320px;
+ background:var(--panel);
+ border-radius:16px;
+ padding:14px;
+ border:2px dashed #444;
+}
+
+/* ================= TABULEIRO ================= */
 .board-frame{
  width:1000px;
  height:750px;
  position:relative;
  overflow:hidden;
- border-radius:10px;
+ border-radius:16px;
  flex-shrink:0;
+ background:#222;
 }
 
 .board-img{
@@ -54,7 +68,6 @@ h1{text-align:center;margin:20px 0}
  z-index:2;
 }
 
-/* ESTAÇÕES — VISÍVEIS */
 .spring{background:rgba(120,255,180,.45)}
 .summer{background:rgba(255,220,120,.55)}
 .autumn{background:rgba(255,150,80,.55)}
@@ -69,60 +82,64 @@ h1{text-align:center;margin:20px 0}
  z-index:3;
 }
 
-/* PAINEL OBJETIVOS (FORA DO TABULEIRO) */
-#objectivePanel{
- width:300px;
- background:var(--panel);
- border-radius:16px;
- padding:12px;
- border:2px dashed #555;
-}
-
-/* OBJETIVOS */
+/* ================= OBJETIVOS ================= */
 .objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
 .obj-item{display:flex;gap:10px;margin-bottom:6px}
 .marco{
- background:var(--grey);color:#fff;
- padding:4px 10px;border-radius:8px;
- min-width:64px;text-align:center;font-weight:bold
+ background:var(--grey);
+ color:#fff;
+ padding:4px 10px;
+ border-radius:8px;
+ min-width:64px;
+ text-align:center;
+ font-weight:bold
 }
 .marco.done{background:var(--green)}
 .extra-title{
- margin:16px 0 8px 0;
- text-align:center;color:#bbb;font-size:13px;
- border-top:1px dashed #444;padding-top:8px;
+ margin:16px 0 8px;
+ text-align:center;
+ color:#bbb;
+ font-size:13px;
+ border-top:1px dashed #444;
+ padding-top:8px;
 }
 
-/* CONTROLOS */
+/* ================= CONTROLOS ================= */
 .controls{text-align:center;margin:20px}
 button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
 .hidden{display:none}
 
-/* PEÕES */
 .car{background:#e53935;color:#fff}
 .bike{background:#fb8c00;color:#fff}
 .moto{background:#222;color:#fff}
 .walk{background:#2ecc71;color:#000}
 
-/* MODAL */
+/* ================= MODAL ================= */
 #modal{
- position:fixed;inset:0;
- background:rgba(0,0,0,.55);
- display:none;align-items:center;justify-content:center;
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.6);
+ display:none;
+ align-items:center;
+ justify-content:center;
  z-index:6000;
 }
+
 #modalBox{
- background:#222;padding:22px;
- border-radius:14px;width:420px;text-align:center
+ background:#222;
+ padding:22px;
+ border-radius:14px;
+ width:420px;
+ text-align:center;
 }
-#modalBox button{margin:6px}
+
 .accept{background:var(--green);color:#000}
 .decline{background:var(--red);color:#fff}
 .eventGood{background:#1b5e20;color:#fff}
 .eventBad{background:#b71c1c;color:#fff}
 
-/* PÓDIO — PÁGINA FINAL */
+/* ================= PÓDIO ================= */
 #podium{
  position:fixed;
  inset:0;
@@ -139,17 +156,19 @@ button:disabled{opacity:.5}
 
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
-<div class="main">
- <div class="board-frame" id="board">
-  <div class="board-img"></div>
-  <div class="season-overlay" id="seasonLayer"></div>
-  <div class="pawn" id="pawn0">🚗</div>
-  <div class="pawn" id="pawn1">🚴</div>
-  <div class="pawn" id="pawn2">🏍️</div>
-  <div class="pawn" id="pawn3">🚶</div>
- </div>
+<div id="game-wrapper">
+  <div class="side-panel" id="leftPanel"></div>
 
- <div id="objectivePanel" class="hidden"></div>
+  <div class="board-frame" id="board">
+    <div class="board-img"></div>
+    <div class="season-overlay" id="seasonLayer"></div>
+    <div class="pawn" id="pawn0">🚗</div>
+    <div class="pawn" id="pawn1">🚴</div>
+    <div class="pawn" id="pawn2">🏍️</div>
+    <div class="pawn" id="pawn3">🚶</div>
+  </div>
+
+  <div class="side-panel" id="rightPanel"></div>
 </div>
 
 <div class="controls">
@@ -298,7 +317,7 @@ const MUNICIPIO_NOME={
   136:"Castro Daire",
   152:"São Pedro do Sul",
   171:"Viseu",
-  200:"Penacova",
+  200:"Tondela",
   213:"Santa Comba Dão",
   225:"Mortágua",
   238:"Penacova",
@@ -377,7 +396,10 @@ const KM_BY_INDEX={
 /* ================= CÉLULAS ESPECIAIS ================= */
 const SPECIAL_CELLS={};
 Object.keys(KM_BY_INDEX).forEach(i=>{
-  SPECIAL_CELLS[i]={km:KM_BY_INDEX[i],final:i==89};
+  SPECIAL_CELLS[i]={
+    km:KM_BY_INDEX[i],
+    final:i==89
+  };
 });
 
 /* ================= EVENTOS ================= */
@@ -467,13 +489,13 @@ const OBJECTIVES=[
 
   {items:[
     {km:0,text:"Partir de Chaves"},
-    {km:369,text:"Passar pelo Meio da Estrada"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
     {km:738,text:"Chegar a Faro"}
   ]},
 
   {items:[
     {km:69,text:"Passar pelo Km 69"},
-    {km:369,text:"Passar pelo Meio da Estrada"},
+    {km:369,text:"Chegar ao Meio da Estrada"},
     {km:500,text:"Visitar Ciborro"},
     {km:494,text:"Visitar Coruche"},
     {km:738,text:"Chegar a Faro"}
@@ -527,16 +549,25 @@ startBtn.onclick=()=>{
   if(i>=total){
    const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
    players.forEach(p=>p.objective=deck.pop());
+
+   leftPanel.innerHTML="";
+   rightPanel.innerHTML="";
+
    names.classList.add("hidden");
    game.classList.remove("hidden");
-   objectivePanel.classList.remove("hidden");
    updateTurn();
    return;
   }
 
   const input=document.createElement("input");
   input.placeholder="Nome do Jogador";
-  names.append("Jogador "+(i+1),document.createElement("br"),input,document.createElement("br"));
+
+  names.append(
+   "Jogador "+(i+1),
+   document.createElement("br"),
+   input,
+   document.createElement("br")
+  );
 
   [
    {id:0,cls:"car",txt:"🚗 Carro"},
@@ -583,15 +614,15 @@ function updateTurn(){
   current=(current+1)%players.length;
  }
  turn.textContent="Vez de "+players[current].name;
- renderObjective(players[current]);
+ renderPanels(players[current]);
 }
 
-/* ================= OBJETIVOS ================= */
-function renderObjective(p){
- objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
+/* ================= PAINÉIS LATERAIS ================= */
+function renderPanels(p){
+ leftPanel.innerHTML=`<div class="objective-title">🎯 Objetivo</div>`;
 
  if(p.objective.special){
-  objectivePanel.innerHTML+=`
+  leftPanel.innerHTML+=`
    <div class="obj-item">
     <div class="marco">Especial</div>
     <div>${
@@ -602,7 +633,7 @@ function renderObjective(p){
    </div>`;
  }else{
   p.objective.items.forEach(it=>{
-   objectivePanel.innerHTML+=`
+   leftPanel.innerHTML+=`
     <div class="obj-item">
      <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
      <div>${it.text}</div>
@@ -611,15 +642,22 @@ function renderObjective(p){
  }
 
  if(p.extra.length){
-  objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
+  leftPanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
   p.extra.forEach(km=>{
-   objectivePanel.innerHTML+=`
+   leftPanel.innerHTML+=`
     <div class="obj-item">
      <div class="marco">Km ${km}</div>
-     <div>Visitar ${MUNICIPIO_NOME[km]}</div>
+     <div>${MUNICIPIO_NOME[km]}</div>
     </div>`;
   });
  }
+
+ rightPanel.innerHTML=`
+  <div class="objective-title">📊 Estatísticas</div>
+  🏘️ Municípios: ${p.municipiosVisitados}<br>
+  ❓ Certas: ${p.questionsCorrect}<br>
+  ❌ Erradas: ${p.questionsWrong}
+ `;
 }
 
 /* ================= PERGUNTA ================= */
@@ -643,9 +681,8 @@ function askQuestion(cell){
 
 /* ================= FICHA ================= */
 function askFicha(cell){
- const nome=MUNICIPIO_NOME[cell.km];
  showModal(
-  `${players[current].name} ganhou a ficha ${nome}. Aceita?`,
+  `${players[current].name} ganhou ${MUNICIPIO_NOME[cell.km]}. Aceita?`,
   [
    {text:"Aceitar",cls:"accept",action:()=>{
     closeModal();
@@ -690,7 +727,7 @@ async function doEvent(){
  }]);
 }
 
-/* ================= AVANÇAR TURNO ================= */
+/* ================= TURNO ================= */
 function nextTurn(){
  current=(current+1)%players.length;
  updateTurn();
@@ -719,15 +756,10 @@ rollBtn.onclick=async()=>{
  const idx=p.pos;
  const cell=SPECIAL_CELLS[idx];
 
- if(idx<3){
-  nextTurn();
- }else if(cell){
-  askQuestion(cell);
- }else if(idx<85){
-  doEvent();
- }else{
-  nextTurn();
- }
+ if(idx<3) nextTurn();
+ else if(cell) askQuestion(cell);
+ else if(idx<85) doEvent();
+ else nextTurn();
 
  rollBtn.disabled=false;
 };
@@ -735,60 +767,34 @@ rollBtn.onclick=async()=>{
 /* ================= PÓDIO ================= */
 function showPodium(){
  podium.style.display="block";
- rollBtn.disabled=true;
  game.classList.add("hidden");
 
  players.forEach(p=>{
-  if(p.objective.special==="first"){
+  if(p.objective.special==="first")
    p.specialScore=p.order===1?100:0;
-  }
-  if(p.objective.special==="last"){
+  if(p.objective.special==="last")
    p.specialScore=p.order===players.length?100:0;
-  }
  });
 
  const ranked=[...players].sort((a,b)=>{
   if(b.specialScore!==a.specialScore)
    return b.specialScore-a.specialScore;
-
-  const oa=Object.keys(a.done).length;
-  const ob=Object.keys(b.done).length;
-  if(ob!==oa)return ob-oa;
   return a.order-b.order;
  });
 
  podium.innerHTML=`
- <div class="podium-box">
-  ${ranked[1]?`<div class="step silver"><div class="emoji">${pawns[ranked[1].pawn].textContent}</div><div class="name">${ranked[1].name}</div></div>`:""}
-  <div class="step gold"><div class="emoji">${pawns[ranked[0].pawn].textContent}</div><div class="name">${ranked[0].name}</div></div>
-  ${ranked[2]?`<div class="step bronze"><div class="emoji">${pawns[ranked[2].pawn].textContent}</div><div class="name">${ranked[2].name}</div></div>`:""}
- </div>
-
- <div class="cards">
+ <h2>🏆 Pódio Final</h2>
  ${ranked.map(p=>`
   <div class="card">
-   <div class="objective-title">🎯 ${p.name}</div>
+   <strong>${p.name}</strong><br>
    ${
      p.objective.special
-     ? `<div class="obj-item"><div class="marco">Especial</div><div>${
-        p.objective.special==="first"
-        ?"Primeiro a Faro"
-        :"Último a Faro"
-       }</div></div>`
-     : p.objective.items.map(it=>`
-        <div class="obj-item">
-         <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-         <div>${it.text}</div>
-        </div>`).join("")
+     ? `🎯 Objetivo Especial: ${p.objective.special==="first"?"Primeiro":"Último"} a Faro`
+     : p.objective.items.map(it=>`Km ${it.km}`).join(", ")
    }
-   <div class="stats">
-    🏘️ Municípios: ${p.municipiosVisitados}<br>
-    ❓ Certas: ${p.questionsCorrect}<br>
-    ❌ Erradas: ${p.questionsWrong}
-   </div>
   </div>
  `).join("")}
- </div>`;
+ `;
 }
 </script>
 
