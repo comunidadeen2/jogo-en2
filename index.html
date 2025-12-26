@@ -15,20 +15,63 @@ h1{text-align:center;margin:20px 0}
 .main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
 
 /* TABULEIRO */
-.board-frame{width:1000px;height:750px;position:relative;overflow:hidden;border-radius:10px}
-.board-img{position:absolute;inset:0;background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat}
-.pawn{position:absolute;transform:translate(-50%,-50%);font-size:22px;pointer-events:none;display:none}
-
-/* ESTAÇÕES */
-.season-overlay{
- position:absolute;inset:0;
- pointer-events:none;
- mix-blend-mode:overlay
+.board-frame{
+ width:1000px;height:750px;
+ position:relative;
+ overflow:hidden;
+ border-radius:10px
 }
-.spring{background:rgba(120,255,180,.18)}
-.summer{background:rgba(255,220,120,.22)}
-.autumn{background:rgba(255,150,80,.22)}
-.winter{background:rgba(180,220,255,.25)}
+.board-img{
+ position:absolute;inset:0;
+ background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat
+}
+.pawn{
+ position:absolute;
+ transform:translate(-50%,-50%);
+ font-size:22px;
+ pointer-events:none;
+ display:none
+}
+
+/* ESTAÇÕES — VISUAL MAIS FORTE */
+.season-overlay{
+ position:absolute;
+ inset:0;
+ pointer-events:none;
+ z-index:2;
+}
+
+.spring{
+ background:
+  radial-gradient(circle at top,
+   rgba(160,255,200,.55),
+   rgba(60,180,120,.35),
+   rgba(0,0,0,.15));
+}
+
+.summer{
+ background:
+  radial-gradient(circle at top,
+   rgba(255,240,170,.65),
+   rgba(255,180,60,.35),
+   rgba(0,0,0,.15));
+}
+
+.autumn{
+ background:
+  radial-gradient(circle at top,
+   rgba(255,180,120,.6),
+   rgba(200,90,30,.4),
+   rgba(0,0,0,.2));
+}
+
+.winter{
+ background:
+  radial-gradient(circle at top,
+   rgba(220,240,255,.7),
+   rgba(140,190,240,.4),
+   rgba(0,0,0,.25));
+}
 
 /* CONTROLOS */
 .controls{text-align:center;margin:20px}
@@ -44,29 +87,30 @@ button:disabled{opacity:.5}
 
 /* OBJETIVOS */
 #objectivePanel{
-  width:300px;background:var(--panel);
-  border-radius:16px;padding:12px;
-  border:2px dashed #555;
+ width:300px;background:var(--panel);
+ border-radius:16px;padding:12px;
+ border:2px dashed #555;
 }
 .objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
 .obj-item{display:flex;gap:10px;margin-bottom:6px}
 .marco{
-  background:var(--grey);color:#fff;
-  padding:4px 10px;border-radius:8px;
-  min-width:64px;text-align:center;font-weight:bold
+ background:var(--grey);color:#fff;
+ padding:4px 10px;border-radius:8px;
+ min-width:64px;text-align:center;font-weight:bold
 }
 .marco.done{background:var(--green)}
 .extra-title{
-  margin:16px 0 8px 0;
-  text-align:center;color:#bbb;font-size:13px;
-  border-top:1px dashed #444;padding-top:8px;
+ margin:16px 0 8px 0;
+ text-align:center;color:#bbb;font-size:13px;
+ border-top:1px dashed #444;padding-top:8px;
 }
 
 /* MODAL */
 #modal{
  position:fixed;inset:0;
  background:rgba(0,0,0,.55);
- display:none;align-items:center;justify-content:center
+ display:none;align-items:center;justify-content:center;
+ z-index:5000
 }
 #modalBox{
  background:#222;padding:22px;
@@ -77,6 +121,47 @@ button:disabled{opacity:.5}
 .decline{background:var(--red);color:#fff}
 .eventGood{background:#1b5e20;color:#fff}
 .eventBad{background:#b71c1c;color:#fff}
+
+/* PÓDIO — PÁGINA FINAL */
+#podium{
+ position:fixed;
+ inset:0;
+ background:#000c;
+ display:none;
+ overflow:auto;
+ padding:40px;
+ z-index:9000;
+}
+.podium-box{
+ display:flex;
+ justify-content:center;
+ align-items:flex-end;
+ gap:30px;
+ margin-bottom:40px
+}
+.step{
+ width:160px;border-radius:14px;
+ text-align:center;padding:12px;color:#000
+}
+.gold{background:#f5c400;height:220px}
+.silver{background:#ccc;height:180px}
+.bronze{background:#c68642;height:150px}
+.step .emoji{font-size:30px}
+.step .name{font-weight:bold;margin-top:6px}
+.cards{
+ display:flex;gap:20px;
+ justify-content:center;
+ flex-wrap:wrap
+}
+.card{
+ background:#1c1c1c;border:2px dashed #555;
+ border-radius:14px;padding:12px;width:260px
+}
+.stats{
+ margin-top:10px;
+ font-size:13px;
+ color:#ccc;
+}
 </style>
 </head>
 
@@ -85,23 +170,27 @@ button:disabled{opacity:.5}
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
 <div class="main">
-  <div class="board-frame" id="board">
-    <div class="board-img"></div>
-    <div class="season-overlay" id="seasonLayer"></div>
-    <div class="pawn" id="pawn0">🚗</div>
-    <div class="pawn" id="pawn1">🚴</div>
-    <div class="pawn" id="pawn2">🏍️</div>
-    <div class="pawn" id="pawn3">🚶</div>
-  </div>
-  <div id="objectivePanel" class="hidden"></div>
+ <div class="board-frame" id="board">
+  <div class="board-img"></div>
+  <div class="season-overlay" id="seasonLayer"></div>
+  <div class="pawn" id="pawn0">🚗</div>
+  <div class="pawn" id="pawn1">🚴</div>
+  <div class="pawn" id="pawn2">🏍️</div>
+  <div class="pawn" id="pawn3">🚶</div>
+ </div>
+ <div id="objectivePanel" class="hidden"></div>
 </div>
+
 <div class="controls">
   <div id="setup">
     Jogadores:
     <select id="playerCount">
-      <option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
     </select>
-    <br>
+    <br><br>
     Estação:
     <select id="seasonSelect">
       <option value="spring">🌸 Primavera</option>
@@ -226,7 +315,7 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-  /* ================= MUNICÍPIOS ================= */
+/* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME={
   0:"Chaves",
   35:"Vila Pouca de Aguiar",
@@ -253,10 +342,10 @@ const MUNICIPIO_NOME={
   400:"Abrantes",
   435:"Ponte de Sôr",
   466:"Avis",
-  475:"Mora",
+  475:"Coruche",
   494:"Coruche",
   500:"Ciborro",
-  518:"Ferreira do Alentejo",
+  518:"Montemor-o-Novo",
   551:"Alcáçovas",
   565:"Torrão",
   595:"Ferreira do Alentejo",
@@ -416,11 +505,12 @@ const OBJECTIVES=[
     {km:738,text:"Chegar a Faro"}
   ]},
 
+  /* OBJETIVOS ESPECIAIS */
   {special:"first"},
   {special:"last"}
 ];
 
-  const pawns=[pawn0,pawn1,pawn2,pawn3];
+const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 
 /* ================= POSIÇÃO PEÃO ================= */
@@ -564,12 +654,12 @@ function askQuestion(cell){
    {text:"Resposta Certa",cls:"accept",action:()=>{
     players[current].questionsCorrect++;
     closeModal();
-    askFicha(cell);
+    askFicha(cell);   // continua a jogar
    }},
    {text:"Resposta Errada",cls:"decline",action:()=>{
     players[current].questionsWrong++;
     closeModal();
-    nextTurn();
+    nextTurn();       // passa o turno
    }}
   ]
  );
@@ -594,7 +684,7 @@ function askFicha(cell){
       p.finished=true;
       p.order=players.filter(x=>x.finished).length;
     }
-    updateTurn(); // mantém o turno se não terminou
+    updateTurn(); // mantém jogador se não terminou
    }},
    {text:"Recusar",cls:"decline",action:()=>{
     closeModal();
