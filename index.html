@@ -7,33 +7,46 @@
 
 <style>
 :root{
-  --bg:#111;--text:#eee;--panel:#1c1c1c;
-  --accent:#ff9800;--grey:#555;--green:#2ecc71;--red:#e53935;
+ --bg:#111;--text:#eee;--panel:#1c1c1c;
+ --accent:#ff9800;--grey:#555;--green:#2ecc71;--red:#e53935;
 }
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial}
+
+body{
+ margin:0;
+ background:var(--bg);
+ color:var(--text);
+ font-family:Arial;
+}
+
 h1{text-align:center;margin:20px 0}
-.main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
+
+/* LAYOUT PRINCIPAL */
+.main{
+ display:flex;
+ justify-content:center;
+ align-items:flex-start;
+ gap:24px;
+ max-width:1400px;
+ margin:0 auto;
+}
 
 /* TABULEIRO */
 .board-frame{
- width:1000px;height:750px;
+ width:1000px;
+ height:750px;
  position:relative;
  overflow:hidden;
- border-radius:10px
-}
-.board-img{
- position:absolute;inset:0;
- background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat
-}
-.pawn{
- position:absolute;
- transform:translate(-50%,-50%);
- font-size:22px;
- pointer-events:none;
- display:none
+ border-radius:10px;
+ flex-shrink:0;
 }
 
-/* ESTAÇÕES — VISUAL MAIS FORTE */
+.board-img{
+ position:absolute;
+ inset:0;
+ background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
+ z-index:1;
+}
+
 .season-overlay{
  position:absolute;
  inset:0;
@@ -41,56 +54,31 @@ h1{text-align:center;margin:20px 0}
  z-index:2;
 }
 
-.spring{
- background:
-  radial-gradient(circle at top,
-   rgba(160,255,200,.55),
-   rgba(60,180,120,.35),
-   rgba(0,0,0,.15));
+/* ESTAÇÕES — VISÍVEIS */
+.spring{background:rgba(120,255,180,.45)}
+.summer{background:rgba(255,220,120,.55)}
+.autumn{background:rgba(255,150,80,.55)}
+.winter{background:rgba(180,220,255,.55)}
+
+.pawn{
+ position:absolute;
+ transform:translate(-50%,-50%);
+ font-size:22px;
+ pointer-events:none;
+ display:none;
+ z-index:3;
 }
 
-.summer{
- background:
-  radial-gradient(circle at top,
-   rgba(255,240,170,.65),
-   rgba(255,180,60,.35),
-   rgba(0,0,0,.15));
-}
-
-.autumn{
- background:
-  radial-gradient(circle at top,
-   rgba(255,180,120,.6),
-   rgba(200,90,30,.4),
-   rgba(0,0,0,.2));
-}
-
-.winter{
- background:
-  radial-gradient(circle at top,
-   rgba(220,240,255,.7),
-   rgba(140,190,240,.4),
-   rgba(0,0,0,.25));
-}
-
-/* CONTROLOS */
-.controls{text-align:center;margin:20px}
-button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5}
-.hidden{display:none}
-
-/* BOTÕES PEÕES */
-.car{background:#e53935;color:#fff}
-.bike{background:#fb8c00;color:#fff}
-.moto{background:#222;color:#fff}
-.walk{background:#2ecc71;color:#000}
-
-/* OBJETIVOS */
+/* PAINEL OBJETIVOS (FORA DO TABULEIRO) */
 #objectivePanel{
- width:300px;background:var(--panel);
- border-radius:16px;padding:12px;
+ width:300px;
+ background:var(--panel);
+ border-radius:16px;
+ padding:12px;
  border:2px dashed #555;
 }
+
+/* OBJETIVOS */
 .objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
 .obj-item{display:flex;gap:10px;margin-bottom:6px}
 .marco{
@@ -105,12 +93,24 @@ button:disabled{opacity:.5}
  border-top:1px dashed #444;padding-top:8px;
 }
 
+/* CONTROLOS */
+.controls{text-align:center;margin:20px}
+button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+.hidden{display:none}
+
+/* PEÕES */
+.car{background:#e53935;color:#fff}
+.bike{background:#fb8c00;color:#fff}
+.moto{background:#222;color:#fff}
+.walk{background:#2ecc71;color:#000}
+
 /* MODAL */
 #modal{
  position:fixed;inset:0;
  background:rgba(0,0,0,.55);
  display:none;align-items:center;justify-content:center;
- z-index:5000
+ z-index:6000;
 }
 #modalBox{
  background:#222;padding:22px;
@@ -132,36 +132,6 @@ button:disabled{opacity:.5}
  padding:40px;
  z-index:9000;
 }
-.podium-box{
- display:flex;
- justify-content:center;
- align-items:flex-end;
- gap:30px;
- margin-bottom:40px
-}
-.step{
- width:160px;border-radius:14px;
- text-align:center;padding:12px;color:#000
-}
-.gold{background:#f5c400;height:220px}
-.silver{background:#ccc;height:180px}
-.bronze{background:#c68642;height:150px}
-.step .emoji{font-size:30px}
-.step .name{font-weight:bold;margin-top:6px}
-.cards{
- display:flex;gap:20px;
- justify-content:center;
- flex-wrap:wrap
-}
-.card{
- background:#1c1c1c;border:2px dashed #555;
- border-radius:14px;padding:12px;width:260px
-}
-.stats{
- margin-top:10px;
- font-size:13px;
- color:#ccc;
-}
 </style>
 </head>
 
@@ -178,6 +148,7 @@ button:disabled{opacity:.5}
   <div class="pawn" id="pawn2">🏍️</div>
   <div class="pawn" id="pawn3">🚶</div>
  </div>
+
  <div id="objectivePanel" class="hidden"></div>
 </div>
 
@@ -342,7 +313,7 @@ const MUNICIPIO_NOME={
   400:"Abrantes",
   435:"Ponte de Sôr",
   466:"Avis",
-  475:"Coruche",
+  475:"Mora",
   494:"Coruche",
   500:"Ciborro",
   518:"Montemor-o-Novo",
@@ -403,6 +374,7 @@ const KM_BY_INDEX={
   89:738.5
 };
 
+/* ================= CÉLULAS ESPECIAIS ================= */
 const SPECIAL_CELLS={};
 Object.keys(KM_BY_INDEX).forEach(i=>{
   SPECIAL_CELLS[i]={km:KM_BY_INDEX[i],final:i==89};
@@ -427,6 +399,8 @@ const QUESTIONS=[
 
 /* ================= OBJETIVOS ================= */
 const OBJECTIVES=[
+
+  /* OBJETIVOS NORMAIS */
   {items:[
     {km:0,text:"Visitar Chaves"},
     {km:88,text:"Visitar Peso da Régua"},
@@ -493,13 +467,13 @@ const OBJECTIVES=[
 
   {items:[
     {km:0,text:"Partir de Chaves"},
-    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:369,text:"Passar pelo Meio da Estrada"},
     {km:738,text:"Chegar a Faro"}
   ]},
 
   {items:[
     {km:69,text:"Passar pelo Km 69"},
-    {km:369,text:"Chegar ao Meio da Estrada"},
+    {km:369,text:"Passar pelo Meio da Estrada"},
     {km:500,text:"Visitar Ciborro"},
     {km:494,text:"Visitar Coruche"},
     {km:738,text:"Chegar a Faro"}
@@ -578,12 +552,15 @@ startBtn.onclick=()=>{
     used.push(p.id);
     players.push({
       name:input.value||("Jogador "+(i+1)),
-      pawn:p.id,pos:0,
-      done:{},extra:[],
+      pawn:p.id,
+      pos:0,
+      done:{},
+      extra:[],
       municipiosVisitados:0,
       questionsCorrect:0,
       questionsWrong:0,
-      finished:false,order:0,
+      finished:false,
+      order:0,
       specialScore:0
     });
     pawns[p.id].style.display="block";
@@ -611,28 +588,27 @@ function updateTurn(){
 
 /* ================= OBJETIVOS ================= */
 function renderObjective(p){
+ objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
+
  if(p.objective.special){
-  objectivePanel.innerHTML=
-   `<div class="objective-title">🎯 Objetivo Especial</div>
-    <div class="obj-item">
-     <div class="marco">Final</div>
-     <div>${
+  objectivePanel.innerHTML+=`
+   <div class="obj-item">
+    <div class="marco">Especial</div>
+    <div>${
       p.objective.special==="first"
       ?"Ser o PRIMEIRO a chegar a Faro"
       :"Ser o ÚLTIMO a chegar a Faro"
-     }</div>
-    </div>`;
-  return;
- }
-
- objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
- p.objective.items.forEach(it=>{
-  objectivePanel.innerHTML+=`
-   <div class="obj-item">
-    <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-    <div>${it.text}</div>
+    }</div>
    </div>`;
- });
+ }else{
+  p.objective.items.forEach(it=>{
+   objectivePanel.innerHTML+=`
+    <div class="obj-item">
+     <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+     <div>${it.text}</div>
+    </div>`;
+  });
+ }
 
  if(p.extra.length){
   objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
@@ -654,12 +630,12 @@ function askQuestion(cell){
    {text:"Resposta Certa",cls:"accept",action:()=>{
     players[current].questionsCorrect++;
     closeModal();
-    askFicha(cell);   // continua a jogar
+    askFicha(cell);
    }},
    {text:"Resposta Errada",cls:"decline",action:()=>{
     players[current].questionsWrong++;
     closeModal();
-    nextTurn();       // passa o turno
+    nextTurn();
    }}
   ]
  );
@@ -675,7 +651,7 @@ function askFicha(cell){
     closeModal();
     const p=players[current];
     p.municipiosVisitados++;
-    if(p.objective.items?.some(it=>it.km===cell.km)){
+    if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
       p.done[cell.km]=true;
     }else{
       p.extra.push(cell.km);
@@ -684,7 +660,7 @@ function askFicha(cell){
       p.finished=true;
       p.order=players.filter(x=>x.finished).length;
     }
-    updateTurn(); // mantém jogador se não terminou
+    updateTurn();
    }},
    {text:"Recusar",cls:"decline",action:()=>{
     closeModal();
@@ -745,14 +721,11 @@ rollBtn.onclick=async()=>{
 
  if(idx<3){
   nextTurn();
- }
- else if(cell){
+ }else if(cell){
   askQuestion(cell);
- }
- else if(idx<85){
+ }else if(idx<85){
   doEvent();
- }
- else{
+ }else{
   nextTurn();
  }
 
@@ -795,11 +768,19 @@ function showPodium(){
  ${ranked.map(p=>`
   <div class="card">
    <div class="objective-title">🎯 ${p.name}</div>
-   ${p.objective.items?p.objective.items.map(it=>`
-    <div class="obj-item">
-     <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-     <div>${it.text}</div>
-    </div>`).join(""):""}
+   ${
+     p.objective.special
+     ? `<div class="obj-item"><div class="marco">Especial</div><div>${
+        p.objective.special==="first"
+        ?"Primeiro a Faro"
+        :"Último a Faro"
+       }</div></div>`
+     : p.objective.items.map(it=>`
+        <div class="obj-item">
+         <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+         <div>${it.text}</div>
+        </div>`).join("")
+   }
    <div class="stats">
     🏘️ Municípios: ${p.municipiosVisitados}<br>
     ❓ Certas: ${p.questionsCorrect}<br>
