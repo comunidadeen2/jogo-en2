@@ -318,23 +318,32 @@ const QUESTIONS=[
  "Qual é a capital do Algarve?"
 ];
 
-/* ================= OBJETIVOS (13 NO TOTAL) ================= */
+/* ================= OBJETIVOS (CORRIGIDOS) ================= */
 const OBJECTIVES=[
 
-/* 11 normais (inalterados) */
-{items:[{km:0,text:"Visitar Chaves"},{km:88,text:"Visitar Peso da Régua"},{km:238,text:"Visitar Penacova"},{km:619,text:"Visitar Aljustrel"},{km:738,text:"Chegar a Faro"}]},
-{items:[{km:0,text:"Visitar Chaves"},{km:104,text:"Visitar Lamego"},{km:248,text:"Visitar Vila Nova de Poiares"},{km:640,text:"Visitar Castro Verde"},{km:738,text:"Chegar a Faro"}]},
-{items:[{km:35,text:"Visitar Vila Pouca de Aguiar"},{km:171,text:"Visitar Viseu"},{km:272,text:"Visitar Góis"},{km:551,text:"Visitar Alcáçovas"},{km:722,text:"Visitar São Brás de Alportel"}]},
-{items:[{km:64,text:"Visitar Vila Real"},{km:213,text:"Visitar Santa Comba Dão"},{km:345,text:"Visitar Sertã"},{km:565,text:"Visitar Torrão"},{km:688,text:"Visitar Ameixial"}]},
-{items:[{km:81,text:"Visitar Santa Marta de Penaguião"},{km:225,text:"Visitar Mortágua"},{km:345,text:"Visitar Sertã"},{km:595,text:"Visitar Ferreira do Alentejo"},{km:738,text:"Chegar a Faro"}]},
-{items:[{km:88,text:"Visitar Peso da Régua"},{km:238,text:"Visitar Penacova"},{km:366,text:"Visitar Vila de Rei"},{km:619,text:"Visitar Aljustrel"},{km:738,text:"Chegar a Faro"}]},
-{items:[{km:104,text:"Visitar Lamego"},{km:248,text:"Visitar Vila Nova de Poiares"},{km:386,text:"Visitar Sardoal"},{km:640,text:"Visitar Castro Verde"},{km:738,text:"Chegar a Faro"}]},
-{items:[{km:136,text:"Visitar Castro Daire"},{km:262,text:"Visitar Lousã"},{km:435,text:"Visitar Ponte de Sôr"},{km:666,text:"Passar pelo Km 666"},{km:738,text:"Chegar a Faro"}]},
-{items:[{km:0,text:"Partir de Chaves"},{km:369,text:"Chegar ao Meio da Estrada"},{km:738,text:"Chegar a Faro"}]},
-{items:[{km:69,text:"Passar pelo Km 69"},{km:369,text:"Chegar ao Meio da Estrada"},{km:475,text:"Visitar Mora"},{km:494,text:"Visitar Coruche"},{km:738,text:"Chegar a Faro"}]},
-{items:[{km:200,text:"Visitar Tondela"},{km:324,text:"Visitar Pedrógão Grande"},{km:500,text:"Visitar Ciborro"},{km:518,text:"Visitar Montemor-o-Novo"},{km:738,text:"Chegar a Faro"}]},
+{items:[{km:0,text:"Visitar Chaves"},{km:200,text:"Visitar Tondela"},{km:400,text:"Visitar Abrantes"},{km:500,text:"Visitar Ciborro"},{km:738,text:"Chegar a Faro"}]},
 
-/* 2 ESPECIAIS (NO MESMO BARALHO) */
+{items:[{km:35,text:"Visitar Vila Pouca de Aguiar"},{km:171,text:"Visitar Viseu"},{km:272,text:"Visitar Góis"},{km:551,text:"Visitar Alcáçovas"},{km:722,text:"Visitar São Brás de Alportel"}]},
+
+{items:[{km:64,text:"Visitar Vila Real"},{km:213,text:"Visitar Santa Comba Dão"},{km:345,text:"Visitar Sertã"},{km:565,text:"Visitar Torrão"},{km:688,text:"Visitar Ameixial"}]},
+
+{items:[{km:152,text:"Visitar São Pedro do Sul"},{km:324,text:"Visitar Pedrógão Grande"},{km:466,text:"Visitar Avis"},{km:518,text:"Visitar Montemor-o-Novo"},{km:663,text:"Visitar Almodôvar"}]},
+
+{items:[{km:81,text:"Visitar Santa Marta de Penaguião"},{km:225,text:"Visitar Mortágua"},{km:345,text:"Visitar Sertã"},{km:595,text:"Visitar Ferreira do Alentejo"},{km:738,text:"Chegar a Faro"}]},
+
+{items:[{km:88,text:"Visitar Peso da Régua"},{km:238,text:"Visitar Penacova"},{km:366,text:"Visitar Vila de Rei"},{km:619,text:"Visitar Aljustrel"},{km:738.5,text:"Chegar a Faro"}]},
+
+{items:[{km:104,text:"Visitar Lamego"},{km:248,text:"Visitar Vila Nova de Poiares"},{km:386,text:"Visitar Sardoal"},{km:640,text:"Visitar Castro Verde"},{km:738,text:"Chegar a Faro"}]},
+
+{items:[{km:136,text:"Visitar Castro Daire"},{km:262,text:"Visitar Lousã"},{km:435,text:"Visitar Ponte de Sôr"},{km:666,text:"Passar pelo Km 666"},{km:738.5,text:"Chegar a Faro"}]},
+
+{items:[{km:0,text:"Partir de Chaves"},{km:369,text:"Chegar ao Meio da Estrada"},{km:738,text:"Chegar a Faro"},{km:738.5,text:"Chegar a Faro (Final)"}]},
+
+{items:[{km:0,text:"Partir de Chaves"},{km:738,text:"Chegar a Faro"}]},
+
+{items:[{km:69,text:"Passar pelo Km 69"},{km:369,text:"Chegar ao Meio da Estrada"},{km:475,text:"Visitar Mora"},{km:494,text:"Visitar Coruche"},{km:738,text:"Chegar a Faro"}]},
+
+/* 2 OBJETIVOS ESPECIAIS (INTOCÁVEIS) */
 {special:"first",items:[]},
 {special:"last",items:[]}
 
@@ -342,6 +351,7 @@ const OBJECTIVES=[
 
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
+let finishOrder=[];
 
 /* ================= POSIÇÃO PEÃO ================= */
 function placePawn(pawn,i){
@@ -407,7 +417,8 @@ startBtn.onclick=()=>{
       municipiosVisitados:0,
       questionsCorrect:0,
       questionsWrong:0,
-      finished:false,order:0
+      finished:false,order:0,
+      objective:null
     });
     pawns[p.id].style.display="block";
     placePawn(pawns[p.id],0);
@@ -437,14 +448,13 @@ function renderObjective(p){
  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
 
  if(p.objective.special){
+  const txt=p.objective.special==="first"
+   ?"Ser o PRIMEIRO a chegar a Faro (Km 738,5)"
+   :"Ser o ÚLTIMO a chegar a Faro (Km 738,5)";
   objectivePanel.innerHTML+=`
    <div class="obj-item">
-    <div class="marco">🎯</div>
-    <div>
-     ${p.objective.special==="first"
-       ?"Ser o PRIMEIRO a chegar a Faro"
-       :"Ser o ÚLTIMO a chegar a Faro"}
-    </div>
+    <div class="marco">FINAL</div>
+    <div>${txt}</div>
    </div>`;
  }else{
   p.objective.items.forEach(it=>{
@@ -505,7 +515,7 @@ function askFicha(cell){
     }
     if(cell.final){
       p.finished=true;
-      p.order=players.filter(x=>x.finished).length;
+      p.order=finishOrder.push(p.name);
     }
     updateTurn();
    }},
@@ -547,25 +557,28 @@ rollBtn.onclick=async()=>{
  const p=players[current];
  let target=p.pos+r;
  const LAST=SPACES.length-1;
- if(target>LAST){
-  target=LAST-(target-LAST);
- }
+ if(target>LAST)target=LAST-(target-LAST);
+
  while(p.pos!==target){
   p.pos+=p.pos<target?1:-1;
   placePawn(pawns[p.pawn],p.pos);
   await new Promise(res=>setTimeout(res,350));
  }
+
  const idx=p.pos;
  const cell=SPECIAL_CELLS[idx];
 
  if(idx<3){
   current=(current+1)%players.length;
   updateTurn();
- }else if(cell){
+ }
+ else if(cell){
   askQuestion(cell);
- }else if(idx<85){
+ }
+ else if(idx<85){
   doEvent();
- }else{
+ }
+ else{
   current=(current+1)%players.length;
   updateTurn();
  }
@@ -575,12 +588,14 @@ rollBtn.onclick=async()=>{
 /* ================= PÓDIO ================= */
 function showPodium(){
  podium.style.display="block";
- rollBtn.disabled=true;
  game.classList.add("hidden");
 
  const ranked=[...players].sort((a,b)=>{
   if(a.objective.special||b.objective.special){
-   return a.order-b.order;
+   if(a.objective.special==="first")return -1;
+   if(b.objective.special==="first")return 1;
+   if(a.objective.special==="last")return 1;
+   if(b.objective.special==="last")return -1;
   }
   const oa=Object.keys(a.done).length;
   const ob=Object.keys(b.done).length;
@@ -593,28 +608,8 @@ function showPodium(){
   ${ranked[1]?`<div class="step silver"><div class="emoji">${pawns[ranked[1].pawn].textContent}</div><div class="name">${ranked[1].name}</div></div>`:""}
   <div class="step gold"><div class="emoji">${pawns[ranked[0].pawn].textContent}</div><div class="name">${ranked[0].name}</div></div>
   ${ranked[2]?`<div class="step bronze"><div class="emoji">${pawns[ranked[2].pawn].textContent}</div><div class="name">${ranked[2].name}</div></div>`:""}
- </div>
- <div class="cards">
- ${ranked.map(p=>`
-  <div class="card">
-   <div class="objective-title">🎯 ${p.name}</div>
-   ${p.objective.special
-     ?`<div>${p.objective.special==="first"?"Primeiro":"Último"} a chegar a Faro</div>`
-     :p.objective.items.map(it=>`
-      <div class="obj-item">
-       <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-       <div>${it.text}</div>
-      </div>`).join("")}
-   <div class="stats">
-    🏘️ Municípios: ${p.municipiosVisitados}<br>
-    ❓ Certas: ${p.questionsCorrect}<br>
-    ❌ Erradas: ${p.questionsWrong}
-   </div>
-  </div>`).join("")}
  </div>`;
 }
-
 </script>
-
 </body>
 </html>
