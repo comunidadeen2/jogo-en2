@@ -119,7 +119,12 @@ button:disabled{opacity:.5}
 <div class="controls">
   <div id="setup">
     Jogadores:
-    <select id="playerCount"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+    <select id="playerCount">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+    </select>
     <button id="startBtn">COMEÇAR</button>
   </div>
   <div id="names" class="hidden"></div>
@@ -140,6 +145,7 @@ button:disabled{opacity:.5}
 <div id="podium"></div>
 
 <script>
+
 /* ================= SPACES ================= */
 const SPACES = [
 {"x":0.09165302782324058,"y":0.11379397834912044},
@@ -236,17 +242,46 @@ const SPACES = [
 
 /* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME={
-0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Peso da Régua",
-81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
-136:"Castro Daire",152:"Mortágua",171:"Viseu",200:"Mortágua",
-213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
-262:"Lousã",272:"Góis",324:"Sertã",345:"Sertã",366:"Vila de Rei",
-369:"Meio da EN2",386:"Sardoal",400:"Ponte de Sôr",435:"Ponte de Sôr",
-466:"Avis",475:"Coruche",494:"Coruche",500:"Mora",518:"Ferreira do Alentejo",
-551:"Alcáçovas",565:"Torrão",595:"Ferreira do Alentejo",
-619:"Aljustrel",640:"Castro Verde",663:"Almodôvar",
-666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
-738:"Faro",738.5:"Faro (Final)"
+0:"Chaves",
+35:"Vila Pouca de Aguiar",
+64:"Vila Real",
+69:"Km 69",
+81:"Santa Marta de Penaguião",
+88:"Peso da Régua",
+104:"Lamego",
+136:"Castro Daire",
+152:"São Pedro do Sul",
+171:"Viseu",
+200:"Tondela",
+213:"Santa Comba Dão",
+225:"Mortágua",
+238:"Penacova",
+248:"Vila Nova de Poiares",
+262:"Lousã",
+272:"Góis",
+324:"Pedrógão Grande",
+345:"Sertã",
+366:"Vila de Rei",
+369:"Meio da EN2",
+386:"Sardoal",
+400:"Abrantes",
+435:"Ponte de Sôr",
+466:"Avis",
+475:"Mora",
+494:"Coruche",
+500:"Ciborro",
+518:"Montemor-o-Novo",
+551:"Alcáçovas",
+565:"Torrão",
+595:"Ferreira do Alentejo",
+619:"Aljustrel",
+640:"Castro Verde",
+663:"Almodôvar",
+666:"Km 666",
+688:"Ameixial",
+722:"São Brás de Alportel",
+738:"Faro",
+738.5:"Faro (Final)"
 };
 
 /* ================= MUNICÍPIOS POR ÍNDICE ================= */
