@@ -7,61 +7,139 @@
 
 <style>
 :root{
-  --bg:#111;--text:#eee;--panel:#1c1c1c;
-  --accent:#ff9800;--grey:#555;--green:#2ecc71;--red:#e53935;
+  --bg:#111;
+  --text:#eee;
+  --panel:#1c1c1c;
+  --accent:#ff9800;
+  --grey:#555;
+  --green:#2ecc71;
+  --red:#e53935;
 }
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial}
-h1{text-align:center;margin:20px 0}
-.main{display:flex;justify-content:center;gap:24px;align-items:flex-start}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+}
+
+h1{
+  text-align:center;
+  margin:20px 0;
+}
+
+/* LAYOUT */
+.main{
+  display:flex;
+  justify-content:center;
+  gap:24px;
+  align-items:flex-start;
+}
 
 /* TABULEIRO */
-.board-frame{width:1000px;height:750px;position:relative;overflow:hidden;border-radius:10px}
-.board-img{position:absolute;inset:0;background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat}
-.pawn{position:absolute;transform:translate(-50%,-50%);font-size:22px;pointer-events:none;display:none}
+.board-frame{
+  width:1000px;
+  height:750px;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+}
+.board-img{
+  position:absolute;
+  inset:0;
+  background:url("https://i.imgur.com/SgYhoY8.png") center/cover no-repeat;
+}
+.pawn{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  font-size:22px;
+  pointer-events:none;
+  display:none;
+}
 
 /* CONTROLOS */
-.controls{text-align:center;margin:20px}
-button{border:none;padding:10px 18px;border-radius:10px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5}
-.hidden{display:none}
+.controls{
+  text-align:center;
+  margin:20px;
+}
+button{
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:disabled{
+  opacity:.5;
+}
+.hidden{
+  display:none;
+}
 
-/* BOTÕES PEÕES */
+/* BOTÕES DE PEÃO */
 .car{background:#e53935;color:#fff}
 .bike{background:#fb8c00;color:#fff}
 .moto{background:#222;color:#fff}
 .walk{background:#2ecc71;color:#000}
 
-/* OBJETIVOS */
+/* PAINEL DE OBJETIVO */
 #objectivePanel{
-  width:300px;background:var(--panel);
-  border-radius:16px;padding:12px;
+  width:300px;
+  background:var(--panel);
+  border-radius:16px;
+  padding:12px;
   border:2px dashed #555;
 }
-.objective-title{color:var(--accent);font-weight:bold;margin-bottom:10px}
-.obj-item{display:flex;gap:10px;margin-bottom:6px}
-.marco{
-  background:var(--grey);color:#fff;
-  padding:4px 10px;border-radius:8px;
-  min-width:64px;text-align:center;font-weight:bold
+.objective-title{
+  color:var(--accent);
+  font-weight:bold;
+  margin-bottom:10px;
 }
-.marco.done{background:var(--green)}
+.obj-item{
+  display:flex;
+  gap:10px;
+  margin-bottom:6px;
+}
+.marco{
+  background:var(--grey);
+  color:#fff;
+  padding:4px 10px;
+  border-radius:8px;
+  min-width:64px;
+  text-align:center;
+  font-weight:bold;
+}
+.marco.done{
+  background:var(--green);
+}
 .extra-title{
-  margin:16px 0 8px 0;
-  text-align:center;color:#bbb;font-size:13px;
-  border-top:1px dashed #444;padding-top:8px;
+  margin:16px 0 8px;
+  text-align:center;
+  color:#bbb;
+  font-size:13px;
+  border-top:1px dashed #444;
+  padding-top:8px;
 }
 
 /* MODAL */
 #modal{
-  position:fixed;inset:0;
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.55);
-  display:none;align-items:center;justify-content:center
+  display:none;
+  align-items:center;
+  justify-content:center;
 }
 #modalBox{
-  background:#222;padding:22px;
-  border-radius:14px;width:420px;text-align:center
+  background:#222;
+  padding:22px;
+  border-radius:14px;
+  width:420px;
+  text-align:center;
 }
-#modalBox button{margin:6px}
+#modalBox button{
+  margin:6px;
+}
 .accept{background:var(--green);color:#000}
 .decline{background:var(--red);color:#fff}
 .eventGood{background:#1b5e20;color:#fff}
@@ -69,29 +147,46 @@ button:disabled{opacity:.5}
 
 /* PÓDIO */
 #podium{
-  position:fixed;inset:0;
+  position:fixed;
+  inset:0;
   background:#000c;
   display:none;
   overflow:auto;
   padding:40px;
 }
 .podium-box{
-  display:flex;justify-content:center;align-items:flex-end;gap:30px;margin-bottom:40px
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:30px;
+  margin-bottom:40px;
 }
 .step{
-  width:160px;border-radius:14px;text-align:center;padding:12px;color:#000
+  width:160px;
+  border-radius:14px;
+  text-align:center;
+  padding:12px;
+  color:#000;
 }
 .gold{background:#f5c400;height:220px}
 .silver{background:#ccc;height:180px}
 .bronze{background:#c68642;height:150px}
 .step .emoji{font-size:30px}
 .step .name{font-weight:bold;margin-top:6px}
+
+/* CARTÕES FINAIS (ESTATÍSTICAS) */
 .cards{
-  display:flex;gap:20px;justify-content:center;flex-wrap:wrap
+  display:flex;
+  gap:20px;
+  justify-content:center;
+  flex-wrap:wrap;
 }
 .card{
-  background:#1c1c1c;border:2px dashed #555;
-  border-radius:14px;padding:12px;width:260px
+  background:#1c1c1c;
+  border:2px dashed #555;
+  border-radius:14px;
+  padding:12px;
+  width:260px;
 }
 .stats{
   margin-top:10px;
@@ -318,40 +413,116 @@ const QUESTIONS=[
  "Qual é a capital do Algarve?"
 ];
 
-/* ================= OBJETIVOS (CORRIGIDOS) ================= */
-const OBJECTIVES=[
+/* ================= OBJETIVOS ================= */
+const OBJECTIVES = [
 
-{items:[{km:0,text:"Visitar Chaves"},{km:200,text:"Visitar Tondela"},{km:400,text:"Visitar Abrantes"},{km:500,text:"Visitar Ciborro"},{km:738,text:"Chegar a Faro"}]},
+  /* 1 */
+  { items:[
+    {km:0,text:"Visitar Chaves"},
+    {km:200,text:"Visitar Tondela"},
+    {km:400,text:"Visitar Abrantes"},
+    {km:500,text:"Visitar Ciborro"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
 
-{items:[{km:35,text:"Visitar Vila Pouca de Aguiar"},{km:171,text:"Visitar Viseu"},{km:272,text:"Visitar Góis"},{km:551,text:"Visitar Alcáçovas"},{km:722,text:"Visitar São Brás de Alportel"}]},
+  /* 2 */
+  { items:[
+    {km:35,text:"Visitar Vila Pouca de Aguiar"},
+    {km:171,text:"Visitar Viseu"},
+    {km:272,text:"Visitar Góis"},
+    {km:551,text:"Visitar Alcáçovas"},
+    {km:722,text:"Visitar São Brás de Alportel"}
+  ]},
 
-{items:[{km:64,text:"Visitar Vila Real"},{km:213,text:"Visitar Santa Comba Dão"},{km:345,text:"Visitar Sertã"},{km:565,text:"Visitar Torrão"},{km:688,text:"Visitar Ameixial"}]},
+  /* 3 */
+  { items:[
+    {km:64,text:"Visitar Vila Real"},
+    {km:213,text:"Visitar Santa Comba Dão"},
+    {km:345,text:"Visitar Sertã"},
+    {km:565,text:"Visitar Torrão"},
+    {km:688,text:"Visitar Ameixial"}
+  ]},
 
-{items:[{km:152,text:"Visitar São Pedro do Sul"},{km:324,text:"Visitar Pedrógão Grande"},{km:466,text:"Visitar Avis"},{km:518,text:"Visitar Montemor-o-Novo"},{km:663,text:"Visitar Almodôvar"}]},
+  /* 4 */
+  { items:[
+    {km:152,text:"Visitar São Pedro do Sul"},
+    {km:324,text:"Visitar Pedrógão Grande"},
+    {km:466,text:"Visitar Avis"},
+    {km:518,text:"Visitar Montemor-o-Novo"},
+    {km:663,text:"Visitar Almodôvar"}
+  ]},
 
-{items:[{km:81,text:"Visitar Santa Marta de Penaguião"},{km:225,text:"Visitar Mortágua"},{km:345,text:"Visitar Sertã"},{km:595,text:"Visitar Ferreira do Alentejo"},{km:738,text:"Chegar a Faro"}]},
+  /* 5 */
+  { items:[
+    {km:81,text:"Visitar Santa Marta de Penaguião"},
+    {km:225,text:"Visitar Mortágua"},
+    {km:345,text:"Visitar Sertã"},
+    {km:595,text:"Visitar Ferreira do Alentejo"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
 
-{items:[{km:88,text:"Visitar Peso da Régua"},{km:238,text:"Visitar Penacova"},{km:366,text:"Visitar Vila de Rei"},{km:619,text:"Visitar Aljustrel"},{km:738.5,text:"Chegar a Faro"}]},
+  /* 6 */
+  { items:[
+    {km:88,text:"Visitar Peso da Régua"},
+    {km:238,text:"Visitar Penacova"},
+    {km:366,text:"Visitar Vila de Rei"},
+    {km:619,text:"Visitar Aljustrel"},
+    {km:738.5,text:"Chegar a Faro (Final)"}
+  ]},
 
-{items:[{km:104,text:"Visitar Lamego"},{km:248,text:"Visitar Vila Nova de Poiares"},{km:386,text:"Visitar Sardoal"},{km:640,text:"Visitar Castro Verde"},{km:738,text:"Chegar a Faro"}]},
+  /* 7 */
+  { items:[
+    {km:104,text:"Visitar Lamego"},
+    {km:248,text:"Visitar Vila Nova de Poiares"},
+    {km:386,text:"Visitar Sardoal"},
+    {km:640,text:"Visitar Castro Verde"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
 
-{items:[{km:136,text:"Visitar Castro Daire"},{km:262,text:"Visitar Lousã"},{km:435,text:"Visitar Ponte de Sôr"},{km:666,text:"Passar pelo Km 666"},{km:738.5,text:"Chegar a Faro"}]},
+  /* 8 */
+  { items:[
+    {km:136,text:"Visitar Castro Daire"},
+    {km:262,text:"Visitar Lousã"},
+    {km:435,text:"Visitar Ponte de Sôr"},
+    {km:666,text:"Passar pelo Km 666"},
+    {km:738.5,text:"Chegar a Faro (Final)"}
+  ]},
 
-{items:[{km:0,text:"Partir de Chaves"},{km:369,text:"Chegar ao Meio da Estrada"},{km:738,text:"Chegar a Faro"},{km:738.5,text:"Chegar a Faro (Final)"}]},
+  /* 9 */
+  { items:[
+    {km:0,text:"Visita Chaves"},
+    {km:369,text:"Chegar ao Meio da EN2"},
+    {km:738,text:"Chegar a Faro"},
+    {km:738.5,text:"Chegar a Faro (Final)"}
+  ]},
 
-{items:[{km:0,text:"Partir de Chaves"},{km:738,text:"Chegar a Faro"}]},
+  /* 10 */
+  { items:[
+    {km:0,text:"Vsitar Chaves"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
 
-{items:[{km:69,text:"Passar pelo Km 69"},{km:369,text:"Chegar ao Meio da Estrada"},{km:475,text:"Visitar Mora"},{km:494,text:"Visitar Coruche"},{km:738,text:"Chegar a Faro"}]},
+  /* 11 */
+  { items:[
+    {km:69,text:"Passar pelo Km 69"},
+    {km:369,text:"Chegar ao Meio da EN2"},
+    {km:475,text:"Visitar Mora"},
+    {km:494,text:"Visitar Coruche"},
+    {km:738,text:"Chegar a Faro"}
+  ]},
 
-/* 2 OBJETIVOS ESPECIAIS (INTOCÁVEIS) */
-{special:"first",items:[]},
-{special:"last",items:[]}
+  /* 12 — OBJETIVO ESPECIAL (baralho normal) */
+  { special:"first", text:"Ser o PRIMEIRO a chegar a Faro (Km 738,5)" },
+
+  /* 13 — OBJETIVO ESPECIAL (baralho normal) */
+  { special:"last", text:"Ser o ÚLTIMO a chegar a Faro (Km 738,5)" }
 
 ];
 
+/* ================= PEÕES & JOGO ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
-let players=[],current=0;
-let finishOrder=[];
+let players=[];
+let current=0;
 
 /* ================= POSIÇÃO PEÃO ================= */
 function placePawn(pawn,i){
@@ -412,13 +583,15 @@ startBtn.onclick=()=>{
     used.push(p.id);
     players.push({
       name:input.value||("Jogador "+(i+1)),
-      pawn:p.id,pos:0,
-      done:{},extra:[],
+      pawn:p.id,
+      pos:0,
+      done:{},
+      extra:[],
       municipiosVisitados:0,
       questionsCorrect:0,
       questionsWrong:0,
-      finished:false,order:0,
-      objective:null
+      finished:false,
+      order:0
     });
     pawns[p.id].style.display="block";
     placePawn(pawns[p.id],0);
@@ -447,32 +620,31 @@ function updateTurn(){
 function renderObjective(p){
  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
 
+ /* OBJETIVOS ESPECIAIS */
  if(p.objective.special){
-  const txt=p.objective.special==="first"
-   ?"Ser o PRIMEIRO a chegar a Faro (Km 738,5)"
-   :"Ser o ÚLTIMO a chegar a Faro (Km 738,5)";
   objectivePanel.innerHTML+=`
    <div class="obj-item">
-    <div class="marco">FINAL</div>
-    <div>${txt}</div>
+     <div class="marco">FINAL</div>
+     <div>${p.objective.text}</div>
    </div>`;
- }else{
+ } else {
   p.objective.items.forEach(it=>{
    objectivePanel.innerHTML+=`
     <div class="obj-item">
-     <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-     <div>${it.text}</div>
+      <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+      <div>${it.text}</div>
     </div>`;
   });
  }
 
+ /* OUTRAS FICHAS (para TODOS, inclusive especiais) */
  if(p.extra.length){
   objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
   p.extra.forEach(km=>{
    objectivePanel.innerHTML+=`
     <div class="obj-item">
-     <div class="marco">Km ${km}</div>
-     <div>Visitar ${MUNICIPIO_NOME[km]}</div>
+      <div class="marco">Km ${km}</div>
+      <div>Visitar ${MUNICIPIO_NOME[km]}</div>
     </div>`;
   });
  }
@@ -508,14 +680,16 @@ function askFicha(cell){
     closeModal();
     const p=players[current];
     p.municipiosVisitados++;
+
     if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
       p.done[cell.km]=true;
-    }else{
+    } else {
       p.extra.push(cell.km);
     }
+
     if(cell.final){
       p.finished=true;
-      p.order=finishOrder.push(p.name);
+      p.order=players.filter(x=>x.finished).length;
     }
     updateTurn();
    }},
@@ -557,25 +731,25 @@ rollBtn.onclick=async()=>{
  const p=players[current];
  let target=p.pos+r;
  const LAST=SPACES.length-1;
- if(target>LAST)target=LAST-(target-LAST);
-
+ if(target>LAST){
+  target=LAST-(target-LAST);
+ }
  while(p.pos!==target){
   p.pos+=p.pos<target?1:-1;
   placePawn(pawns[p.pawn],p.pos);
   await new Promise(res=>setTimeout(res,350));
  }
-
  const idx=p.pos;
  const cell=SPECIAL_CELLS[idx];
 
- if(idx<3){
+ if(idx < 3){
   current=(current+1)%players.length;
   updateTurn();
  }
  else if(cell){
   askQuestion(cell);
  }
- else if(idx<85){
+ else if(idx < 85){
   doEvent();
  }
  else{
@@ -588,15 +762,10 @@ rollBtn.onclick=async()=>{
 /* ================= PÓDIO ================= */
 function showPodium(){
  podium.style.display="block";
+ rollBtn.disabled=true;
  game.classList.add("hidden");
 
  const ranked=[...players].sort((a,b)=>{
-  if(a.objective.special||b.objective.special){
-   if(a.objective.special==="first")return -1;
-   if(b.objective.special==="first")return 1;
-   if(a.objective.special==="last")return 1;
-   if(b.objective.special==="last")return -1;
-  }
   const oa=Object.keys(a.done).length;
   const ob=Object.keys(b.done).length;
   if(ob!==oa)return ob-oa;
@@ -608,8 +777,22 @@ function showPodium(){
   ${ranked[1]?`<div class="step silver"><div class="emoji">${pawns[ranked[1].pawn].textContent}</div><div class="name">${ranked[1].name}</div></div>`:""}
   <div class="step gold"><div class="emoji">${pawns[ranked[0].pawn].textContent}</div><div class="name">${ranked[0].name}</div></div>
   ${ranked[2]?`<div class="step bronze"><div class="emoji">${pawns[ranked[2].pawn].textContent}</div><div class="name">${ranked[2].name}</div></div>`:""}
+ </div>
+
+ <div class="cards">
+  ${ranked.map(p=>`
+   <div class="card">
+    <div class="objective-title">🎯 ${p.name}</div>
+    <div class="stats">
+      🏘️ Municípios: ${p.municipiosVisitados}<br>
+      ❓ Certas: ${p.questionsCorrect}<br>
+      ❌ Erradas: ${p.questionsWrong}
+    </div>
+   </div>
+  `).join("")}
  </div>`;
 }
 </script>
 </body>
 </html>
+
