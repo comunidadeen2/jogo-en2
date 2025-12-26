@@ -119,10 +119,17 @@ button:disabled{opacity:.5}
 <div class="controls">
   <div id="setup">
     Jogadores:
-    <select id="playerCount"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+    <select id="playerCount">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+    </select>
     <button id="startBtn">COMEÇAR</button>
   </div>
+
   <div id="names" class="hidden"></div>
+
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
@@ -140,101 +147,8 @@ button:disabled{opacity:.5}
 <div id="podium"></div>
 
 <script>
-/* ================= SPACES ================= */
-const SPACES = [
-{"x":0.09165302782324058,"y":0.11379397834912044},
-{"x":0.0867430441898527,"y":0.16250845737483086},
-{"x":0.0867430441898527,"y":0.2152824763193505},
-{"x":0.09165302782324058,"y":0.2700862652232747},
-{"x":0.127114020731042,"y":0.23558017591339647},
-{"x":0.15057283142389524,"y":0.18957205683355888},
-{"x":0.17621385706492088,"y":0.14356393775372125},
-{"x":0.21876704855428258,"y":0.11311738836265224},
-{"x":0.26513911620294595,"y":0.09417286874154264},
-{"x":0.30551009274413526,"y":0.10229194857916103},
-{"x":0.3458810692853246,"y":0.13003213802435723},
-{"x":0.35951991271140205,"y":0.17671684709066307},
-{"x":0.3246044735406437,"y":0.21595906630581868},
-{"x":0.287506819421713,"y":0.19227841677943167},
-{"x":0.24277141298417892,"y":0.17198071718538568},
-{"x":0.2198581560283688,"y":0.21798883626522328},
-{"x":0.23840698308783415,"y":0.2700862652232747},
-{"x":0.22804146208401527,"y":0.31880074424898514},
-{"x":0.18112384069830878,"y":0.3269198240866035},
-{"x":0.13911620294599017,"y":0.33571549391069017},
-{"x":0.11292962356792144,"y":0.38713633288227334},
-{"x":0.11947626841243862,"y":0.4372039918809202},
-{"x":0.15711947626841244,"y":0.4690037212449256},
-{"x":0.20021822149481724,"y":0.45005920162381596},
-{"x":0.23404255319148934,"y":0.41217016238159676},
-{"x":0.2613202400436443,"y":0.368868403247632},
-{"x":0.2940534642662302,"y":0.3275964140730717},
-{"x":0.3333333333333333,"y":0.2998562246278755},
-{"x":0.37861429350791054,"y":0.3181241542625169},
-{"x":0.4026186579378069,"y":0.3600727334235454},
-{"x":0.40698308783415166,"y":0.41961265223274696},
-{"x":0.3824331696672122,"y":0.4554719215155616},
-{"x":0.3376977632296781,"y":0.4893014208389716},
-{"x":0.2967812329514457,"y":0.5048629905277402},
-{"x":0.2509547190398254,"y":0.5190713802435725},
-{"x":0.20403709765411893,"y":0.5501945196211097},
-{"x":0.1756683033278778,"y":0.5887601488497971},
-{"x":0.18876159301691217,"y":0.6455937077131259},
-{"x":0.23349699945444624,"y":0.6652148173207038},
-{"x":0.27714129841789414,"y":0.6516830175913396},
-{"x":0.3175122749590834,"y":0.6313853179972937},
-{"x":0.35951991271140205,"y":0.6070280784844384},
-{"x":0.4004364429896345,"y":0.5725219891745602},
-{"x":0.42825968357883254,"y":0.5420754397834913},
-{"x":0.4653573376977632,"y":0.5014800405953992},
-{"x":0.4915439170758319,"y":0.46765054127198924},
-{"x":0.5237315875613747,"y":0.4290849120433018},
-{"x":0.5613747954173486,"y":0.40269790257104193},
-{"x":0.5990180032733223,"y":0.36345568335588635},
-{"x":0.6377523186033823,"y":0.34045162381596755},
-{"x":0.6824877250409165,"y":0.32489005412719896},
-{"x":0.7255864702673214,"y":0.33639208389715836},
-{"x":0.7408619749045281,"y":0.385783152909337},
-{"x":0.7097654118930714,"y":0.433144451962111},
-{"x":0.6715766503000545,"y":0.46359100135318},
-{"x":0.629569012547736,"y":0.4865950608930988},
-{"x":0.5881069285324604,"y":0.5116288903924222},
-{"x":0.552645935624659,"y":0.5434286197564276},
-{"x":0.5280960174577196,"y":0.5806410690121786},
-{"x":0.5302782324058919,"y":0.642210757780785},
-{"x":0.5575559192580469,"y":0.6861891069012179},
-{"x":0.5995635570103655,"y":0.6949847767253045},
-{"x":0.6415711947626841,"y":0.6713041271989174},
-{"x":0.668848881614839,"y":0.6246194181326117},
-{"x":0.6972176759410802,"y":0.5779347090663058},
-{"x":0.729950900163666,"y":0.5319265899864682},
-{"x":0.7665030005455538,"y":0.5068927604871448},
-{"x":0.8090561920349154,"y":0.534632949932341},
-{"x":0.8199672667757774,"y":0.5860537889039242},
-{"x":0.7948717948717948,"y":0.6408575778078485},
-{"x":0.7495908346972177,"y":0.6516830175913396},
-{"x":0.7054009819967266,"y":0.66656799729364},
-{"x":0.7092198581560283,"y":0.7132527063599459},
-{"x":0.7277686852154936,"y":0.7667033152909337},
-{"x":0.7026732133115112,"y":0.8194773342354534},
-{"x":0.6623022367703219,"y":0.801209404600812},
-{"x":0.6126568466993999,"y":0.7768521650879567},
-{"x":0.5859247135842881,"y":0.8194773342354534},
-{"x":0.6099290780141844,"y":0.8688684032476319},
-{"x":0.6486633933442444,"y":0.8898426928281462},
-{"x":0.6912165848336062,"y":0.8918724627875507},
-{"x":0.7424986361156574,"y":0.8715747631935048},
-{"x":0.7801418439716311,"y":0.8330091339648173},
-{"x":0.7997817785051827,"y":0.7863244248985116},
-{"x":0.8145117294053463,"y":0.7396397158322058},
-{"x":0.8521549372613202,"y":0.6902486468200271},
-{"x":0.8696126568466993,"y":0.7477587956698242},
-{"x":0.8908892525913802,"y":0.7897073748308525},
-{"x":0.9078014184397163,"y":0.8478941136671179},
-{"x":0.8979814511729405,"y":0.902697902571042}
-];
 
-/* ================= MUNICÍPIOS ================= */
+  /* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME={
   0:"Chaves",
   35:"Vila Pouca de Aguiar",
@@ -280,14 +194,13 @@ const MUNICIPIO_NOME={
 
 /* ================= MUNICÍPIOS POR ÍNDICE ================= */
 const KM_BY_INDEX={
-  3:0, 5:35, 7:64, 8:69, 11:81, 13:88, 16:104, 19:136, 21:152,
-  23:171, 25:200, 27:213, 29:225, 31:238, 33:248, 35:262, 37:272,
-  39:324, 41:345, 43:366, 44:369, 46:386, 48:400, 50:435, 52:466,
-  54:475, 57:494, 58:500, 60:518, 63:551, 66:565, 68:595, 70:619,
-  73:640, 75:663, 77:666, 80:688, 83:722, 85:738, 89:738.5
+  3:0,5:35,7:64,8:69,11:81,13:88,16:104,19:136,21:152,
+  23:171,25:200,27:213,29:225,31:238,33:248,35:262,37:272,
+  39:324,41:345,43:366,44:369,46:386,48:400,50:435,52:466,
+  54:475,57:494,58:500,60:518,63:551,66:565,68:595,70:619,
+  73:640,75:663,77:666,80:688,83:722,85:738,89:738.5
 };
 
-/* ================= CÉLULAS ESPECIAIS ================= */
 const SPECIAL_CELLS={};
 Object.keys(KM_BY_INDEX).forEach(i=>{
   SPECIAL_CELLS[i]={ km:KM_BY_INDEX[i], final:i==89 };
@@ -397,10 +310,11 @@ const OBJECTIVES=[
   {special:"last"}
 ];
 
+/* ================= PEÕES ================= */
 const pawns=[pawn0,pawn1,pawn2,pawn3];
 let players=[],current=0;
 
-/* ================= POSIÇÃO PEÃO ================= */
+  /* ================= POSIÇÃO PEÃO ================= */
 function placePawn(pawn,i){
  const s=SPACES[i];
  let ox=-8,oy=-10;
@@ -429,8 +343,6 @@ function closeModal(){modal.style.display="none";}
 
 /* ================= SETUP ================= */
 startBtn.onclick=()=>{
- seasonLayer.className="season-overlay "+seasonSelect.value;
-
  setup.classList.add("hidden");
  names.classList.remove("hidden");
 
@@ -459,7 +371,8 @@ startBtn.onclick=()=>{
   ].forEach(p=>{
    if(used.includes(p.id))return;
    const b=document.createElement("button");
-   b.className=p.cls;b.textContent=p.txt;
+   b.className=p.cls;
+   b.textContent=p.txt;
    b.onclick=()=>{
     used.push(p.id);
     players.push({
@@ -497,7 +410,7 @@ function updateTurn(){
  renderObjective(players[current]);
 }
 
-/* ================= OBJETIVOS + ESTATÍSTICAS ================= */
+/* ================= OBJETIVOS ================= */
 function renderObjective(p){
  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
 
@@ -507,8 +420,8 @@ function renderObjective(p){
     <div class="marco">Especial</div>
     <div>${
       p.objective.special==="first"
-      ?"Ser o PRIMEIRO a chegar a Faro"
-      :"Ser o ÚLTIMO a chegar a Faro"
+        ?"Ser o PRIMEIRO a chegar a Faro"
+        :"Ser o ÚLTIMO a chegar a Faro"
     }</div>
    </div>`;
  }else{
@@ -531,13 +444,6 @@ function renderObjective(p){
     </div>`;
   });
  }
-
- objectivePanel.innerHTML+=`
-  <div class="extra-title">Estatísticas</div>
-  🏘️ Municípios: ${p.municipiosVisitados}<br>
-  ❓ Certas: ${p.questionsCorrect}<br>
-  ❌ Erradas: ${p.questionsWrong}
- `;
 }
 
 /* ================= PERGUNTA ================= */
@@ -644,6 +550,7 @@ rollBtn.onclick=async()=>{
 /* ================= PÓDIO ================= */
 function showPodium(){
  podium.style.display="block";
+ rollBtn.disabled=true;
  game.classList.add("hidden");
 
  const ranked=[...players].sort((a,b)=>{
@@ -653,37 +560,41 @@ function showPodium(){
   }
   const oa=Object.keys(a.done).length;
   const ob=Object.keys(b.done).length;
-  if(ob!==oa) return ob-oa;
+  if(ob!==oa)return ob-oa;
   return a.order-b.order;
  });
 
  podium.innerHTML=`
- <h2>🏆 Pódio Final</h2>
- ${ranked.map(p=>`
-  <div class="card">
-   <strong>${p.name}</strong><br>
-   ${
-    p.objective.special
-     ? `🎯 Objetivo Especial: ${
-        p.objective.special==="first"
-        ?"Primeiro a Faro"
-        :"Último a Faro"
-       }`
-     : p.objective.items.map(it=>`Km ${it.km}`).join(", ")
-   }
-   <div class="stats">
-    🏘️ Municípios: ${p.municipiosVisitados}<br>
-    ❓ Certas: ${p.questionsCorrect}<br>
-    ❌ Erradas: ${p.questionsWrong}
+ <div class="podium-box">
+  ${ranked[1]?`<div class="step silver"><div class="emoji">${pawns[ranked[1].pawn].textContent}</div><div class="name">${ranked[1].name}</div></div>`:""}
+  <div class="step gold"><div class="emoji">${pawns[ranked[0].pawn].textContent}</div><div class="name">${ranked[0].name}</div></div>
+  ${ranked[2]?`<div class="step bronze"><div class="emoji">${pawns[ranked[2].pawn].textContent}</div><div class="name">${ranked[2].name}</div></div>`:""}
+ </div>
+ <div class="cards">
+  ${ranked.map(p=>`
+   <div class="card">
+    <div class="objective-title">🎯 ${p.name}</div>
+    ${
+      p.objective.special
+      ? `<div class="obj-item"><div class="marco">Especial</div>
+         <div>${p.objective.special==="first"?"Primeiro a Faro":"Último a Faro"}</div></div>`
+      : p.objective.items.map(it=>`
+        <div class="obj-item">
+         <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+         <div>${it.text}</div>
+        </div>`).join("")
+    }
+    <div class="stats">
+      🏘️ Municípios: ${p.municipiosVisitados}<br>
+      ❓ Certas: ${p.questionsCorrect}<br>
+      ❌ Erradas: ${p.questionsWrong}
+    </div>
    </div>
-  </div>
- `).join("")}
- `;
+  `).join("")}
+ </div>`;
 }
 </script>
 
 </body>
 </html>
-
-
 
