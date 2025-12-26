@@ -594,7 +594,7 @@ function askFicha(cell){
       p.finished=true;
       p.order=players.filter(x=>x.finished).length;
     }
-    nextTurn();
+    updateTurn(); // mantém o turno se não terminou
    }},
    {text:"Recusar",cls:"decline",action:()=>{
     closeModal();
