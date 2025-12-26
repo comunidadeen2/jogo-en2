@@ -242,46 +242,17 @@ const SPACES = [
 
 /* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME={
-0:"Chaves",
-35:"Vila Pouca de Aguiar",
-64:"Vila Real",
-69:"Km 69",
-81:"Santa Marta de Penaguião",
-88:"Peso da Régua",
-104:"Lamego",
-136:"Castro Daire",
-152:"São Pedro do Sul",
-171:"Viseu",
-200:"Tondela",
-213:"Santa Comba Dão",
-225:"Mortágua",
-238:"Penacova",
-248:"Vila Nova de Poiares",
-262:"Lousã",
-272:"Góis",
-324:"Pedrógão Grande",
-345:"Sertã",
-366:"Vila de Rei",
-369:"Meio da EN2",
-386:"Sardoal",
-400:"Abrantes",
-435:"Ponte de Sôr",
-466:"Avis",
-475:"Mora",
-494:"Coruche",
-500:"Ciborro",
-518:"Montemor-o-Novo",
-551:"Alcáçovas",
-565:"Torrão",
-595:"Ferreira do Alentejo",
-619:"Aljustrel",
-640:"Castro Verde",
-663:"Almodôvar",
-666:"Km 666",
-688:"Ameixial",
-722:"São Brás de Alportel",
-738:"Faro",
-738.5:"Faro (Final)"
+0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Km 69",
+81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
+136:"Castro Daire",152:"São Pedro do Sul",171:"Viseu",200:"Tondela",
+213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
+262:"Lousã",272:"Góis",324:"Pedrógão Grande",345:"Sertã",366:"Vila de Rei",
+369:"Meio da EN2",386:"Sardoal",400:"Abrantes",435:"Ponte de Sôr",
+466:"Avis",475:"Mora",494:"Coruche",500:"Ciborro",518:"Montemor-o-Novo",
+551:"Alcáçovas",565:"Torrão",595:"Ferreira do Alentejo",
+619:"Aljustrel",640:"Castro Verde",663:"Almodôvar",
+666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
+738:"Faro",738.5:"Faro (Final)"
 };
 
 /* ================= MUNICÍPIOS POR ÍNDICE ================= */
@@ -316,8 +287,8 @@ const QUESTIONS=[
 
 /* ================= OBJETIVOS ================= */
 const OBJECTIVES = [
-     
-  { items:[
+
+  { type:"normal", items:[
     {km:0,text:"Visitar Chaves"},
     {km:88,text:"Visitar Peso da Régua"},
     {km:238,text:"Visitar Penacova"},
@@ -325,7 +296,7 @@ const OBJECTIVES = [
     {km:738,text:"Chegar a Faro"}
   ]},
 
-  { items:[
+  { type:"normal", items:[
     {km:0,text:"Visitar Chaves"},
     {km:104,text:"Visitar Lamego"},
     {km:248,text:"Visitar Vila Nova de Poiares"},
@@ -333,7 +304,7 @@ const OBJECTIVES = [
     {km:738,text:"Chegar a Faro"}
   ]},
 
-  { items:[
+  { type:"normal", items:[
     {km:35,text:"Visitar Vila Pouca de Aguiar"},
     {km:172,text:"Visitar Viseu"},
     {km:271,text:"Visitar Góis"},
@@ -341,7 +312,7 @@ const OBJECTIVES = [
     {km:722,text:"Visitar São Brás de Alportel"}
   ]},
 
-  { items:[
+  { type:"normal", items:[
     {km:64,text:"Visitar Vila Real"},
     {km:213,text:"Visitar Santa Comba Dão"},
     {km:345,text:"Visitar Sertã"},
@@ -349,51 +320,9 @@ const OBJECTIVES = [
     {km:688,text:"Visitar Ameixial"}
   ]},
 
-  { items:[
-    {km:81,text:"Visitar Santa Marta de Penaguião"},
-    {km:225,text:"Visitar Mortágua"},
-    {km:345,text:"Visitar Sertã"},
-    {km:595,text:"Visitar Ferreira do Alentejo"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
+  { type:"special", special:"first", text:"🥇 Ser o PRIMEIRO a chegar a Faro (Km 738,5)" },
+  { type:"special", special:"last",  text:"🐢 Ser o ÚLTIMO a chegar a Faro (Km 738,5)" }
 
-  { items:[
-    {km:88,text:"Visitar Peso da Régua"},
-    {km:238,text:"Visitar Penacova"},
-    {km:366,text:"Visitar Vila de Rei"},
-    {km:619,text:"Visitar Aljustrel"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:104,text:"Visitar Lamego"},
-    {km:248,text:"Visitar Vila Nova de Poiares"},
-    {km:386,text:"Visitar Sardoal"},
-    {km:640,text:"Visitar Castro Verde"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:136,text:"Visitar Castro Daire"},
-    {km:260,text:"Visitar Lousã"},
-    {km:430,text:"Visitar Ponte de Sôr"},
-    {km:666,text:"Passar pelo Km 666"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:0,text:"Partir de Chaves"},
-    {km:369,text:"Chegar ao Meio da Estrada"},
-    {km:738,text:"Chegar a Faro"}
-  ]},
-
-  { items:[
-    {km:69,text:"Passar pelo Km 69"},
-    {km:369,text:"Chegar ao Meio da Estrada"},
-    {km:476,text:"Visitar Mora"},
-    {km:494,text:"Visitar Coruche"},
-    {km:738,text:"Chegar a Faro"}
-  ]}
 ];
 
 const pawns=[pawn0,pawn1,pawn2,pawn3];
@@ -434,8 +363,13 @@ startBtn.onclick=()=>{
  function next(){
   names.innerHTML="";
   if(i>=total){
-   const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
-   players.forEach(p=>p.objective=deck.pop());
+   const normals=OBJECTIVES.filter(o=>o.type==="normal");
+   const specials=OBJECTIVES.filter(o=>o.type==="special");
+   const deck=[...normals].sort(()=>Math.random()-0.5);
+   players.forEach((p,idx)=>{
+     p.objective=deck.pop();
+     p.special=specials[idx]||null;
+   });
    names.classList.add("hidden");
    game.classList.remove("hidden");
    objectivePanel.classList.remove("hidden");
@@ -463,7 +397,8 @@ startBtn.onclick=()=>{
       municipiosVisitados:0,
       questionsCorrect:0,
       questionsWrong:0,
-      finished:false,order:0
+      finished:false,order:0,
+      specialDone:false
     });
     pawns[p.id].style.display="block";
     placePawn(pawns[p.id],0);
@@ -491,13 +426,23 @@ function updateTurn(){
 /* ================= OBJETIVOS ================= */
 function renderObjective(p){
  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
- p.objective.items.forEach(it=>{
+ if(p.objective?.items){
+  p.objective.items.forEach(it=>{
+   objectivePanel.innerHTML+=`
+    <div class="obj-item">
+     <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
+     <div>${it.text}</div>
+    </div>`;
+  });
+ }
+ if(p.special){
   objectivePanel.innerHTML+=`
+   <div class="extra-title">Objetivo especial</div>
    <div class="obj-item">
-    <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-    <div>${it.text}</div>
+    <div class="marco ${p.specialDone?"done":""}">⭐</div>
+    <div>${p.special.text}</div>
    </div>`;
- });
+ }
  if(p.extra.length){
   objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
   p.extra.forEach(km=>{
@@ -540,7 +485,7 @@ function askFicha(cell){
     closeModal();
     const p=players[current];
     p.municipiosVisitados++;
-    if(p.objective.items.some(it=>it.km===cell.km)){
+    if(p.objective?.items?.some(it=>it.km===cell.km)){
       p.done[cell.km]=true;
     }else{
       p.extra.push(cell.km);
@@ -548,6 +493,10 @@ function askFicha(cell){
     if(cell.final){
       p.finished=true;
       p.order=players.filter(x=>x.finished).length;
+      if(p.special){
+        if(p.special.special==="first" && p.order===1)p.specialDone=true;
+        if(p.special.special==="last"  && p.order===players.length)p.specialDone=true;
+      }
     }
     updateTurn();
    }},
@@ -624,8 +573,8 @@ function showPodium(){
  game.classList.add("hidden");
 
  const ranked=[...players].sort((a,b)=>{
-  const oa=Object.keys(a.done).length;
-  const ob=Object.keys(b.done).length;
+  const oa=Object.keys(a.done).length + (a.specialDone?1:0);
+  const ob=Object.keys(b.done).length + (b.specialDone?1:0);
   if(ob!==oa)return ob-oa;
   return a.order-b.order;
  });
@@ -640,11 +589,17 @@ function showPodium(){
   ${ranked.map(p=>`
    <div class="card">
     <div class="objective-title">🎯 ${p.name}</div>
-    ${p.objective.items.map(it=>`
+    ${p.objective?.items?.map(it=>`
       <div class="obj-item">
         <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
         <div>${it.text}</div>
-      </div>`).join("")}
+      </div>`).join("")||""}
+    ${p.special?`
+      <div class="extra-title">Objetivo especial</div>
+      <div class="obj-item">
+        <div class="marco ${p.specialDone?"done":""}">⭐</div>
+        <div>${p.special.text}</div>
+      </div>`:""}
     <div class="stats">
       🏘️ Municípios: ${p.municipiosVisitados}<br>
       ❓ Certas: ${p.questionsCorrect}<br>
