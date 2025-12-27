@@ -992,11 +992,13 @@ rollBtn.onclick = async ()=>{
 
   const p = players[current];
   let target = p.pos + r;
-  const LAST = SPACES.length-1;
+  const LAST = SPACES.length - 1;
 
   if(target > LAST){
     target = LAST - (target - LAST);
   }
+
+  rollBtn.disabled = true;
 
   while(p.pos !== target){
     p.pos += p.pos < target ? 1 : -1;
@@ -1007,22 +1009,24 @@ rollBtn.onclick = async ()=>{
   const idx = p.pos;
   const cell = SPECIAL_CELLS[idx];
 
-const cell = SPECIAL_CELLS[idx];
+  if(idx < 3){
+    current = (current + 1) % players.length;
+    updateTurn();
+  }
+  else if(cell){
+    askQuestion(cell);
+  }
+  else if(idx < 85){
+    doEvent();
+  }
+  else{
+    current = (current + 1) % players.length;
+    updateTurn();
+  }
 
-if(idx < 3){
-  current = (current+1) % players.length;
-  updateTurn();
-}
-else if(cell){
-  askQuestion(cell);
-}
-else if(idx < 85){
-  doEvent();
-}
-else{
-  current = (current+1) % players.length;
-  updateTurn();
-}
+  rollBtn.disabled = false;
+};
+  
 /* ================= PÓDIO FINAL ================= */
 function showPodium(){
   podium.style.display = "block";
@@ -1086,6 +1090,7 @@ function showPodium(){
 </script>
 </body>
 </html>
+
 
 
 
