@@ -740,14 +740,20 @@ function askFicha(cell){
         }
       },
       {
-        text:"Recusar",
-        cls:"decline",
-        action:()=>{
-          closeModal();
-          // 🔥 CONTINUA A JOGAR
-          updateTurn();
-        }
-      }
+  text:"Recusar",
+  cls:"decline",
+  action:()=>{
+    closeModal();
+    const p = players[current];
+
+    if(cell.final){
+      p.finished = true;
+      p.order = players.filter(x=>x.finished).length;
+    }
+
+    updateTurn();
+  }
+}
     ]
   );
 }
