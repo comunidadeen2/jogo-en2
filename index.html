@@ -143,6 +143,13 @@ button:disabled{
   color:#fff;
 }
 
+#modalEffect{
+  margin-top:10px;
+  margin-bottom:12px;
+  font-weight:bold;
+  opacity:.9;
+}
+
 #modalBox.good{
   background:#2f5a46;   /* verde mais vivo, mas suave */
 }
@@ -268,6 +275,7 @@ button:disabled{
 <div id="modal">
   <div id="modalBox">
     <p id="modalText"></p>
+    <div id="modalEffect"></div>
     <div id="modalButtons"></div>
   </div>
 </div>
@@ -615,11 +623,11 @@ function placePawn(pawn, i){
 }
 
 /* ================= MODAL ================= */
-function showModal(text,buttons){
+function showModal(text,buttons,effect=""){
   modalText.textContent = text;
-  modalButtons.innerHTML = "";
+  modalEffect.textContent = effect;
 
-  // reset classes do bloco
+  modalButtons.innerHTML = "";
   modalBox.className = "";
 
   buttons.forEach(b=>{
@@ -628,14 +636,11 @@ function showModal(text,buttons){
     btn.className = b.cls || "";
     btn.onclick = b.action;
     modalButtons.appendChild(btn);
-
-    // aplica cor AO BLOCO, não ao botão
-    if(b.cls === "eventGood") modalBox.classList.add("good");
-    if(b.cls === "eventBad")  modalBox.classList.add("bad");
   });
 
   modal.style.display = "flex";
 }
+
 function closeModal(){
   modal.style.display = "none";
 }
