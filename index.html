@@ -452,6 +452,11 @@ const KM_BY_INDEX = {
   83:722,85:738,89:738.5
 };
 
+const KM_TO_INDEX = {};
+Object.entries(KM_BY_INDEX).forEach(([idx, km])=>{
+  KM_TO_INDEX[km] = Number(idx);
+});
+
 const SPECIAL_CELLS = {};
 Object.keys(KM_BY_INDEX).forEach(i=>{
   SPECIAL_CELLS[i] = { km: KM_BY_INDEX[i], final: i == 89 };
@@ -460,55 +465,56 @@ Object.keys(KM_BY_INDEX).forEach(i=>{
 /* ================= EVENTOS ================= */
 const EVENTS = [
 
-  /* ==== CONTRATEMPOS – RELATIVOS ==== */
   {
-    text:"Nem tudo na viagem corre bem… Furo no pneu em Santa Marta de Penaguião. Recua 1 casa",
+    title:"Nem tudo na viagem corre bem…",
+    text:"Furo no pneu em Santa Marta de Penaguião.",
+    effect:"Recua 1 casa.",
     move:-1,
     cls:"eventBad"
   },
+
   {
-    text:"Nem tudo na viagem corre bem… A tua mota ficou sem gasolina. Recua 2 casas",
+    title:"Nem tudo na viagem corre bem…",
+    text:"A tua mota ficou sem gasolina.",
+    effect:"Recua 2 casas.",
     move:-2,
     cls:"eventBad"
   },
-  {
-    text:"Nem tudo na viagem corre bem… Encontro com grupo de ciclistas. Recua 1 casa",
-    move:-1,
-    cls:"eventBad"
-  },
 
-  /* ==== CONTRATEMPOS – DESTINO ==== */
   {
-    text:"Nem tudo na viagem corre bem… Selfie em Chaves no Km 0. Vai até Chaves",
-    goKm:0,
-    cls:"eventBad"
-  },
-
-  /* ==== BONS MOMENTOS – RELATIVOS ==== */
-  {
-    text:"Bons momentos! Estrada livre, bom ritmo. Avança 1 casa",
+    title:"Bons momentos!",
+    text:"Estrada livre, bom ritmo.",
+    effect:"Avança +1 casa.",
     move:1,
     cls:"eventGood"
   },
+
   {
-    text:"Bons momentos! Paisagem inspiradora. Avança 2 casas",
+    title:"Bons momentos!",
+    text:"Paisagem inspiradora.",
+    effect:"Avança +2 casas.",
     move:2,
     cls:"eventGood"
   },
 
-  /* ==== BONS MOMENTOS – DESTINO ==== */
   {
-    text:"Bons momentos! Vai até ao Km 369 (Meio da EN2).",
-    goKm:369,
+    title:"Bons momentos!",
+    text:"Seguiste pela rota mais fluida.",
+    effect:"Avança até ao Km 200 (Tondela).",
+    goKm:200,
     cls:"eventGood"
   },
+
   {
-    text:"Bons momentos! Avança até ao Km 200 (Tondela).",
-    goKm:200,
+    title:"Bons momentos!",
+    text:"Chegaste ao ponto simbólico da viagem.",
+    effect:"Avança até ao Km 369 (Meio da EN2).",
+    goKm:369,
     cls:"eventGood"
   }
 
 ];
+
 
 /* ================= PERGUNTAS ================= */
 const QUESTIONS = [
@@ -881,40 +887,44 @@ function askFicha(cell){
 function doEvent(){
   const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
 
-  showModal(ev.text,[{
-    text:"OK",
-    cls:ev.cls,
-    action: async ()=>{
-      closeModal();
-      const p = players[current];
-      let target;
+  showModal(
+    ev.title,
+    ev.text,
+    [{
+      text:"OK",
+      cls:ev.cls,
+      action: async ()=>{
+        closeModal();
+        rollBtn.disabled = true;
 
-      /* TIPO 1 — move relativo */
-      if(typeof ev.move === "number"){
-        target = p.pos + ev.move;
+        const p = players[current];
+        let target = p.pos;
+
+        if(ev.move){
+          target = p.pos + ev.move;
+          if(target < 0) target = 0;
+          if(target > SPACES.length-1) target = SPACES.length-1;
+        }
+
+        if(ev.goKm !== undefined){
+          target = KM_TO_INDEX[ev.goKm];
+        }
+
+        while(p.pos !== target){
+          p.pos += p.pos < target ? 1 : -1;
+          placePawn(pawns[p.pawn], p.pos);
+          await new Promise(r=>setTimeout(r,300));
+        }
+
+        rollBtn.disabled = false;
+        current = (current+1) % players.length;
+        updateTurn();
       }
-
-      /* TIPO 2 — ir para Km específico */
-      if(typeof ev.goKm === "number"){
-        const idx = Object.keys(SPECIAL_CELLS)
-          .find(i => SPECIAL_CELLS[i].km === ev.goKm);
-        if(idx !== undefined) target = Number(idx);
-      }
-
-      if(target < 0) target = 0;
-      if(target > SPACES.length-1) target = SPACES.length-1;
-
-      while(p.pos !== target){
-        p.pos += p.pos < target ? 1 : -1;
-        placePawn(pawns[p.pawn], p.pos);
-        await new Promise(r=>setTimeout(r,300));
-      }
-
-      current = (current+1) % players.length;
-      updateTurn();
-    }
-  }]);
+    }],
+    ev.effect
+  );
 }
+
 /* ================= JOGAR ================= */
 rollBtn.onclick = async ()=>{
   rollBtn.disabled = true;
