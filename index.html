@@ -1001,24 +1001,24 @@ rollBtn.onclick = async ()=>{
   }
 
   const idx = p.pos;
-  const cell = SPECIAL_CELLS[idx];
+const cell = SPECIAL_CELLS[idx];
 
-  if(idx < 3){
-    current = (current + 1) % players.length;
-    updateTurn();
-  }
-  else if(cell){
-    askQuestion(cell);
-  }
-  else if(idx < 85){
-    doEvent();
-  }
-  else{
-    current = (current + 1) % players.length;
-    updateTurn();
-  }
+// 1️⃣ casas iniciais — nada acontece
+if(idx < 3){
+  current = (current+1) % players.length;
+  updateTurn();
+}
 
-  rollBtn.disabled = false;
+// 2️⃣ CASAS COM KM → PERGUNTA (PRIORIDADE MÁXIMA)
+else if(cell){
+  askQuestion(cell);
+}
+
+// 3️⃣ resto do tabuleiro → EVENTO
+else{
+  doEvent();
+}
+
 };
   
 /* ================= PÓDIO FINAL ================= */
