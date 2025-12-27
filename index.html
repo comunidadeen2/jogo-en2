@@ -849,38 +849,34 @@ function renderObjective(p){
 /* ================= PERGUNTA ================= */
 function askQuestion(cell){
   showModal(
-    {
-      title: "Pergunta",
-      text: QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
-      effect: "",
-      cls: ""
-    },
+    "Pergunta",
+    QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
     [
       {
         text:"Resposta Certa",
         cls:"accept",
         action:()=>{
-  players[current].questionsCorrect++;
-  closeModal();
-  rollBtn.disabled = false;
-  askFicha(cell);
-}
+          players[current].questionsCorrect++;
+          closeModal();
+          rollBtn.disabled = false;
+          askFicha(cell);
+        }
       },
       {
         text:"Resposta Errada",
-  cls:"decline",
-  action:()=>{
-    players[current].questionsWrong++;
-    closeModal();
-    rollBtn.disabled = false;
-    current = (current+1) % players.length;
-    updateTurn();
-  }
-}
-    ]
+        cls:"decline",
+        action:()=>{
+          players[current].questionsWrong++;
+          closeModal();
+          rollBtn.disabled = false;
+          current = (current+1) % players.length;
+          updateTurn();
+        }
+      }
+    ],
+    ""
   );
 }
-
 
 /* ================= FICHA (CORRIGIDO) ================= */
 function askFicha(cell){
