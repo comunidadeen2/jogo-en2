@@ -680,8 +680,8 @@ function placePawn(pawn, i){
 function showModal(card, buttons){
   modalButtons.innerHTML = "";
 
-  modalBox.className = "modal-box";
-  modalBox.classList.add(card.cls);
+  modalBox.className = "";
+modalBox.classList.add(card.cls);
 
   modalText.innerHTML = `
     <div style="font-weight:bold;margin-bottom:8px">${card.title}</div>
@@ -993,11 +993,11 @@ rollBtn.onclick = async ()=>{
     updateTurn();
   }
   else if(cell){
-    askQuestion(cell);
-  }
-  else if(idx < 85){
-    doEvent();
-  }
+  askQuestion(cell);
+}
+else{
+  doEvent();
+}
   else{
     current = (current+1) % players.length;
     updateTurn();
