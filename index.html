@@ -989,12 +989,19 @@ rollBtn.onclick = async ()=>{
   const cell = SPECIAL_CELLS[idx];
 
   if(idx < 3){
-    current = (current+1) % players.length;
-    updateTurn();
-  }
+  current = (current+1) % players.length;
+  updateTurn();
+}
+else if(SPECIAL_CELLS[idx]){
+  askQuestion(SPECIAL_CELLS[idx]);
+}
+else{
+  doEvent();
+}
   else if(cell){
   askQuestion(cell);
 }
+
   else{
     current = (current+1) % players.length;
     updateTurn();
@@ -1065,4 +1072,3 @@ function showPodium(){
 </script>
 </body>
 </html>
-
