@@ -139,13 +139,26 @@ button:disabled{
 .accept{background:var(--green);color:#000}
 .decline{background:var(--red);color:#fff}
 .eventGood{
-  background:#1f3d2b; /* verde suave */
-  color:#eaf7ef;
+  background:#e6f4ea;      /* verde suave */
+  color:#1b3a2a;
 }
 
 .eventBad{
-  background:#4a1f1f; /* vermelho suave */
-  color:#fdeaea;
+  background:#fdeaea;      /* vermelho suave */
+  color:#5a1a1a;
+}
+
+/* BOTÕES OK — VIVOS */
+.eventGood button,
+button.eventGood{
+  background:#2ecc71;      /* verde vivo */
+  color:#000;
+}
+
+.eventBad button,
+button.eventBad{
+  background:#e53935;      /* vermelho vivo */
+  color:#fff;
 }
 
 /* PÓDIO */
@@ -556,16 +569,19 @@ function placePawn(pawn, i){
 }
 
 /* ================= MODAL ================= */
-function showModal(text,buttons){
-  modalText.textContent = text;
-  modalButtons.innerHTML = "";
-  buttons.forEach(b=>{
-    const btn = document.createElement("button");
-    btn.textContent = b.text;
-    btn.className = b.cls || "";
-    btn.onclick = b.action;
-    modalButtons.appendChild(btn);
-  });
+buttons.forEach(b=>{
+  const btn = document.createElement("button");
+  btn.textContent = b.text;
+  btn.className = b.cls || "";
+
+  // 👉 aplica o fundo do evento ao cartão
+  if(b.cls === "eventGood") modalBox.classList.add("eventGood");
+  if(b.cls === "eventBad")  modalBox.classList.add("eventBad");
+
+  btn.onclick = b.action;
+  modalButtons.appendChild(btn);
+});
+
   modal.style.display = "flex";
 }
 function closeModal(){
