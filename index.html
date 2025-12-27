@@ -461,7 +461,8 @@ const SPECIAL_CELLS = {};
 Object.keys(KM_BY_INDEX).forEach(i=>{
   SPECIAL_CELLS[i] = { km: KM_BY_INDEX[i], final: i == 89 };
 });
-
+  
+/*
 /* ================= EVENTOS ================= */
 const EVENTS = [
 
@@ -709,6 +710,7 @@ function closeModal(){
   modal.style.display = "none";
 }
 
+  /*
 /* ================= SETUP ================= */
 startBtn.onclick = ()=>{
   setup.classList.add("hidden");
@@ -1086,3 +1088,4 @@ function showPodium(){
 </script>
 </body>
 </html>
+
