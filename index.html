@@ -15,6 +15,25 @@
   --green:#2ecc71;
   --red:#e53935;
 }
+
+#modalTitle{
+  font-weight:bold;
+  font-size:16px;
+  margin-bottom:6px;
+}
+
+#modalText{
+  font-size:15px;
+  line-height:1.4;
+}
+
+#modalEffect{
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid rgba(255,255,255,.25);
+  font-weight:bold;
+}
+
 body{
   margin:0;
   background:var(--bg);
@@ -274,10 +293,11 @@ button:disabled{
 
 <div id="modal">
   <div id="modalBox">
-    <p id="modalText"></p>
-    <div id="modalEffect"></div>
-    <div id="modalButtons"></div>
-  </div>
+  <div id="modalTitle"></div>
+  <p id="modalText"></p>
+  <div id="modalEffect"></div>
+  <div id="modalButtons"></div>
+</div>
 </div>
 
 <div id="podium"></div>
@@ -623,8 +643,9 @@ function placePawn(pawn, i){
 }
 
 /* ================= MODAL ================= */
-function showModal(text,buttons,effect=""){
-  modalText.textContent = text;
+function showModal(title,text,buttons,effect=""){
+  modalTitle.textContent = title;
+  modalText.textContent  = text;
   modalEffect.textContent = effect;
 
   modalButtons.innerHTML = "";
@@ -636,6 +657,9 @@ function showModal(text,buttons,effect=""){
     btn.className = b.cls || "";
     btn.onclick = b.action;
     modalButtons.appendChild(btn);
+
+    if(b.cls === "eventGood") modalBox.classList.add("good");
+    if(b.cls === "eventBad")  modalBox.classList.add("bad");
   });
 
   modal.style.display = "flex";
