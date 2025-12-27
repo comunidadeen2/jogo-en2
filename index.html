@@ -923,8 +923,7 @@ function doEvent(){
       cls:ev.cls,
       action: async ()=>{
         closeModal();
-        rollBtn.disabled = true;
-
+        
         const movers = ev.all ? players : [players[current]];
 
         for(const p of movers){
@@ -947,7 +946,6 @@ function doEvent(){
           }
         }
 
-        rollBtn.disabled = false;
         current = (current+1) % players.length;
         updateTurn();
       }
@@ -958,7 +956,6 @@ function doEvent(){
 
 /* ================= JOGAR ================= */
 rollBtn.onclick = async ()=>{
-  rollBtn.disabled = true;
   const r = Math.floor(Math.random()*6)+1;
   dice.textContent = r;
 
@@ -994,8 +991,7 @@ rollBtn.onclick = async ()=>{
     updateTurn();
   }
 
-  rollBtn.disabled = false;
-};
+ };
 
 /* ================= PÓDIO FINAL ================= */
 function showPodium(){
