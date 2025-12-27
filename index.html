@@ -680,7 +680,7 @@ function placePawn(pawn, i){
 function showModal(card, buttons){
   modalButtons.innerHTML = "";
 
-  modalBox.className = "";
+  modalBox.className = "modal-box";
   modalBox.classList.add(card.cls);
 
   modalText.innerHTML = `
@@ -830,7 +830,12 @@ function renderObjective(p){
 /* ================= PERGUNTA ================= */
 function askQuestion(cell){
   showModal(
-    QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
+    {
+      title: "Pergunta",
+      text: QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
+      effect: "",
+      cls: ""
+    },
     [
       {
         text:"Resposta Certa",
@@ -838,7 +843,7 @@ function askQuestion(cell){
         action:()=>{
           players[current].questionsCorrect++;
           closeModal();
-          askFicha(cell); // 🔹 CONTINUA SEMPRE
+          askFicha(cell);
         }
       },
       {
@@ -854,6 +859,7 @@ function askQuestion(cell){
     ]
   );
 }
+
 
 /* ================= FICHA (CORRIGIDO) ================= */
 function askFicha(cell){
@@ -926,14 +932,19 @@ async function doEvent(){
 
         // ir para Km específico
         if(ev.goKm !== undefined){
-          const idx = Object.keys(SPECIAL_CELLS)
-            .find(i => SPECIAL_CELLS[i].km === ev.goKm);
-          if(idx !== undefined){
-            p.pos = Number(idx);
-            placePawn(pawns[p.pawn], p.pos);
-          }
-          continue;
-        }
+  const idx = Object.keys(SPECIAL_CELLS)
+    .find(i => SPECIAL_CELLS[i].km === ev.goKm);
+
+  if(idx !== undefined){
+    const target = Number(idx);
+    while(p.pos !== target){
+      p.pos += p.pos < target ? 1 : -1;
+      placePawn(pawns[p.pawn], p.pos);
+      await new Promise(r=>setTimeout(r,300));
+    }
+  }
+  continue;
+}
 
         // mover casas
         if(ev.move){
