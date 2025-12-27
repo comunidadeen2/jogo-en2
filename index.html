@@ -696,7 +696,12 @@ modalBox.classList.add(card.cls);
     btn.onclick = b.action;
     modalButtons.appendChild(btn);
   });
-
+if(buttons.some(b => b.cls === "eventGood")){
+  modalBox.classList.add("good");
+}
+if(buttons.some(b => b.cls === "eventBad")){
+  modalBox.classList.add("bad");
+}
   modal.style.display = "flex";
 }
 
