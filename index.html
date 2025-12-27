@@ -643,7 +643,22 @@ function placePawn(pawn, i){
 }
 
 /* ================= MODAL ================= */
-function showModal(title,text,buttons,effect=""){
+function showModal(a, b, c, d=""){
+  // compatibilidade antiga: showModal(text, buttons)
+  let title="", text="", buttons=[], effect="";
+
+  if(Array.isArray(b)){
+    text = a;
+    buttons = b;
+  }
+  // nova versão: showModal(title, text, buttons, effect)
+  else{
+    title = a;
+    text = b;
+    buttons = c;
+    effect = d;
+  }
+
   modalTitle.textContent = title;
   modalText.textContent  = text;
   modalEffect.textContent = effect;
@@ -651,15 +666,15 @@ function showModal(title,text,buttons,effect=""){
   modalButtons.innerHTML = "";
   modalBox.className = "";
 
-  buttons.forEach(b=>{
+  buttons.forEach(btnData=>{
     const btn = document.createElement("button");
-    btn.textContent = b.text;
-    btn.className = b.cls || "";
-    btn.onclick = b.action;
+    btn.textContent = btnData.text;
+    btn.className = btnData.cls || "";
+    btn.onclick = btnData.action;
     modalButtons.appendChild(btn);
 
-    if(b.cls === "eventGood") modalBox.classList.add("good");
-    if(b.cls === "eventBad")  modalBox.classList.add("bad");
+    if(btnData.cls === "eventGood") modalBox.classList.add("good");
+    if(btnData.cls === "eventBad")  modalBox.classList.add("bad");
   });
 
   modal.style.display = "flex";
