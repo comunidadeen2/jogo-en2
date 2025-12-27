@@ -1,4 +1,4 @@
-<!doctype html>
+  <!doctype html>
 <html lang="pt">
 <head>
 <meta charset="utf-8">
@@ -14,10 +14,6 @@
   --grey:#555;
   --green:#2ecc71;
   --red:#e53935;
-
-  /* novos tons suaves para eventos */
-  --event-good:#1f4d2e;
-  --event-bad:#5a1f1f;
 }
 
 body{
@@ -73,12 +69,8 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
-button:disabled{
-  opacity:.5;
-}
-.hidden{
-  display:none;
-}
+button:disabled{opacity:.5}
+.hidden{display:none}
 
 /* BOTÕES PEÕES */
 .car{background:#e53935;color:#fff}
@@ -113,9 +105,7 @@ button:disabled{
   text-align:center;
   font-weight:bold;
 }
-.marco.done{
-  background:var(--green);
-}
+.marco.done{background:var(--green)}
 .extra-title{
   margin:16px 0 8px 0;
   text-align:center;
@@ -142,20 +132,19 @@ button:disabled{
   text-align:center;
 }
 
-/* fundos por tipo de evento */
-#modalBox.eventGood{
-  background:var(--event-good);
+/* 🔥 NOVO: fundos visuais por tipo de evento */
+.modal-good{
+  background:#1f3d2b; /* verde suave */
 }
-#modalBox.eventBad{
-  background:var(--event-bad);
-}
-
-#modalBox button{
-  margin:6px;
+.modal-bad{
+  background:#3a1f1f; /* vermelho suave */
 }
 
+#modalBox button{margin:6px}
 .accept{background:var(--green);color:#000}
 .decline{background:var(--red);color:#fff}
+.eventGood{background:#1b5e20;color:#fff}
+.eventBad{background:#b71c1c;color:#fff}
 
 /* PÓDIO */
 #podium{
@@ -222,6 +211,7 @@ button:disabled{
     <div class="pawn" id="pawn2">🏍️</div>
     <div class="pawn" id="pawn3">🚶</div>
   </div>
+
   <div id="objectivePanel" class="hidden"></div>
 </div>
 
@@ -351,48 +341,19 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ================= MUNICÍPIOS (BASE ESTÁVEL) ================= */
+/* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME = {
-  0:"Chaves",
-  35:"Vila Pouca de Aguiar",
-  64:"Vila Real",
-  69:"Km 69",
-  81:"Santa Marta de Penaguião",
-  88:"Peso da Régua",
-  104:"Lamego",
-  136:"Castro Daire",
-  152:"São Pedro do Sul",
-  171:"Viseu",
-  200:"Tondela",
-  213:"Santa Comba Dão",
-  225:"Mortágua",
-  238:"Penacova",
-  248:"Vila Nova de Poiares",
-  262:"Lousã",
-  272:"Góis",
-  324:"Pedrógão Grande",
-  345:"Sertã",
-  366:"Vila de Rei",
-  369:"Meio da EN2",
-  386:"Sardoal",
-  400:"Abrantes",
-  435:"Ponte de Sôr",
-  466:"Avis",
-  475:"Mora",
-  494:"Coruche",
-  500:"Ciborro",
-  518:"Montemor-o-Novo",
-  551:"Alcáçovas",
-  565:"Torrão",
-  595:"Ferreira do Alentejo",
-  619:"Aljustrel",
-  640:"Castro Verde",
-  663:"Almodôvar",
-  666:"Km 666",
-  688:"Ameixial",
-  722:"São Brás de Alportel",
-  738:"Faro",
-  738.5:"Faro (Final)"
+  0:"Chaves",35:"Vila Pouca de Aguiar",64:"Vila Real",69:"Km 69",
+  81:"Santa Marta de Penaguião",88:"Peso da Régua",104:"Lamego",
+  136:"Castro Daire",152:"São Pedro do Sul",171:"Viseu",200:"Tondela",
+  213:"Santa Comba Dão",225:"Mortágua",238:"Penacova",248:"Vila Nova de Poiares",
+  262:"Lousã",272:"Góis",324:"Pedrógão Grande",345:"Sertã",
+  366:"Vila de Rei",369:"Meio da EN2",386:"Sardoal",400:"Abrantes",
+  435:"Ponte de Sôr",466:"Avis",475:"Mora",494:"Coruche",
+  500:"Ciborro",518:"Montemor-o-Novo",551:"Alcáçovas",565:"Torrão",
+  595:"Ferreira do Alentejo",619:"Aljustrel",640:"Castro Verde",
+  663:"Almodôvar",666:"Km 666",688:"Ameixial",722:"São Brás de Alportel",
+  738:"Faro",738.5:"Faro (Final)"
 };
 
 /* ================= KM POR CASA ================= */
@@ -407,7 +368,7 @@ const KM_BY_INDEX = {
 
 const SPECIAL_CELLS = {};
 Object.keys(KM_BY_INDEX).forEach(i=>{
-  SPECIAL_CELLS[i] = { km: KM_BY_INDEX[i], final: i == 89 };
+  SPECIAL_CELLS[i] = { km: KM_BY_INDEX[i], final: i==89 };
 });
 
 /* ================= EVENTOS ================= */
@@ -418,120 +379,26 @@ const EVENTS = [
   { text:"Contratempo! Recua 2 casas.", move:-2, cls:"eventBad" }
 ];
 
-/* ================= PERGUNTAS ================= */
-const QUESTIONS = [
-  "Qual é o prato típico mais famoso de Portugal?",
-  "Em que ano foi inaugurada a EN2?",
-  "Qual é o rio mais longo de Portugal?",
-  "Portugal tem quantos distritos?",
-  "Qual é a capital do Algarve?"
-];
+/* ================= MODAL ================= */
+function showModal(text, buttons, extraClass=""){
+  modalText.textContent = text;
+  modalButtons.innerHTML = "";
+  modalBox.className = "";               // limpa classes antigas
+  if(extraClass) modalBox.classList.add(extraClass);
 
-/* ================= OBJETIVOS (13 TOTAIS) ================= */
-const OBJECTIVES = [
-
-/* 1 */
-{ items:[
-  {km:0,text:"Visitar Chaves"},
-  {km:200,text:"Visitar Tondela"},
-  {km:400,text:"Visitar Abrantes"},
-  {km:500,text:"Visitar Ciborro"},
-  {km:738,text:"Chegar a Faro"}
-]},
-
-/* 2 */
-{ items:[
-  {km:35,text:"Visitar Vila Pouca de Aguiar"},
-  {km:171,text:"Visitar Viseu"},
-  {km:272,text:"Visitar Góis"},
-  {km:551,text:"Visitar Alcáçovas"},
-  {km:722,text:"Visitar São Brás de Alportel"}
-]},
-
-/* 3 */
-{ items:[
-  {km:64,text:"Visitar Vila Real"},
-  {km:213,text:"Visitar Santa Comba Dão"},
-  {km:345,text:"Visitar Sertã"},
-  {km:565,text:"Visitar Torrão"},
-  {km:688,text:"Visitar Ameixial"}
-]},
-
-/* 4 */
-{ items:[
-  {km:152,text:"Visitar São Pedro do Sul"},
-  {km:324,text:"Visitar Pedrógão Grande"},
-  {km:466,text:"Visitar Avis"},
-  {km:518,text:"Visitar Montemor-o-Novo"},
-  {km:663,text:"Visitar Almodôvar"}
-]},
-
-/* 5 */
-{ items:[
-  {km:81,text:"Visitar Santa Marta de Penaguião"},
-  {km:225,text:"Visitar Mortágua"},
-  {km:345,text:"Visitar Sertã"},
-  {km:595,text:"Visitar Ferreira do Alentejo"},
-  {km:738,text:"Chegar a Faro"}
-]},
-
-/* 6 */
-{ items:[
-  {km:88,text:"Visitar Peso da Régua"},
-  {km:238,text:"Visitar Penacova"},
-  {km:366,text:"Visitar Vila de Rei"},
-  {km:619,text:"Visitar Aljustrel"},
-  {km:738.5,text:"Chegar a Faro (Final)"}
-]},
-
-/* 7 */
-{ items:[
-  {km:104,text:"Visitar Lamego"},
-  {km:248,text:"Visitar Vila Nova de Poiares"},
-  {km:386,text:"Visitar Sardoal"},
-  {km:640,text:"Visitar Castro Verde"},
-  {km:738,text:"Chegar a Faro"}
-]},
-
-/* 8 */
-{ items:[
-  {km:136,text:"Visitar Castro Daire"},
-  {km:262,text:"Visitar Lousã"},
-  {km:435,text:"Visitar Ponte de Sôr"},
-  {km:666,text:"Passar pelo Km 666"},
-  {km:738.5,text:"Chegar a Faro (Final)"}
-]},
-
-/* 9 */
-{ items:[
-  {km:0,text:"Partir de Chaves"},
-  {km:369,text:"Chegar ao Meio da Estrada"},
-  {km:738,text:"Chegar a Faro"},
-  {km:738.5,text:"Chegar a Faro (Final)"}
-]},
-
-/* 10 */
-{ items:[
-  {km:0,text:"Partir de Chaves"},
-  {km:738,text:"Chegar a Faro"}
-]},
-
-/* 11 */
-{ items:[
-  {km:69,text:"Passar pelo Km 69"},
-  {km:369,text:"Chegar ao Meio da Estrada"},
-  {km:475,text:"Visitar Mora"},
-  {km:494,text:"Visitar Coruche"},
-  {km:738,text:"Chegar a Faro"}
-]},
-
-/* 12 — OBJETIVO ESPECIAL */
-{ special:true, type:"first", text:"Ser o PRIMEIRO a chegar a Faro (Km 738,5)" },
-
-/* 13 — OBJETIVO ESPECIAL */
-{ special:true, type:"last", text:"Ser o ÚLTIMO a chegar a Faro (Km 738,5)" }
-
-];
+  buttons.forEach(b=>{
+    const btn = document.createElement("button");
+    btn.textContent = b.text;
+    btn.className = b.cls || "";
+    btn.onclick = b.action;
+    modalButtons.appendChild(btn);
+  });
+  modal.style.display = "flex";
+}
+function closeModal(){
+  modal.style.display = "none";
+  modalBox.className = "";
+}
 
 /* ================= JOGADORES ================= */
 const pawns = [pawn0, pawn1, pawn2, pawn3];
@@ -541,32 +408,13 @@ let current = 0;
 /* ================= POSICIONAR PEÃO ================= */
 function placePawn(pawn, i){
   const s = SPACES[i];
-  let ox = -8, oy = -10;
+  let ox=-8, oy=-10;
   if(i===80){ox=-18;oy=-14}
   if(i===83){ox=-16;oy=-18}
   if(i===85){ox=-12;oy=-20}
   if(i===89){ox=-10;oy=-22}
-  pawn.style.left = (s.x * board.clientWidth + ox) + "px";
-  pawn.style.top  = (s.y * board.clientHeight + oy) + "px";
-}
-
-/* ================= MODAL ================= */
-function showModal(text, buttons){
-  modalText.textContent = text;
-  modalButtons.innerHTML = "";
-
-  buttons.forEach(b=>{
-    const btn = document.createElement("button");
-    btn.textContent = b.text;
-    btn.className = b.cls || "";
-    btn.onclick = b.action;
-    modalButtons.appendChild(btn);
-  });
-
-  modal.style.display = "flex";
-}
-function closeModal(){
-  modal.style.display = "none";
+  pawn.style.left = (s.x*board.clientWidth+ox)+"px";
+  pawn.style.top  = (s.y*board.clientHeight+oy)+"px";
 }
 
 /* ================= SETUP ================= */
@@ -580,10 +428,9 @@ startBtn.onclick = ()=>{
 
   function nextPlayer(){
     names.innerHTML = "";
-
-    if(i >= total){
-      const deck = [...OBJECTIVES].sort(()=>Math.random()-0.5);
-      players.forEach(p=>p.objective = deck.pop());
+    if(i>=total){
+      const deck=[...OBJECTIVES].sort(()=>Math.random()-0.5);
+      players.forEach(p=>p.objective=deck.pop());
       names.classList.add("hidden");
       game.classList.remove("hidden");
       objectivePanel.classList.remove("hidden");
@@ -591,15 +438,10 @@ startBtn.onclick = ()=>{
       return;
     }
 
-    const input = document.createElement("input");
-    input.placeholder = "Nome do Jogador";
+    const input=document.createElement("input");
+    input.placeholder="Nome do Jogador";
 
-    names.append(
-      "Jogador " + (i+1),
-      document.createElement("br"),
-      input,
-      document.createElement("br")
-    );
+    names.append("Jogador "+(i+1),document.createElement("br"),input,document.createElement("br"));
 
     [
       {id:0,cls:"car",txt:"🚗 Carro"},
@@ -608,75 +450,62 @@ startBtn.onclick = ()=>{
       {id:3,cls:"walk",txt:"🚶 A pé"}
     ].forEach(p=>{
       if(used.includes(p.id)) return;
-
-      const b = document.createElement("button");
-      b.className = p.cls;
-      b.textContent = p.txt;
-
-      b.onclick = ()=>{
+      const b=document.createElement("button");
+      b.className=p.cls;
+      b.textContent=p.txt;
+      b.onclick=()=>{
         used.push(p.id);
         players.push({
-          name: input.value || ("Jogador "+(i+1)),
-          pawn: p.id,
-          pos: 0,
-          done: {},
-          extra: [],
-          municipiosVisitados: 0,
-          questionsCorrect: 0,
-          questionsWrong: 0,
-          finished: false,
-          order: 0
+          name:input.value||("Jogador "+(i+1)),
+          pawn:p.id,pos:0,done:{},extra:[],
+          municipiosVisitados:0,
+          questionsCorrect:0,
+          questionsWrong:0,
+          finished:false,
+          order:0
         });
-        pawns[p.id].style.display = "block";
+        pawns[p.id].style.display="block";
         placePawn(pawns[p.id],0);
-        i++;
-        nextPlayer();
+        i++; nextPlayer();
       };
-
       names.appendChild(b);
     });
   }
-
   nextPlayer();
 };
 
 /* ================= TURNO ================= */
 function updateTurn(){
-  if(players.every(p=>p.finished)){
-    showPodium();
-    return;
-  }
+  if(players.every(p=>p.finished)){ showPodium(); return; }
   while(players[current].finished){
-    current = (current+1) % players.length;
+    current=(current+1)%players.length;
   }
-  turn.textContent = "Vez de " + players[current].name;
+  turn.textContent="Vez de "+players[current].name;
   renderObjective(players[current]);
 }
 
 /* ================= OBJETIVO ================= */
 function renderObjective(p){
-  objectivePanel.innerHTML = `<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
-
+  objectivePanel.innerHTML=`<div class="objective-title">🎯 Objetivo de ${p.name}</div>`;
   if(p.objective.special){
-    objectivePanel.innerHTML += `
+    objectivePanel.innerHTML+=`
       <div class="obj-item">
         <div class="marco">FINAL</div>
         <div>${p.objective.text}</div>
       </div>`;
-  } else {
+  }else{
     p.objective.items.forEach(it=>{
-      objectivePanel.innerHTML += `
+      objectivePanel.innerHTML+=`
         <div class="obj-item">
           <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
           <div>${it.text}</div>
         </div>`;
     });
   }
-
   if(p.extra.length){
-    objectivePanel.innerHTML += `<div class="extra-title">Outras fichas</div>`;
+    objectivePanel.innerHTML+=`<div class="extra-title">Outras fichas</div>`;
     p.extra.forEach(km=>{
-      objectivePanel.innerHTML += `
+      objectivePanel.innerHTML+=`
         <div class="obj-item">
           <div class="marco">Km ${km}</div>
           <div>Visitar ${MUNICIPIO_NOME[km]}</div>
@@ -690,203 +519,147 @@ function askQuestion(cell){
   showModal(
     QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
     [
-      {
-        text:"Resposta Certa",
-        cls:"accept",
-        action:()=>{
+      { text:"Resposta Certa", cls:"accept", action:()=>{
           players[current].questionsCorrect++;
           closeModal();
-          askFicha(cell); // continua sempre
-        }
-      },
-      {
-        text:"Resposta Errada",
-        cls:"decline",
-        action:()=>{
+          askFicha(cell);
+      }},
+      { text:"Resposta Errada", cls:"decline", action:()=>{
           players[current].questionsWrong++;
           closeModal();
-          current = (current+1) % players.length;
+          current=(current+1)%players.length;
           updateTurn();
-        }
-      }
+      }}
     ]
   );
 }
 
 /* ================= FICHA ================= */
 function askFicha(cell){
-  const nome = MUNICIPIO_NOME[cell.km] || `Km ${cell.km}`;
-
+  const nome=MUNICIPIO_NOME[cell.km]||`Km ${cell.km}`;
   showModal(
     `${players[current].name} ganhou a ficha ${nome}. Aceita?`,
     [
-      {
-        text:"Aceitar",
-        cls:"accept",
-        action:()=>{
+      { text:"Aceitar", cls:"accept", action:()=>{
           closeModal();
-          const p = players[current];
+          const p=players[current];
           p.municipiosVisitados++;
-
           if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
-            p.done[cell.km] = true;
-          } else {
+            p.done[cell.km]=true;
+          }else{
             p.extra.push(cell.km);
           }
-
           if(cell.final){
-            p.finished = true;
-            p.order = players.filter(x=>x.finished).length;
+            p.finished=true;
+            p.order=players.filter(x=>x.finished).length;
           }
-
           updateTurn();
-        }
-      },
-      {
-        text:"Recusar",
-        cls:"decline",
-        action:()=>{
+      }},
+      { text:"Recusar", cls:"decline", action:()=>{
           closeModal();
-          const p = players[current];
-
+          const p=players[current];
           if(cell.final){
-            p.finished = true;
-            p.order = players.filter(x=>x.finished).length;
+            p.finished=true;
+            p.order=players.filter(x=>x.finished).length;
           }
-
           updateTurn();
-        }
-      }
+      }}
     ]
   );
 }
 
-/* ================= EVENTO ================= */
+/* ================= EVENTO (VISUAL CORRIGIDO) ================= */
 function doEvent(){
-  const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
-  showModal(ev.text,[{
-    text:"OK",
-    cls: ev.cls, // mantém verde/vermelho
-    action: async ()=>{
-      closeModal();
-      const p = players[current];
-      let target = p.pos + ev.move;
-      if(target < 0) target = 0;
-      if(target > SPACES.length-1) target = SPACES.length-1;
-
-      while(p.pos !== target){
-        p.pos += p.pos < target ? 1 : -1;
-        placePawn(pawns[p.pawn], p.pos);
-        await new Promise(r=>setTimeout(r,300));
+  const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+  showModal(
+    ev.text,
+    [{
+      text:"OK",
+      cls: ev.cls==="eventGood" ? "accept" : "decline",
+      action: async ()=>{
+        closeModal();
+        const p=players[current];
+        let target=p.pos+ev.move;
+        if(target<0) target=0;
+        if(target>SPACES.length-1) target=SPACES.length-1;
+        while(p.pos!==target){
+          p.pos+=p.pos<target?1:-1;
+          placePawn(pawns[p.pawn],p.pos);
+          await new Promise(r=>setTimeout(r,300));
+        }
+        current=(current+1)%players.length;
+        updateTurn();
       }
-
-      current = (current+1) % players.length;
-      updateTurn();
-    }
-  }]);
+    }],
+    ev.cls==="eventGood" ? "eventGood" : "eventBad"
+  );
 }
 
 /* ================= JOGAR ================= */
-rollBtn.onclick = async ()=>{
-  rollBtn.disabled = true;
-
-  const r = Math.floor(Math.random()*6)+1;
-  dice.textContent = r;
-
-  const p = players[current];
-  let target = p.pos + r;
-  const LAST = SPACES.length-1;
-
-  if(target > LAST){
-    target = LAST - (target - LAST);
+rollBtn.onclick=async()=>{
+  rollBtn.disabled=true;
+  const r=Math.floor(Math.random()*6)+1;
+  dice.textContent=r;
+  const p=players[current];
+  let target=p.pos+r;
+  const LAST=SPACES.length-1;
+  if(target>LAST) target=LAST-(target-LAST);
+  while(p.pos!==target){
+    p.pos+=p.pos<target?1:-1;
+    placePawn(pawns[p.pawn],p.pos);
+    await new Promise(r=>setTimeout(r,300));
   }
-
-  while(p.pos !== target){
-    p.pos += p.pos < target ? 1 : -1;
-    placePawn(pawns[p.pawn], p.pos);
-    await new Promise(res=>setTimeout(res,300));
-  }
-
-  const idx = p.pos;
-  const cell = SPECIAL_CELLS[idx];
-
-  if(idx < 3){
-    current = (current+1) % players.length;
-    updateTurn();
-  }
-  else if(cell){
-    askQuestion(cell);
-  }
-  else if(idx < 85){
-    doEvent();
-  }
-  else{
-    current = (current+1) % players.length;
-    updateTurn();
-  }
-
-  rollBtn.disabled = false;
+  const idx=p.pos;
+  const cell=SPECIAL_CELLS[idx];
+  if(idx<3){ current=(current+1)%players.length; updateTurn(); }
+  else if(cell){ askQuestion(cell); }
+  else if(idx<85){ doEvent(); }
+  else{ current=(current+1)%players.length; updateTurn(); }
+  rollBtn.disabled=false;
 };
 
 /* ================= PÓDIO FINAL ================= */
 function showPodium(){
-  podium.style.display = "block";
+  podium.style.display="block";
   game.classList.add("hidden");
 
-  const firstObj = players.find(p=>p.objective.special && p.objective.type==="first");
-  const lastObj  = players.find(p=>p.objective.special && p.objective.type==="last");
-  const finished = players.filter(p=>p.finished).sort((a,b)=>a.order-b.order);
+  const firstObj=players.find(p=>p.objective.special&&p.objective.type==="first");
+  const lastObj=players.find(p=>p.objective.special&&p.objective.type==="last");
+  const finished=players.filter(p=>p.finished).sort((a,b)=>a.order-b.order);
 
-  if(firstObj && finished[0] === firstObj) firstObj.doneFinal = true;
-  if(lastObj && finished[finished.length-1] === lastObj) lastObj.doneFinal = true;
+  if(firstObj&&finished[0]===firstObj) firstObj.doneFinal=true;
+  if(lastObj&&finished[finished.length-1]===lastObj) lastObj.doneFinal=true;
 
-  const ranked = [...players].sort((a,b)=>{
-    const oa = Object.keys(a.done).length + (a.doneFinal?1:0);
-    const ob = Object.keys(b.done).length + (b.doneFinal?1:0);
+  const ranked=[...players].sort((a,b)=>{
+    const oa=Object.keys(a.done).length+(a.doneFinal?1:0);
+    const ob=Object.keys(b.done).length+(b.doneFinal?1:0);
     if(ob!==oa) return ob-oa;
-    return a.order - b.order;
+    return a.order-b.order;
   });
 
-  podium.innerHTML = `
+  podium.innerHTML=`
   <div class="podium-box">
     ${ranked[1]?`<div class="step silver"><div class="emoji">${pawns[ranked[1].pawn].textContent}</div><div class="name">${ranked[1].name}</div></div>`:""}
     <div class="step gold"><div class="emoji">${pawns[ranked[0].pawn].textContent}</div><div class="name">${ranked[0].name}</div></div>
     ${ranked[2]?`<div class="step bronze"><div class="emoji">${pawns[ranked[2].pawn].textContent}</div><div class="name">${ranked[2].name}</div></div>`:""}
-  </div>
-
-  <div class="cards">
-  ${ranked.map(p=>`
-    <div class="card">
-      <div class="objective-title">🎴 Carta de Jogo — ${p.name}</div>
-
-      ${
-        p.objective.special
-        ? `<div class="obj-item">
-            <div class="marco ${p.doneFinal?"done":""}">FINAL</div>
-            <div>${p.objective.text}</div>
-          </div>`
-        : p.objective.items.map(it=>`
-            <div class="obj-item">
-              <div class="marco ${p.done[it.km]?"done":""}">Km ${it.km}</div>
-              <div>${it.text}</div>
-            </div>`).join("")
-      }
-
-      ${p.extra.length?`<div class="extra-title">Outras fichas</div>`:""}
-      ${p.extra.map(km=>`
-        <div class="obj-item">
-          <div class="marco">Km ${km}</div>
-          <div>Visitar ${MUNICIPIO_NOME[km]}</div>
-        </div>`).join("")}
-
-      <div class="stats">
-        🏘️ Municípios: ${p.municipiosVisitados}<br>
-        ❓ Certas: ${p.questionsCorrect}<br>
-        ❌ Erradas: ${p.questionsWrong}
-      </div>
-    </div>
-  `).join("")}
   </div>`;
+}
+
+/* ===== MODAL VISUAL POR TIPO DE EVENTO ===== */
+#modalBox.eventGood{
+  background:#1b5e20;        /* verde escuro */
+  border:2px solid #2ecc71;
+}
+
+#modalBox.eventBad{
+  background:#7f1d1d;        /* vermelho escuro */
+  border:2px solid #e53935;
+}
+
+/* garantir contraste do texto */
+#modalBox.eventGood p,
+#modalBox.eventBad p{
+  color:#fff;
 }
 
 </script>
