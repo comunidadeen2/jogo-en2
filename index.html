@@ -858,7 +858,6 @@ function askQuestion(cell){
         action:()=>{
           players[current].questionsCorrect++;
           closeModal();
-          rollBtn.disabled = false;
           askFicha(cell);
         }
       },
@@ -868,7 +867,6 @@ function askQuestion(cell){
         action:()=>{
           players[current].questionsWrong++;
           closeModal();
-          rollBtn.disabled = false;
           current = (current+1) % players.length;
           updateTurn();
         }
