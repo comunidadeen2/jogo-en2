@@ -431,18 +431,55 @@ Object.keys(KM_BY_INDEX).forEach(i=>{
 
 /* ================= EVENTOS ================= */
 const EVENTS = [
-  /* RELATIVOS (como já existiam) */
-  { text:"Bons momentos! Avança +1 casa.", move:1, cls:"eventGood" },
-  { text:"Bons momentos! Avança +2 casas.", move:2, cls:"eventGood" },
-  { text:"Contratempo! Recua 1 casa.", move:-1, cls:"eventBad" },
-  { text:"Contratempo! Recua 2 casas.", move:-2, cls:"eventBad" },
 
-  /* DESTINO FIXO (NOVO) */
-  { text:"Bons momentos! Vai até ao Km 200 (Tondela).", goKm:200, cls:"eventGood" },
-  { text:"Bons momentos! Vai até ao Km 369 (Meio da EN2).", goKm:369, cls:"eventGood" },
+  /* ==== CONTRATEMPOS – RELATIVOS ==== */
+  {
+    text:"Nem tudo na viagem corre bem… Furo no pneu em Santa Marta de Penaguião.",
+    move:-1,
+    cls:"eventBad"
+  },
+  {
+    text:"Nem tudo na viagem corre bem… A tua mota ficou sem gasolina.",
+    move:-2,
+    cls:"eventBad"
+  },
+  {
+    text:"Nem tudo na viagem corre bem… Encontro com grupo de ciclistas.",
+    move:-1,
+    cls:"eventBad"
+  },
 
-  { text:"Contratempo! Recua até ao Km 69.", goKm:69, cls:"eventBad" },
-  { text:"Contratempo! Volta a Chaves (Km 0).", goKm:0, cls:"eventBad" }
+  /* ==== CONTRATEMPOS – DESTINO ==== */
+  {
+    text:"Nem tudo na viagem corre bem… Selfie em Chaves no Km 0.",
+    goKm:0,
+    cls:"eventBad"
+  },
+
+  /* ==== BONS MOMENTOS – RELATIVOS ==== */
+  {
+    text:"Bons momentos! Estrada livre, bom ritmo.",
+    move:1,
+    cls:"eventGood"
+  },
+  {
+    text:"Bons momentos! Paisagem inspiradora.",
+    move:2,
+    cls:"eventGood"
+  },
+
+  /* ==== BONS MOMENTOS – DESTINO ==== */
+  {
+    text:"Bons momentos! Vai até ao Km 369 (Meio da EN2).",
+    goKm:369,
+    cls:"eventGood"
+  },
+  {
+    text:"Bons momentos! Avança até ao Km 200 (Tondela).",
+    goKm:200,
+    cls:"eventGood"
+  }
+
 ];
 
 /* ================= PERGUNTAS ================= */
