@@ -992,11 +992,11 @@ rollBtn.onclick = async ()=>{
   current = (current+1) % players.length;
   updateTurn();
 }
-else if(SPECIAL_CELLS[idx]){
-  askQuestion(SPECIAL_CELLS[idx]);
-}
-  else if(cell){
+else if(cell){
   askQuestion(cell);
+}
+else{
+  doEvent();
 }
 
   else{
@@ -1069,4 +1069,3 @@ function showPodium(){
 </script>
 </body>
 </html>
-
