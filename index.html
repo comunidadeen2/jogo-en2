@@ -431,10 +431,18 @@ Object.keys(KM_BY_INDEX).forEach(i=>{
 
 /* ================= EVENTOS ================= */
 const EVENTS = [
+  /* RELATIVOS (como já existiam) */
   { text:"Bons momentos! Avança +1 casa.", move:1, cls:"eventGood" },
   { text:"Bons momentos! Avança +2 casas.", move:2, cls:"eventGood" },
   { text:"Contratempo! Recua 1 casa.", move:-1, cls:"eventBad" },
-  { text:"Contratempo! Recua 2 casas.", move:-2, cls:"eventBad" }
+  { text:"Contratempo! Recua 2 casas.", move:-2, cls:"eventBad" },
+
+  /* DESTINO FIXO (NOVO) */
+  { text:"Bons momentos! Vai até ao Km 200 (Tondela).", goKm:200, cls:"eventGood" },
+  { text:"Bons momentos! Vai até ao Km 369 (Meio da EN2).", goKm:369, cls:"eventGood" },
+
+  { text:"Contratempo! Recua até ao Km 69.", goKm:69, cls:"eventBad" },
+  { text:"Contratempo! Volta a Chaves (Km 0).", goKm:0, cls:"eventBad" }
 ];
 
 /* ================= PERGUNTAS ================= */
@@ -791,13 +799,27 @@ function askFicha(cell){
 /* ================= EVENTO ================= */
 function doEvent(){
   const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
+
   showModal(ev.text,[{
     text:"OK",
     cls:ev.cls,
     action: async ()=>{
       closeModal();
       const p = players[current];
-      let target = p.pos + ev.move;
+      let target;
+
+      /* TIPO 1 — move relativo */
+      if(typeof ev.move === "number"){
+        target = p.pos + ev.move;
+      }
+
+      /* TIPO 2 — ir para Km específico */
+      if(typeof ev.goKm === "number"){
+        const idx = Object.keys(SPECIAL_CELLS)
+          .find(i => SPECIAL_CELLS[i].km === ev.goKm);
+        if(idx !== undefined) target = Number(idx);
+      }
+
       if(target < 0) target = 0;
       if(target > SPACES.length-1) target = SPACES.length-1;
 
@@ -806,12 +828,12 @@ function doEvent(){
         placePawn(pawns[p.pawn], p.pos);
         await new Promise(r=>setTimeout(r,300));
       }
+
       current = (current+1) % players.length;
       updateTurn();
     }
   }]);
 }
-
 /* ================= JOGAR ================= */
 rollBtn.onclick = async ()=>{
   rollBtn.disabled = true;
