@@ -131,12 +131,12 @@ button:disabled{opacity:.5}
 }
 #modalBox button{margin:6px}
 
-/* EVENTOS — FUNDO DO BLOCO (ÚNICA ALTERAÇÃO) */
+/* ÚNICA ALTERAÇÃO PERMITIDA */
 #modalBox.eventGood{
-  background:#263a30; /* verde suave */
+  background:#2a3a33; /* verde suave */
 }
 #modalBox.eventBad{
-  background:#3a2626; /* vermelho suave */
+  background:#3a2a2a; /* vermelho suave */
 }
 
 /* PÓDIO */
@@ -333,7 +333,7 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ================= MUNICÍPIOS (BASE ÂNCORA) ================= */
+/* ================= MUNICÍPIOS ================= */
 const MUNICIPIO_NOME = {
   0:"Chaves",
   35:"Vila Pouca de Aguiar",
@@ -377,32 +377,6 @@ const MUNICIPIO_NOME = {
   738.5:"Faro (Final)"
 };
 
-/* ================= MODAL (BASE + CORREÇÃO VISUAL) ================= */
-function showModal(text,buttons){
-  modalText.textContent = text;
-  modalButtons.innerHTML = "";
-
-  modalBox.classList.remove("eventGood","eventBad");
-
-  buttons.forEach(b=>{
-    const btn = document.createElement("button");
-    btn.textContent = b.text;
-    btn.className = b.cls || "";
-
-    if(b.cls === "eventGood") modalBox.classList.add("eventGood");
-    if(b.cls === "eventBad")  modalBox.classList.add("eventBad");
-
-    btn.onclick = b.action;
-    modalButtons.appendChild(btn);
-  });
-
-  modal.style.display = "flex";
-}
-
-function closeModal(){
-  modal.style.display = "none";
-}
-
 /* ================= KM POR CASA ================= */
 const KM_BY_INDEX = {
   3:0,5:35,7:64,8:69,11:81,13:88,16:104,19:136,21:152,
@@ -435,9 +409,10 @@ const QUESTIONS = [
   "Qual é a capital do Algarve?"
 ];
 
-/* ================= OBJETIVOS (BASE ÂNCORA) ================= */
+/* ================= OBJETIVOS ================= */
 const OBJECTIVES = [
 
+/* 1 */
 { items:[
   {km:0,text:"Visitar Chaves"},
   {km:200,text:"Visitar Tondela"},
@@ -446,6 +421,7 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 2 */
 { items:[
   {km:35,text:"Visitar Vila Pouca de Aguiar"},
   {km:171,text:"Visitar Viseu"},
@@ -454,6 +430,7 @@ const OBJECTIVES = [
   {km:722,text:"Visitar São Brás de Alportel"}
 ]},
 
+/* 3 */
 { items:[
   {km:64,text:"Visitar Vila Real"},
   {km:213,text:"Visitar Santa Comba Dão"},
@@ -462,6 +439,7 @@ const OBJECTIVES = [
   {km:688,text:"Visitar Ameixial"}
 ]},
 
+/* 4 */
 { items:[
   {km:152,text:"Visitar São Pedro do Sul"},
   {km:324,text:"Visitar Pedrógão Grande"},
@@ -470,6 +448,7 @@ const OBJECTIVES = [
   {km:663,text:"Visitar Almodôvar"}
 ]},
 
+/* 5 */
 { items:[
   {km:81,text:"Visitar Santa Marta de Penaguião"},
   {km:225,text:"Visitar Mortágua"},
@@ -478,6 +457,7 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 6 */
 { items:[
   {km:88,text:"Visitar Peso da Régua"},
   {km:238,text:"Visitar Penacova"},
@@ -486,6 +466,7 @@ const OBJECTIVES = [
   {km:738.5,text:"Chegar a Faro (Final)"}
 ]},
 
+/* 7 */
 { items:[
   {km:104,text:"Visitar Lamego"},
   {km:248,text:"Visitar Vila Nova de Poiares"},
@@ -494,6 +475,7 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 8 */
 { items:[
   {km:136,text:"Visitar Castro Daire"},
   {km:262,text:"Visitar Lousã"},
@@ -502,6 +484,7 @@ const OBJECTIVES = [
   {km:738.5,text:"Chegar a Faro (Final)"}
 ]},
 
+/* 9 */
 { items:[
   {km:0,text:"Partir de Chaves"},
   {km:369,text:"Chegar ao Meio da Estrada"},
@@ -509,11 +492,13 @@ const OBJECTIVES = [
   {km:738.5,text:"Chegar a Faro (Final)"}
 ]},
 
+/* 10 */
 { items:[
   {km:0,text:"Partir de Chaves"},
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 11 */
 { items:[
   {km:69,text:"Passar pelo Km 69"},
   {km:369,text:"Chegar ao Meio da Estrada"},
@@ -522,8 +507,11 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 12 */
 { special:true, type:"first", text:"Ser o PRIMEIRO a chegar a Faro (Km 738,5)" },
-{ special:true, type:"last",  text:"Ser o ÚLTIMO a chegar a Faro (Km 738,5)" }
+
+/* 13 */
+{ special:true, type:"last", text:"Ser o ÚLTIMO a chegar a Faro (Km 738,5)" }
 
 ];
 
@@ -572,7 +560,7 @@ function askFicha(cell){
 
           if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
             p.done[cell.km] = true;
-          }else{
+          } else {
             p.extra.push(cell.km);
           }
 
