@@ -144,11 +144,17 @@ button:disabled{
 }
 
 #modalBox.good{
-  background:#243f2f;   /* verde suave */
+  background:#2f5a46;   /* verde mais vivo, mas suave */
 }
 
 #modalBox.bad{
-  background:#4a2323;   /* vermelho suave */
+  background:#6a2f2f;   /* vermelho mais limpo, menos bordeaux */
+}
+
+/* destaque subtil do OK sem mudar a cor base */
+#modalBox.good button.eventGood,
+#modalBox.bad  button.eventBad{
+  box-shadow:0 0 0 2px rgba(255,255,255,.15);
 }
 
 .eventBad{
