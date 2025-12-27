@@ -14,13 +14,19 @@
   --grey:#555;
   --green:#2ecc71;
   --red:#e53935;
+
+  /* novos tons suaves para eventos */
+  --event-good:#1f4d2e;
+  --event-bad:#5a1f1f;
 }
+
 body{
   margin:0;
   background:var(--bg);
   color:var(--text);
   font-family:Arial, Helvetica, sans-serif;
 }
+
 h1{
   text-align:center;
   margin:20px 0;
@@ -67,8 +73,12 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
-button:disabled{opacity:.5}
-.hidden{display:none}
+button:disabled{
+  opacity:.5;
+}
+.hidden{
+  display:none;
+}
 
 /* BOTÕES PEÕES */
 .car{background:#e53935;color:#fff}
@@ -103,7 +113,9 @@ button:disabled{opacity:.5}
   text-align:center;
   font-weight:bold;
 }
-.marco.done{background:var(--green)}
+.marco.done{
+  background:var(--green);
+}
 .extra-title{
   margin:16px 0 8px 0;
   text-align:center;
@@ -128,18 +140,20 @@ button:disabled{opacity:.5}
   border-radius:14px;
   width:420px;
   text-align:center;
-  transition:background .25s ease;
 }
 
-/* FUNDOS VISUAIS DOS EVENTOS */
-#modalBox.modal-good{
-  background:rgba(46,204,113,0.18);
+/* fundos por tipo de evento */
+#modalBox.eventGood{
+  background:var(--event-good);
 }
-#modalBox.modal-bad{
-  background:rgba(229,57,53,0.18);
+#modalBox.eventBad{
+  background:var(--event-bad);
 }
 
-#modalBox button{margin:6px}
+#modalBox button{
+  margin:6px;
+}
+
 .accept{background:var(--green);color:#000}
 .decline{background:var(--red);color:#fff}
 
@@ -172,6 +186,27 @@ button:disabled{opacity:.5}
 .step .emoji{font-size:30px}
 .step .name{font-weight:bold;margin-top:6px}
 
+/* CARTAS FINAIS */
+.cards{
+  display:flex;
+  gap:20px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.card{
+  background:#1c1c1c;
+  border:2px dashed #555;
+  border-radius:14px;
+  padding:12px;
+  width:260px;
+}
+
+/* ESTATÍSTICAS */
+.stats{
+  margin-top:10px;
+  font-size:13px;
+  color:#ccc;
+}
 </style>
 </head>
 
@@ -395,6 +430,7 @@ const QUESTIONS = [
 /* ================= OBJETIVOS (13 TOTAIS) ================= */
 const OBJECTIVES = [
 
+/* 1 */
 { items:[
   {km:0,text:"Visitar Chaves"},
   {km:200,text:"Visitar Tondela"},
@@ -403,6 +439,7 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 2 */
 { items:[
   {km:35,text:"Visitar Vila Pouca de Aguiar"},
   {km:171,text:"Visitar Viseu"},
@@ -411,6 +448,7 @@ const OBJECTIVES = [
   {km:722,text:"Visitar São Brás de Alportel"}
 ]},
 
+/* 3 */
 { items:[
   {km:64,text:"Visitar Vila Real"},
   {km:213,text:"Visitar Santa Comba Dão"},
@@ -419,6 +457,7 @@ const OBJECTIVES = [
   {km:688,text:"Visitar Ameixial"}
 ]},
 
+/* 4 */
 { items:[
   {km:152,text:"Visitar São Pedro do Sul"},
   {km:324,text:"Visitar Pedrógão Grande"},
@@ -427,6 +466,7 @@ const OBJECTIVES = [
   {km:663,text:"Visitar Almodôvar"}
 ]},
 
+/* 5 */
 { items:[
   {km:81,text:"Visitar Santa Marta de Penaguião"},
   {km:225,text:"Visitar Mortágua"},
@@ -435,6 +475,7 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 6 */
 { items:[
   {km:88,text:"Visitar Peso da Régua"},
   {km:238,text:"Visitar Penacova"},
@@ -443,6 +484,7 @@ const OBJECTIVES = [
   {km:738.5,text:"Chegar a Faro (Final)"}
 ]},
 
+/* 7 */
 { items:[
   {km:104,text:"Visitar Lamego"},
   {km:248,text:"Visitar Vila Nova de Poiares"},
@@ -451,6 +493,7 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 8 */
 { items:[
   {km:136,text:"Visitar Castro Daire"},
   {km:262,text:"Visitar Lousã"},
@@ -459,6 +502,7 @@ const OBJECTIVES = [
   {km:738.5,text:"Chegar a Faro (Final)"}
 ]},
 
+/* 9 */
 { items:[
   {km:0,text:"Partir de Chaves"},
   {km:369,text:"Chegar ao Meio da Estrada"},
@@ -466,11 +510,13 @@ const OBJECTIVES = [
   {km:738.5,text:"Chegar a Faro (Final)"}
 ]},
 
+/* 10 */
 { items:[
   {km:0,text:"Partir de Chaves"},
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 11 */
 { items:[
   {km:69,text:"Passar pelo Km 69"},
   {km:369,text:"Chegar ao Meio da Estrada"},
@@ -479,7 +525,10 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
+/* 12 — OBJETIVO ESPECIAL */
 { special:true, type:"first", text:"Ser o PRIMEIRO a chegar a Faro (Km 738,5)" },
+
+/* 13 — OBJETIVO ESPECIAL */
 { special:true, type:"last", text:"Ser o ÚLTIMO a chegar a Faro (Km 738,5)" }
 
 ];
@@ -503,7 +552,6 @@ function placePawn(pawn, i){
 
 /* ================= MODAL ================= */
 function showModal(text, buttons){
-  modalBox.classList.remove("modal-good","modal-bad");
   modalText.textContent = text;
   modalButtons.innerHTML = "";
 
@@ -517,10 +565,8 @@ function showModal(text, buttons){
 
   modal.style.display = "flex";
 }
-
 function closeModal(){
   modal.style.display = "none";
-  modalBox.classList.remove("modal-good","modal-bad");
 }
 
 /* ================= SETUP ================= */
@@ -650,7 +696,7 @@ function askQuestion(cell){
         action:()=>{
           players[current].questionsCorrect++;
           closeModal();
-          askFicha(cell);
+          askFicha(cell); // continua sempre
         }
       },
       {
@@ -715,15 +761,12 @@ function askFicha(cell){
   );
 }
 
-/* ================= EVENTO (VISUAL COLORIDO) ================= */
+/* ================= EVENTO ================= */
 function doEvent(){
   const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
-
-  modalBox.classList.add(ev.cls==="eventGood"?"modal-good":"modal-bad");
-
   showModal(ev.text,[{
     text:"OK",
-    cls:ev.cls,
+    cls: ev.cls, // mantém verde/vermelho
     action: async ()=>{
       closeModal();
       const p = players[current];
@@ -746,6 +789,7 @@ function doEvent(){
 /* ================= JOGAR ================= */
 rollBtn.onclick = async ()=>{
   rollBtn.disabled = true;
+
   const r = Math.floor(Math.random()*6)+1;
   dice.textContent = r;
 
@@ -784,7 +828,7 @@ rollBtn.onclick = async ()=>{
   rollBtn.disabled = false;
 };
 
-/* ================= PÓDIO ================= */
+/* ================= PÓDIO FINAL ================= */
 function showPodium(){
   podium.style.display = "block";
   game.classList.add("hidden");
