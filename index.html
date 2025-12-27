@@ -860,21 +860,23 @@ function askQuestion(cell){
         text:"Resposta Certa",
         cls:"accept",
         action:()=>{
-          players[current].questionsCorrect++;
-          closeModal();
-          askFicha(cell);
-        }
+  players[current].questionsCorrect++;
+  closeModal();
+  rollBtn.disabled = false;
+  askFicha(cell);
+}
       },
       {
         text:"Resposta Errada",
-        cls:"decline",
-        action:()=>{
-          players[current].questionsWrong++;
-          closeModal();
-          current = (current+1) % players.length;
-          updateTurn();
-        }
-      }
+  cls:"decline",
+  action:()=>{
+    players[current].questionsWrong++;
+    closeModal();
+    rollBtn.disabled = false;
+    current = (current+1) % players.length;
+    updateTurn();
+  }
+}
     ]
   );
 }
@@ -1090,7 +1092,3 @@ function showPodium(){
 </script>
 </body>
 </html>
-
-
-
-
