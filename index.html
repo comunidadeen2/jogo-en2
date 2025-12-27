@@ -1007,14 +1007,15 @@ rollBtn.onclick = async ()=>{
   const idx = p.pos;
   const cell = SPECIAL_CELLS[idx];
 
+const cell = SPECIAL_CELLS[idx];
+
 if(idx < 3){
   current = (current+1) % players.length;
   updateTurn();
 }
-else if(isQuestionCell){
-  askQuestion(SPECIAL_CELLS[idx] || { km: KM_BY_INDEX[idx] });
+else if(cell){
+  askQuestion(cell);
 }
-
 else if(idx < 85){
   doEvent();
 }
@@ -1022,8 +1023,6 @@ else{
   current = (current+1) % players.length;
   updateTurn();
 }
-  };
-
 /* ================= PÓDIO FINAL ================= */
 function showPodium(){
   podium.style.display = "block";
@@ -1087,5 +1086,6 @@ function showPodium(){
 </script>
 </body>
 </html>
+
 
 
