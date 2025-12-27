@@ -677,38 +677,24 @@ function placePawn(pawn, i){
 }
 
 /* ================= MODAL ================= */
-function showModal(a, b, c, d=""){
-  // compatibilidade antiga: showModal(text, buttons)
-  let title="", text="", buttons=[], effect="";
-
-  if(Array.isArray(b)){
-    text = a;
-    buttons = b;
-  }
-  // nova versão: showModal(title, text, buttons, effect)
-  else{
-    title = a;
-    text = b;
-    buttons = c;
-    effect = d;
-  }
-
-  modalTitle.textContent = title;
-  modalText.textContent  = text;
-  modalEffect.textContent = effect;
-
+function showModal(card, buttons){
   modalButtons.innerHTML = "";
+
   modalBox.className = "";
+modalBox.classList.add(card.cls);
 
-  buttons.forEach(btnData=>{
+  modalText.innerHTML = `
+    <div style="font-weight:bold;margin-bottom:8px">${card.title}</div>
+    <div style="margin-bottom:8px">${card.text}</div>
+    <div style="opacity:.9">${card.effect}</div>
+  `;
+
+  buttons.forEach(b=>{
     const btn = document.createElement("button");
-    btn.textContent = btnData.text;
-    btn.className = btnData.cls || "";
-    btn.onclick = btnData.action;
+    btn.textContent = b.text;
+    btn.className = b.cls || "";
+    btn.onclick = b.action;
     modalButtons.appendChild(btn);
-
-    if(btnData.cls === "eventGood") modalBox.classList.add("good");
-    if(btnData.cls === "eventBad")  modalBox.classList.add("bad");
   });
 
   modal.style.display = "flex";
@@ -765,17 +751,18 @@ startBtn.onclick = ()=>{
       b.onclick = ()=>{
         used.push(p.id);
         players.push({
-          name: input.value || ("Jogador "+(i+1)),
-          pawn: p.id,
-          pos: 0,
-          done: {},
-          extra: [],
-          municipiosVisitados: 0,
-          questionsCorrect: 0,
-          questionsWrong: 0,
-          finished: false,
-          order: 0
-        });
+  name: input.value || ("Jogador "+(i+1)),
+  pawn: p.id,
+  pos: 0,
+  done: {},
+  extra: [],
+  municipiosVisitados: 0,
+  questionsCorrect: 0,
+  questionsWrong: 0,
+  finished: false,
+  order: 0,
+  skipTurns: 0
+});
         pawns[p.id].style.display = "block";
         placePawn(pawns[p.id],0);
         i++;
@@ -795,11 +782,31 @@ function updateTurn(){
     showPodium();
     return;
   }
-  while(players[current].finished){
-    current = (current+1) % players.length;
+
+  const p = players[current];
+
+  if(p.skipTurns > 0){
+    p.skipTurns--;
+
+    showModal(
+      "Turno perdido",
+      `${p.name}, este turno não jogas.`,
+      [{
+        text:"OK",
+        cls:"decline",
+        action:()=>{
+          closeModal();
+          current = (current+1) % players.length;
+          updateTurn();
+        }
+      }],
+      "Ficaste sem jogar este turno."
+    );
+    return;
   }
-  turn.textContent = "Vez de " + players[current].name;
-  renderObjective(players[current]);
+
+  turn.textContent = "Vez de " + p.name;
+  renderObjective(p);
 }
 
 /* ================= OBJETIVO ================= */
@@ -837,7 +844,12 @@ function renderObjective(p){
 /* ================= PERGUNTA ================= */
 function askQuestion(cell){
   showModal(
-    QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
+    {
+      title: "Pergunta",
+      text: QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
+      effect: "",
+      cls: ""
+    },
     [
       {
         text:"Resposta Certa",
@@ -845,7 +857,7 @@ function askQuestion(cell){
         action:()=>{
           players[current].questionsCorrect++;
           closeModal();
-          askFicha(cell); // 🔹 CONTINUA SEMPRE
+          askFicha(cell);
         }
       },
       {
@@ -861,6 +873,7 @@ function askQuestion(cell){
     ]
   );
 }
+
 
 /* ================= FICHA (CORRIGIDO) ================= */
 function askFicha(cell){
@@ -912,46 +925,59 @@ function askFicha(cell){
 }
 
 /* ================= EVENTO ================= */
-function doEvent(){
+async function doEvent(){
   const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
 
-  showModal(
-    ev.title,
-    ev.text,
-    [{
-      text:"OK",
-      cls:ev.cls,
-      action: async ()=>{
-        closeModal();
-        
-        const movers = ev.all ? players : [players[current]];
+  showModal(ev,[{
+    text:"OK",
+    cls:ev.cls,
+    action: async ()=>{
+      closeModal();
 
-        for(const p of movers){
-          let target = p.pos;
+      const targets = ev.all ? players : [players[current]];
 
-          if(ev.move){
-            target = p.pos + ev.move;
-            if(target < 0) target = 0;
-            if(target > SPACES.length-1) target = SPACES.length-1;
-          }
+      for(const p of targets){
 
-          if(ev.goKm !== undefined){
-            target = KM_TO_INDEX[ev.goKm];
-          }
+        // perder turnos
+        if(ev.skip){
+          p.skip = (p.skip || 0) + ev.skip;
+          continue;
+        }
+
+        // ir para Km específico
+        if(ev.goKm !== undefined){
+  const idx = Object.keys(SPECIAL_CELLS)
+    .find(i => SPECIAL_CELLS[i].km === ev.goKm);
+
+  if(idx !== undefined){
+    const target = Number(idx);
+    while(p.pos !== target){
+      p.pos += p.pos < target ? 1 : -1;
+      placePawn(pawns[p.pawn], p.pos);
+      await new Promise(r=>setTimeout(r,300));
+    }
+  }
+  continue;
+}
+
+        // mover casas
+        if(ev.move){
+          let target = p.pos + ev.move;
+          if(target < 0) target = 0;
+          if(target > SPACES.length-1) target = SPACES.length-1;
 
           while(p.pos !== target){
             p.pos += p.pos < target ? 1 : -1;
             placePawn(pawns[p.pawn], p.pos);
-            await new Promise(r=>setTimeout(r,200));
+            await new Promise(r=>setTimeout(r,300));
           }
         }
-
-        current = (current+1) % players.length;
-        updateTurn();
       }
-    }],
-    ev.effect
-  );
+
+      current = (current+1) % players.length;
+      updateTurn();
+    }
+  }]);
 }
 
 /* ================= JOGAR ================= */
@@ -977,15 +1003,16 @@ rollBtn.onclick = async ()=>{
   const cell = SPECIAL_CELLS[idx];
 
   if(idx < 3){
-    current = (current+1) % players.length;
-    updateTurn();
-  }
-  else if(cell){
-    askQuestion(cell);
-  }
-  else if(idx < 85){
-    doEvent();
-  }
+  current = (current+1) % players.length;
+  updateTurn();
+}
+else if(cell){
+  askQuestion(cell);
+}
+else{
+  doEvent();
+}
+
   else{
     current = (current+1) % players.length;
     updateTurn();
