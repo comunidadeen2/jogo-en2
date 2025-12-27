@@ -512,6 +512,34 @@ const EVENTS = [
     goKm:369,
     cls:"eventGood"
   }
+/* ==== EVENTOS GLOBAIS ==== */
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Mau tempo em todo o país.",
+    effect:"Todos os jogadores recuam 1 casa.",
+    move:-1,
+    all:true,
+    cls:"eventBad"
+  },
+
+  {
+    title:"Bons momentos!",
+    text:"Trânsito fluido em toda a EN2.",
+    effect:"Todos os jogadores avançam 1 casa.",
+    move:1,
+    all:true,
+    cls:"eventGood"
+  },
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Arrastão da Grande Pedra em Vila Pouca de Aguiar.",
+    effect:"Todos os jogadores vão para Vila Pouca de Aguiar (Km 35).",
+    goKm:35,
+    all:true,
+    cls:"eventBad"
+  }
 
 ];
 
@@ -897,23 +925,26 @@ function doEvent(){
         closeModal();
         rollBtn.disabled = true;
 
-        const p = players[current];
-        let target = p.pos;
+        const movers = ev.all ? players : [players[current]];
 
-        if(ev.move){
-          target = p.pos + ev.move;
-          if(target < 0) target = 0;
-          if(target > SPACES.length-1) target = SPACES.length-1;
-        }
+        for(const p of movers){
+          let target = p.pos;
 
-        if(ev.goKm !== undefined){
-          target = KM_TO_INDEX[ev.goKm];
-        }
+          if(ev.move){
+            target = p.pos + ev.move;
+            if(target < 0) target = 0;
+            if(target > SPACES.length-1) target = SPACES.length-1;
+          }
 
-        while(p.pos !== target){
-          p.pos += p.pos < target ? 1 : -1;
-          placePawn(pawns[p.pawn], p.pos);
-          await new Promise(r=>setTimeout(r,300));
+          if(ev.goKm !== undefined){
+            target = KM_TO_INDEX[ev.goKm];
+          }
+
+          while(p.pos !== target){
+            p.pos += p.pos < target ? 1 : -1;
+            placePawn(pawns[p.pawn], p.pos);
+            await new Promise(r=>setTimeout(r,200));
+          }
         }
 
         rollBtn.disabled = false;
