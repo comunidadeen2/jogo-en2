@@ -34,6 +34,14 @@ h1{
   align-items:flex-start;
 }
 
+#modalBox.eventGood{
+  background:#2a3a33; /* verde suave */
+}
+
+#modalBox.eventBad{
+  background:#3a2a2a; /* vermelho suave */
+}
+
 /* TABULEIRO */
 .board-frame{
   width:1000px;
@@ -67,8 +75,12 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
-button:disabled{opacity:.5}
-.hidden{display:none}
+button:disabled{
+  opacity:.5;
+}
+.hidden{
+  display:none;
+}
 
 /* BOTÕES PEÕES */
 .car{background:#e53935;color:#fff}
@@ -103,7 +115,9 @@ button:disabled{opacity:.5}
   text-align:center;
   font-weight:bold;
 }
-.marco.done{background:var(--green)}
+.marco.done{
+  background:var(--green);
+}
 .extra-title{
   margin:16px 0 8px 0;
   text-align:center;
@@ -130,14 +144,10 @@ button:disabled{opacity:.5}
   text-align:center;
 }
 #modalBox button{margin:6px}
-
-/* ÚNICA ALTERAÇÃO PERMITIDA */
-#modalBox.eventGood{
-  background:#2a3a33; /* verde suave */
-}
-#modalBox.eventBad{
-  background:#3a2a2a; /* vermelho suave */
-}
+.accept{background:var(--green);color:#000}
+.decline{background:var(--red);color:#fff}
+.eventGood{background:#1b5e20;color:#fff}
+.eventBad{background:#b71c1c;color:#fff}
 
 /* PÓDIO */
 #podium{
@@ -183,6 +193,23 @@ button:disabled{opacity:.5}
   width:260px;
 }
 
+/* CARTA DE JOGO */
+.game-card{
+  background:#111;
+  border:1px solid #444;
+  border-radius:10px;
+  padding:8px;
+  margin-bottom:10px;
+  font-size:13px;
+}
+.game-card .title{
+  color:var(--accent);
+  font-weight:bold;
+  margin-bottom:6px;
+  text-align:center;
+}
+.game-card .line{margin-bottom:4px}
+
 /* ESTATÍSTICAS */
 .stats{
   margin-top:10px;
@@ -211,10 +238,7 @@ button:disabled{opacity:.5}
   <div id="setup">
     Jogadores:
     <select id="playerCount">
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
     </select>
     <button id="startBtn">COMEÇAR</button>
   </div>
@@ -333,7 +357,7 @@ const SPACES = [
 {"x":0.8979814511729405,"y":0.902697902571042}
 ];
 
-/* ================= MUNICÍPIOS ================= */
+/* ================= MUNICÍPIOS (BASE ESTÁVEL) ================= */
 const MUNICIPIO_NOME = {
   0:"Chaves",
   35:"Vila Pouca de Aguiar",
@@ -409,7 +433,7 @@ const QUESTIONS = [
   "Qual é a capital do Algarve?"
 ];
 
-/* ================= OBJETIVOS ================= */
+/* ================= OBJETIVOS (13 TOTAIS) ================= */
 const OBJECTIVES = [
 
 /* 1 */
@@ -507,89 +531,13 @@ const OBJECTIVES = [
   {km:738,text:"Chegar a Faro"}
 ]},
 
-/* 12 */
+/* 12 — OBJETIVO ESPECIAL */
 { special:true, type:"first", text:"Ser o PRIMEIRO a chegar a Faro (Km 738,5)" },
 
-/* 13 */
+/* 13 — OBJETIVO ESPECIAL */
 { special:true, type:"last", text:"Ser o ÚLTIMO a chegar a Faro (Km 738,5)" }
 
 ];
-
-/* ================= PERGUNTA ================= */
-function askQuestion(cell){
-  showModal(
-    QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
-    [
-      {
-        text:"Resposta Certa",
-        cls:"accept",
-        action:()=>{
-          players[current].questionsCorrect++;
-          closeModal();
-          askFicha(cell);
-        }
-      },
-      {
-        text:"Resposta Errada",
-        cls:"decline",
-        action:()=>{
-          players[current].questionsWrong++;
-          closeModal();
-          current = (current+1) % players.length;
-          updateTurn();
-        }
-      }
-    ]
-  );
-}
-
-/* ================= FICHA ================= */
-function askFicha(cell){
-  const nome = MUNICIPIO_NOME[cell.km] || `Km ${cell.km}`;
-
-  showModal(
-    `${players[current].name} ganhou a ficha ${nome}. Aceita?`,
-    [
-      {
-        text:"Aceitar",
-        cls:"accept",
-        action:()=>{
-          closeModal();
-          const p = players[current];
-          p.municipiosVisitados++;
-
-          if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
-            p.done[cell.km] = true;
-          } else {
-            p.extra.push(cell.km);
-          }
-
-          if(cell.final){
-            p.finished = true;
-            p.order = players.filter(x=>x.finished).length;
-          }
-
-          updateTurn();
-        }
-      },
-      {
-        text:"Recusar",
-        cls:"decline",
-        action:()=>{
-          closeModal();
-          const p = players[current];
-
-          if(cell.final){
-            p.finished = true;
-            p.order = players.filter(x=>x.finished).length;
-          }
-
-          updateTurn();
-        }
-      }
-    ]
-  );
-}
 
 /* ================= JOGADORES ================= */
 const pawns = [pawn0, pawn1, pawn2, pawn3];
@@ -606,6 +554,23 @@ function placePawn(pawn, i){
   if(i===89){ox=-10;oy=-22}
   pawn.style.left = (s.x * board.clientWidth + ox) + "px";
   pawn.style.top  = (s.y * board.clientHeight + oy) + "px";
+}
+
+/* ================= MODAL ================= */
+function showModal(text,buttons){
+  modalText.textContent = text;
+  modalButtons.innerHTML = "";
+  buttons.forEach(b=>{
+    const btn = document.createElement("button");
+    btn.textContent = b.text;
+    btn.className = b.cls || "";
+    btn.onclick = b.action;
+    modalButtons.appendChild(btn);
+  });
+  modal.style.display = "flex";
+}
+function closeModal(){
+  modal.style.display = "none";
 }
 
 /* ================= SETUP ================= */
@@ -722,6 +687,83 @@ function renderObjective(p){
         </div>`;
     });
   }
+}
+
+/* ================= PERGUNTA ================= */
+function askQuestion(cell){
+  showModal(
+    QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
+    [
+      {
+        text:"Resposta Certa",
+        cls:"accept",
+        action:()=>{
+          players[current].questionsCorrect++;
+          closeModal();
+          askFicha(cell); // 🔹 CONTINUA SEMPRE
+        }
+      },
+      {
+        text:"Resposta Errada",
+        cls:"decline",
+        action:()=>{
+          players[current].questionsWrong++;
+          closeModal();
+          current = (current+1) % players.length;
+          updateTurn();
+        }
+      }
+    ]
+  );
+}
+
+/* ================= FICHA (CORRIGIDO) ================= */
+function askFicha(cell){
+  const nome = MUNICIPIO_NOME[cell.km] || `Km ${cell.km}`;
+
+  showModal(
+    `${players[current].name} ganhou a ficha ${nome}. Aceita?`,
+    [
+      {
+        text:"Aceitar",
+        cls:"accept",
+        action:()=>{
+          closeModal();
+          const p = players[current];
+          p.municipiosVisitados++;
+
+          if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
+            p.done[cell.km] = true;
+          } else {
+            p.extra.push(cell.km);
+          }
+
+          if(cell.final){
+            p.finished = true;
+            p.order = players.filter(x=>x.finished).length;
+          }
+
+          // 🔥 CONTINUA A JOGAR
+          updateTurn();
+        }
+      },
+      {
+  text:"Recusar",
+  cls:"decline",
+  action:()=>{
+    closeModal();
+    const p = players[current];
+
+    if(cell.final){
+      p.finished = true;
+      p.order = players.filter(x=>x.finished).length;
+    }
+
+    updateTurn();
+  }
+}
+    ]
+  );
 }
 
 /* ================= EVENTO ================= */
@@ -850,6 +892,5 @@ function showPodium(){
   </div>`;
 }
 </script>
-
 </body>
 </html>
