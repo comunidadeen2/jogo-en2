@@ -1090,11 +1090,11 @@ function updateTurn(){
 
   if(p.skipTurns && p.skipTurns > 0){
   showModal(
-    "⏭️ Turno Saltado",
+    "🟠 Vez sem jogar",
     `${p.name} perde esta vez.`,
     [{
       text:"OK",
-      cls:"accept",
+      cls:"decline",
       action:()=>{
         closeModal();
         p.skipTurns--;
@@ -1151,7 +1151,7 @@ function askQuestion(cell){
   const q = QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
 
   showModal(
-    "❓ Pergunta EN2",
+    "❓ Vamos testar o teu conhecimento da EN2",
     q.q,
     q.a.map((txt, i)=>({
       text: txt,
@@ -1176,7 +1176,25 @@ function askQuestion(cell){
 /* ================= FICHA (CORRIGIDO) ================= */
 function askFicha(cell){
   const nome = MUNICIPIO_NOME[cell.km] || `Km ${cell.km}`;
+const p = players[current];
 
+// se já tem esta ficha (objetivo ou extra)
+if(p.done[cell.km] || p.extra.includes(cell.km)){
+  showModal(
+    "📍 Ficha repetida",
+    `Já tens a ficha de ${nome}. Continua a jogar.`,
+    [{
+      text:"OK",
+      cls:"accept",
+      action:()=>{
+        closeModal();
+        rollBtn.disabled = false;
+        updateTurn();
+      }
+    }]
+  );
+  return;
+}
   showModal(
     `${players[current].name} ganhou a ficha ${nome}. Aceita?`,
     [
@@ -1188,18 +1206,13 @@ function askFicha(cell){
           const p = players[current];
           p.municipiosVisitados++;
 
-          if(p.done[cell.km] || p.extra.includes(cell.km)){
-  // já tem a ficha → não faz nada
+if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
+  p.done[cell.km] = true;
 } else {
-  p.municipiosVisitados++;
-
-  if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
-    p.done[cell.km] = true;
-  } else {
-    p.extra.push(cell.km);
-  }
+  p.extra.push(cell.km);
 }
-          if(cell.final){
+
+            if(cell.final){
             p.finished = true;
             p.order = players.filter(x=>x.finished).length;
           }
