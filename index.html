@@ -1026,13 +1026,6 @@ function updateTurn(){
 
   const p = players[current];
 
-if(p.extraTurns && p.extraTurns > 0){
-  p.extraTurns--;
-  turn.textContent = "Vez extra de " + p.name;
-  renderObjective(p);
-  return;
-}
-
   if(p.skipTurns && p.skipTurns > 0){
   showModal(
     "⏭️ Turno Saltado",
@@ -1236,6 +1229,13 @@ function doEvent(){
 if(ev.limitNextRoll){
   players[current].limitNextRoll = ev.limitNextRoll;
 }
+if(ev.extraTurn){
+  if(ev.all){
+    players.forEach(p => p.extraTurns = (p.extraTurns || 0) + 1);
+  } else {
+    players[current].extraTurns = (players[current].extraTurns || 0) + 1;
+  }
+}
         const movers = ev.all ? players : [players[current]];
 
         for(const p of movers){
@@ -1316,8 +1316,8 @@ rollBtn.onclick = async ()=>{
   const LAST = SPACES.length-1;
 
   if(target > LAST){
-    target = LAST - (target - LAST);
-  }
+  target = LAST;
+}
 
   while(p.pos !== target){
     p.pos += p.pos < target ? 1 : -1;
@@ -1338,9 +1338,13 @@ rollBtn.onclick = async ()=>{
     doEvent();
   }
   else{
-    current = (current+1) % players.length;
-    updateTurn();
-  }
+    if(players[current].extraTurns && players[current].extraTurns > 0){
+  players[current].extraTurns--;
+  updateTurn();
+} else {
+  current = (current+1) % players.length;
+  updateTurn();
+}
 
  };
 
