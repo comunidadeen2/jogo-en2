@@ -1276,12 +1276,17 @@ if(ev.goNextMunicipio){
   target = getNextMunicipioIndex(p.pos);
 }
           while(p.pos !== target){
-            p.pos += p.pos < target ? 1 : -1;
-            placePawn(pawns[p.pawn], p.pos);
-            await new Promise(r=>setTimeout(r,200));
-          }
-        }],
-  ev.effect
+  p.pos += p.pos < target ? 1 : -1;
+  placePawn(pawns[p.pawn], p.pos);
+  await new Promise(r=>setTimeout(r,200));
+}
+}
+
+current = (current+1) % players.length;
+updateTurn();
+}
+],
+ev.effect
 );
 }
 
