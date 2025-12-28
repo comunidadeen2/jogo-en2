@@ -572,7 +572,7 @@ const EVENTS = [
   move:1,
   cls:"eventGood"
 },
-  
+
 {
   title:"Bons momentos!",
   text:"Boa dica de um local.",
@@ -580,7 +580,7 @@ const EVENTS = [
   move:2,
   cls:"eventGood"
 },
-  
+
 {
   title:"Bons momentos!",
   text:"Encontraste um atalho simples.",
@@ -588,7 +588,7 @@ const EVENTS = [
   move:3,
   cls:"eventGood"
 },
-  
+
 {
   title:"Bons momentos!",
   text:"Estrada livre e excelente ritmo.",
@@ -706,7 +706,6 @@ const EVENTS = [
   cls:"eventBad"
 },
 
-
 {
   title:"Bons momentos!",
   text:"Paraste para ajudar outro viajante da EN2.",
@@ -737,21 +736,21 @@ const EVENTS = [
   move:2,
   cls:"eventGood"
 },
-  
+
 {
   title:"Momento EN2 😄",
   text:"Paraste só para apreciar a paisagem.",
   effect:"Nada acontece.",
   cls:"eventGood"
 },
-  
+
 {
   title:"Momento EN2 😄",
   text:"Conversa longa com outro viajante.",
   effect:"Nada acontece.",
   cls:"eventGood"
 },
-  
+
 {
   title:"Bons momentos!",
   text:"Estrada vazia e ritmo perfeito.",
@@ -817,6 +816,7 @@ const EVENTS = [
   move:-3,
   cls:"eventBad"
 }
+
 ];
 
 /* ================= PERGUNTAS ================= */
@@ -1156,16 +1156,12 @@ function askQuestion(cell){
       text: txt,
       cls: "accept",
       action: ()=>{
-        closeModal();
-
-        if(i === q.c){
-          players[current].questionsCorrect++;
-          askFicha(cell); // continua a jogar
-        } else {
-          players[current].questionsWrong++;
-          current = (current + 1) % players.length;
-          updateTurn();
-        }
+  players[current].questionsWrong++;
+  closeModal();
+  current = (current + 1) % players.length;
+  rollBtn.disabled = false;
+  updateTurn();
+}
       }
     }))
   );
@@ -1437,5 +1433,3 @@ function showPodium(){
 </script>
 </body>
 </html>
-
-
