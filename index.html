@@ -834,6 +834,9 @@ startBtn.onclick = ()=>{
   questionsWrong: 0,
   finished: false,
   order: 0,
+  skipTurns: 0,
+  limitNextRoll: null
+});
 
   skipTurns: 0,   // vezes sem jogar
   slowNext: 0     // jogada lenta
@@ -857,9 +860,31 @@ function updateTurn(){
     showPodium();
     return;
   }
+
+  const p = players[current];
+
+  if(p.skipTurns && p.skipTurns > 0){
+    p.skipTurns--;
+
+    showModal(
+      "⏭️ Turno Saltado",
+      `${p.name} perde esta vez.`,
+      [{
+        text:"OK",
+        action:()=>{
+          closeModal();
+          current = (current+1) % players.length;
+          updateTurn();
+        }
+      }]
+    );
+    return;
+  }
+
   while(players[current].finished){
     current = (current+1) % players.length;
   }
+
   turn.textContent = "Vez de " + players[current].name;
   renderObjective(players[current]);
 }
@@ -973,6 +998,24 @@ function askFicha(cell){
   );
 }
 
+function getPreviousMunicipioIndex(pos){
+  const kms = Object.keys(KM_TO_INDEX)
+    .map(Number)
+    .sort((a,b)=>a-b);
+
+  let prevKm = 0;
+
+  for(const km of kms){
+    if(KM_TO_INDEX[km] < pos){
+      prevKm = km;
+    } else {
+      break;
+    }
+  }
+
+  return KM_TO_INDEX[prevKm] ?? 0;
+}
+
 /* ================= EVENTO ================= */
 function doEvent(){
   const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
@@ -985,7 +1028,10 @@ function doEvent(){
       cls:ev.cls,
       action: async ()=>{
         closeModal();
-        
+
+        if(ev.skip){
+  players[current].skipTurns += ev.skip;
+}
         const movers = ev.all ? players : [players[current]];
 
         for(const p of movers){
@@ -1013,6 +1059,9 @@ if(ev.backMunicipio){
             target = KM_TO_INDEX[ev.goKm];
           }
 
+if(ev.backToPreviousMunicipio){
+  target = getPreviousMunicipioIndex(p.pos);
+}
           while(p.pos !== target){
             p.pos += p.pos < target ? 1 : -1;
             placePawn(pawns[p.pawn], p.pos);
@@ -1030,7 +1079,15 @@ if(ev.backMunicipio){
 
 /* ================= JOGAR ================= */
 rollBtn.onclick = async ()=>{
+let r = Math.floor(Math.random()*6)+1;
 const p = players[current];
+
+if(p.limitNextRoll){
+  r = Math.min(r, p.limitNextRoll);
+  p.limitNextRoll = null; // usa só uma vez
+}
+
+dice.textContent = r;
 
 if(p.skipTurns > 0){
   p.skipTurns--;
