@@ -868,10 +868,10 @@ function updateTurn(){
       text:"OK",
       cls:"accept",
       action:()=>{
-        p.skipTurns--;
         closeModal();
+        p.skipTurns--;
         current = (current+1) % players.length;
-        updateTurn();
+        setTimeout(updateTurn, 0);
       }
     }]
   );
@@ -1037,7 +1037,7 @@ if(ev.limitNextRoll){
         for(const p of movers){
           let target = p.pos;
 if(ev.skip){
-  p.skipTurns += ev.skip;
+  players[current].skipTurns = ev.skip;
 }
 
 if(ev.backMunicipio){
