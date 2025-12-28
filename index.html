@@ -883,6 +883,7 @@ function askQuestion(cell){
         action:()=>{
           players[current].questionsCorrect++;
           closeModal();
+          rollBtn.disabled = false;   // 🔴 DESBLOQUEIA
           askFicha(cell);
         }
       },
@@ -892,6 +893,7 @@ function askQuestion(cell){
         action:()=>{
           players[current].questionsWrong++;
           closeModal();
+          rollBtn.disabled = false;   // 🔴 DESBLOQUEIA
           current = (current+1) % players.length;
           updateTurn();
         }
@@ -900,7 +902,6 @@ function askQuestion(cell){
     ""
   );
 }
-
 /* ================= FICHA (CORRIGIDO) ================= */
 function askFicha(cell){
   const nome = MUNICIPIO_NOME[cell.km] || `Km ${cell.km}`;
