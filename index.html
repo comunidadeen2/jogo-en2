@@ -1095,6 +1095,7 @@ function askQuestion(cell){
           players[current].questionsWrong++;
           closeModal();
           current = (current + 1) % players.length;
+rollBtn.disabled = false;
 updateTurn();
         }
       }
@@ -1134,7 +1135,8 @@ function askFicha(cell){
           }
 
           // 🔥 CONTINUA A JOGAR
-          updateTurn();
+          rollBtn.disabled = false;
+updateTurn();
         }
       },
       {
@@ -1150,6 +1152,7 @@ function askFicha(cell){
     }
 
     current = (current + 1) % players.length;
+rollBtn.disabled = false;
 updateTurn();
   }
 }
@@ -1248,7 +1251,8 @@ function doEvent(){
         }
 
         current = (current + 1) % players.length;
-        updateTurn();
+rollBtn.disabled = false;
+updateTurn();
       }
     }],
     ev.effect
@@ -1257,6 +1261,7 @@ function doEvent(){
 
 /* ================= JOGAR ================= */
 rollBtn.onclick = async ()=>{
+rollBtn.disabled = true;
   let r = Math.floor(Math.random()*6)+1;
   const p = players[current];
 
@@ -1285,6 +1290,7 @@ rollBtn.onclick = async ()=>{
 
   if(idx < 3){
   current = (current+1) % players.length;
+rollBtn.disabled = false;
   updateTurn();
 }
 else if(cell){
@@ -1295,6 +1301,7 @@ else if(idx < 85){
 }
 else{
   current = (current+1) % players.length;
+rollBtn.disabled = false;
   updateTurn();
 }
  };
