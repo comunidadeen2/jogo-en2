@@ -1007,9 +1007,10 @@ startBtn.onclick = ()=>{
   questionsWrong: 0,
   finished: false,
   order: 0,
+
   skipTurns: 0,
-  extraTurn: false,
-  limitNextRoll: null
+  limitNextRoll: null,
+  extraTurns: 0
 });
 
         pawns[p.id].style.display = "block";
@@ -1033,6 +1034,13 @@ function updateTurn(){
   }
 
   const p = players[current];
+
+if(p.extraTurns && p.extraTurns > 0){
+  p.extraTurns--;
+  turn.textContent = "Vez extra de " + p.name;
+  renderObjective(p);
+  return;
+}
 
   if(p.skipTurns && p.skipTurns > 0){
   showModal(
@@ -1243,7 +1251,7 @@ if(ev.extraTurn){
   if(ev.all){
     players.forEach(p => p.extraTurn = true);
   } else {
-    players[current].extraTurn = true;
+    
   }
 }
 
@@ -1258,6 +1266,13 @@ if(ev.extraTurn){
     }],
     ev.effect
   );
+if(ev.extraTurn){
+  if(ev.all){
+    players.forEach(p => p.extraTurns++);
+  } else {
+    players[current].extraTurns++;
+  }
+}
 }
 
 /* ================= JOGAR ================= */
@@ -1289,7 +1304,6 @@ rollBtn.onclick = async ()=>{
   const cell = SPECIAL_CELLS[idx];
 
   if(idx < 3){
-    current = (current+1) % players.length;
     updateTurn();
   }
   else if(cell){
