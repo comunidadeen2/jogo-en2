@@ -823,10 +823,12 @@ function updateTurn(){
         text:"OK",
         cls:"decline",
         action:()=>{
-          closeModal();
-          current = (current+1) % players.length;
-          updateTurn();
-        }
+  players[current].questionsWrong++;
+  closeModal();
+  rollBtn.disabled = false;   // 🔴 ESTA LINHA É OBRIGATÓRIA
+  current = (current+1) % players.length;
+  updateTurn();
+}
       }],
       "Ficaste sem jogar este turno."
     );
@@ -999,7 +1001,8 @@ async function doEvent(){
       }
 
       current = (current+1) % players.length;
-      updateTurn();
+rollBtn.disabled = false;   // 🔴 DESBLOQUEIA AQUI
+updateTurn();
     }
   }]);
 }
