@@ -643,15 +643,6 @@ const EVENTS = [
 
 {
   title:"Nem tudo na viagem corre bem…",
-  text:"Dia de obras na EN2.",
-  effect:"Todos ficam 1 vez sem jogar.",
-  skip:1,
-  all:true,
-  cls:"eventBad"
-},
-
-{
-  title:"Nem tudo na viagem corre bem…",
   text:"Confusão generalizada de trânsito.",
   effect:"Todos recuam 1 casa.",
   move:-1,
@@ -1143,12 +1134,17 @@ function askFicha(cell){
           const p = players[current];
           p.municipiosVisitados++;
 
-          if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
-            p.done[cell.km] = true;
-          } else {
-            p.extra.push(cell.km);
-          }
+          if(p.done[cell.km] || p.extra.includes(cell.km)){
+  // já tem a ficha → não faz nada
+} else {
+  p.municipiosVisitados++;
 
+  if(!p.objective.special && p.objective.items.some(it=>it.km===cell.km)){
+    p.done[cell.km] = true;
+  } else {
+    p.extra.push(cell.km);
+  }
+}
           if(cell.final){
             p.finished = true;
             p.order = players.filter(x=>x.finished).length;
@@ -1195,7 +1191,33 @@ function getPreviousMunicipioIndex(pos){
   return KM_TO_INDEX[prevKm] ?? 0;
 }
 
+function getNextMunicipioIndex(pos){
+  const indices = Object.values(KM_TO_INDEX)
+    .map(Number)
+    .sort((a,b)=>a-b);
+
+  for(const idx of indices){
+    if(idx > pos){
+      return idx;
+    }
+  }
+  return pos;
+}
+
 /* ================= EVENTO ================= */
+function getNextMunicipioIndex(pos){
+  const indices = Object.values(KM_TO_INDEX)
+    .map(Number)
+    .sort((a,b)=>a-b);
+
+  for(const idx of indices){
+    if(idx > pos){
+      return idx;
+    }
+  }
+  return pos;
+}
+
 function doEvent(){
   const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
 
@@ -1240,6 +1262,9 @@ if(ev.backMunicipio){
 
 if(ev.backToPreviousMunicipio){
   target = getPreviousMunicipioIndex(p.pos);
+}
+if(ev.goNextMunicipio){
+  target = getNextMunicipioIndex(p.pos);
 }
           while(p.pos !== target){
             p.pos += p.pos < target ? 1 : -1;
