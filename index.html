@@ -1134,7 +1134,8 @@ function askFicha(cell){
           }
 
           // 🔥 CONTINUA A JOGAR
-          updateTurn();
+          current = (current + 1) % players.length;
+updateTurn();
         }
       },
       {
@@ -1149,7 +1150,8 @@ function askFicha(cell){
       p.order = players.filter(x=>x.finished).length;
     }
 
-    updateTurn();
+    current = (current + 1) % players.length;
+updateTurn();
   }
 }
     ]
@@ -1258,7 +1260,7 @@ if(ev.goNextMunicipio){
 }
 }
 
-current = (current+1) % players.length;
+current = (current + 1) % players.length;
 updateTurn();
 }
 }],
