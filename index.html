@@ -833,8 +833,7 @@ function askQuestion(cell){
           players[current].questionsWrong++;
           closeModal();
           rollBtn.disabled = false;   // 🔴 DESBLOQUEIA
-          current = (current+1) % players.length;
-          updateTurn();
+          endTurn();
         }
       }
     ],
@@ -940,9 +939,7 @@ async function doEvent(){
         }
       }
 
-      current = (current+1) % players.length;
-rollBtn.disabled = false;   // 🔴 DESBLOQUEIA AQUI
-updateTurn();
+      endTurn();
     }
   }]);
 }
@@ -971,8 +968,7 @@ const cell = SPECIAL_CELLS[idx];
 
 // 1️⃣ casas iniciais — nada acontece
 if(idx < 3){
-  current = (current+1) % players.length;
-  updateTurn();
+  endTurn();
 }
 
 // 2️⃣ CASAS COM KM → PERGUNTA (PRIORIDADE MÁXIMA)
@@ -1046,6 +1042,15 @@ function showPodium(){
     </div>
   `).join("")}
   </div>`;
+}
+function endTurn(){
+  if(players.every(p=>p.finished)){
+    showPodium();
+    return;
+  }
+
+  current = (current + 1) % players.length;
+  updateTurn();
 }
 </script>
 </body>
