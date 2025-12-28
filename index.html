@@ -599,6 +599,179 @@ const EVENTS = [
   goKm:35,
   all:true,
   cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Paraste para discutir qual é a melhor bifana.",
+  effect:"Ficas 1 vez sem jogar.",
+  skip:1,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"O motor aqueceu numa subida longa.",
+  effect:"Recua 2 casas.",
+  move:-2,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Perdeste tempo à procura de um carimbo raro.",
+  effect:"Na próxima jogada só podes avançar 1 casa.",
+  limitNextRoll:1,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Chuva intensa obrigou a reduzir velocidade.",
+  effect:"Ficas 1 vez sem jogar.",
+  skip:1,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Paragem longa numa esplanada.",
+  effect:"Ficas 1 vez sem jogar.",
+  skip:1,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Dia de obras na EN2.",
+  effect:"Todos ficam 1 vez sem jogar.",
+  skip:1,
+  all:true,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Confusão generalizada de trânsito.",
+  effect:"Todos recuam 1 casa.",
+  move:-1,
+  all:true,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Calor extremo em todo o país.",
+  effect:"Na próxima jogada todos só podem avançar 1 casa.",
+  limitNextRoll:1,
+  all:true,
+  cls:"eventBad"
+},
+
+{
+  title:"Bons momentos!",
+  text:"Paraste para ajudar outro viajante da EN2.",
+  effect:"Avança 1 casa.",
+  move:1,
+  cls:"eventGood"
+},
+
+{
+  title:"Momento EN2",
+  text:"Ficaste a ouvir histórias locais.",
+  effect:"Nada acontece… mas valeu a pena 😄",
+  cls:"eventGood"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Selfies demais para as redes sociais.",
+  effect:"Recua 1 casa.",
+  move:-1,
+  cls:"eventBad"
+},
+
+{
+  title:"Bons momentos!",
+  text:"Encontraste um festival inesperado.",
+  effect:"Avança 2 casas.",
+  move:2,
+  cls:"eventGood"
+},
+
+{
+  title:"Bons momentos!",
+  text:"Estrada vazia e ritmo perfeito.",
+  effect:"Avança 2 casas.",
+  move:2,
+  cls:"eventGood"
+},
+
+{
+  title:"Bons momentos!",
+  text:"Paragem técnica super eficiente.",
+  effect:"Avança 1 casa.",
+  move:1,
+  cls:"eventGood"
+},
+
+{
+  title:"Bons momentos!",
+  text:"Dica local salvou-te tempo.",
+  effect:"Avança até ao próximo município.",
+  goNextMunicipio:true,
+  cls:"eventGood"
+},
+
+{
+  title:"Bons momentos!",
+  text:"Dia perfeito para viajar na EN2.",
+  effect:"Todos avançam 1 casa.",
+  move:1,
+  all:true,
+  cls:"eventGood"
+},
+
+{
+  title:"Bons momentos!",
+  text:"Trânsito fluido de norte a sul.",
+  effect:"Todos avançam 2 casas.",
+  move:2,
+  all:true,
+  cls:"eventGood"
+},
+
+{
+  title:"Espírito EN2!",
+  text:"O entusiasmo contagia todos os viajantes.",
+  effect:"Todos jogam novamente quando lhes tocar.",
+  extraTurn:true,
+  all:true,
+  cls:"eventGood"
+},
+
+{
+  title:"Momento simbólico!",
+  text:"Decisão estratégica ousada.",
+  effect:"Avança até ao Km 369 (Meio da EN2).",
+  goKm:369,
+  cls:"eventGood"
+},
+
+{
+  title:"Bons momentos!",
+  text:"Atalho improvável correu bem.",
+  effect:"Avança 3 casas.",
+  move:3,
+  cls:"eventGood"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Erro de planeamento grave.",
+  effect:"Recua 3 casas.",
+  move:-3,
+  cls:"eventBad"
 }
 
 ];
