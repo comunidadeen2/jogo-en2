@@ -1317,6 +1317,7 @@ function getNextMunicipioIndex(pos){
 }
 
 /* ================= ESTAÇÃO DO ANO ================= */
+
 function setSeason(season){
   document.body.className = season;
   seasonSelect.classList.add("hidden");
@@ -1334,20 +1335,23 @@ function doEvent(){
       action: async ()=>{
         closeModal();
 
-        if(ev.skip){
-          players[current].skipTurns = ev.skip;
-        }
-        if(ev.limitNextRoll){
-          players[current].limitNextRoll = ev.limitNextRoll;
-        }
-
         const movers = ev.all ? players : [players[current]];
 
         for(const p of movers){
           let target = p.pos;
 
+          if(ev.skip){
+            p.skipTurns += ev.skip;
+          }
+
+          if(ev.limitNextRoll){
+            p.limitNextRoll = ev.limitNextRoll;
+          }
+
           if(ev.move){
-            target = Math.max(0, Math.min(SPACES.length-1, p.pos + ev.move));
+            target = p.pos + ev.move;
+            if(target < 0) target = 0;
+            if(target > SPACES.length-1) target = SPACES.length-1;
           }
 
           if(ev.goKm !== undefined){
@@ -1355,11 +1359,11 @@ function doEvent(){
           }
 
           if(ev.backToPreviousMunicipio){
-            target = getPreviousMunicipioIndex(target);
+            target = getPreviousMunicipioIndex(p.pos);
           }
 
           if(ev.goNextMunicipio){
-            target = getNextMunicipioIndex(target);
+            target = getNextMunicipioIndex(p.pos);
           }
 
           while(p.pos !== target){
@@ -1368,10 +1372,10 @@ function doEvent(){
             await new Promise(r=>setTimeout(r,200));
           }
         }
-           }
+
         current = (current + 1) % players.length;
-rollBtn.disabled = false;
-updateTurn();
+        rollBtn.disabled = false;
+        updateTurn();
       }
     }],
     ev.effect
@@ -1488,4 +1492,3 @@ function showPodium(){
 </script>
 </body>
 </html>
-
