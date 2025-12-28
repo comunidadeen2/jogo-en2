@@ -463,12 +463,12 @@ Object.keys(KM_BY_INDEX).forEach(i=>{
 });
 
 /* ================= EVENTOS ================= */
-const EVENTS = [
+const EVENTS_NORTE = [
 
   {
     title:"Nem tudo na viagem corre bem…",
     text:"Furo no pneu em Santa Marta de Penaguião.",
-    effect:"Recua 1 casa.",
+    effect:"Volta 1 casa.",
     move:-1,
     cls:"eventBad"
   },
@@ -476,43 +476,98 @@ const EVENTS = [
   {
     title:"Nem tudo na viagem corre bem…",
     text:"A tua mota ficou sem gasolina.",
-    effect:"Recua 2 casas.",
+    effect:"Volta 2 casas.",
     move:-2,
     cls:"eventBad"
   },
 
   {
-    title:"Bons momentos!",
-    text:"Estrada livre, bom ritmo.",
-    effect:"Avança +1 casa.",
-    move:1,
-    cls:"eventGood"
+    title:"Nem tudo na viagem corre bem…",
+    text:"Caravana emperrou na subida.",
+    effect:"Fica 1 vez sem jogar.",
+    skip:1,
+    cls:"eventBad"
   },
 
   {
-    title:"Bons momentos!",
-    text:"Paisagem inspiradora.",
-    effect:"Avança +2 casas.",
-    move:2,
-    cls:"eventGood"
+    title:"Nem tudo na viagem corre bem…",
+    text:"O GPS perdeu-se no meio da serra.",
+    effect:"Fica 2 vezes sem jogar.",
+    skip:2,
+    cls:"eventBad"
   },
 
   {
-    title:"Bons momentos!",
-    text:"Seguiste pela rota mais fluida.",
-    effect:"Avança até ao Km 200 (Tondela).",
-    goKm:200,
-    cls:"eventGood"
+    title:"Nem tudo na viagem corre bem…",
+    text:"Selfie em Chaves no Km 0.",
+    effect:"Recua até Chaves (Km 0).",
+    goKm:0,
+    cls:"eventBad"
   },
 
   {
-    title:"Bons momentos!",
-    text:"Chegaste ao ponto simbólico da viagem.",
-    effect:"Avança até ao Km 369 (Meio da EN2).",
-    goKm:369,
-    cls:"eventGood"
+    title:"Nem tudo na viagem corre bem…",
+    text:"Termas em Carvalhal: relax total!",
+    effect:"Fica 1 vez sem jogar.",
+    skip:1,
+    cls:"eventBad"
   },
-/* ==== EVENTOS GLOBAIS ==== */
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Saltou a corrente da bicicleta.",
+    effect:"Fica 1 vez sem jogar.",
+    skip:1,
+    cls:"eventBad"
+  },
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Ui… sol de frente.",
+    effect:"Fica 1 vez sem jogar.",
+    skip:1,
+    cls:"eventBad"
+  },
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Ir carimbar Mortágua é um grande desvio.",
+    effect:"Fica 1 vez sem jogar.",
+    skip:1,
+    cls:"eventBad"
+  },
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Foste apanhado no radar.",
+    effect:"Na próxima jogada avanças só 1 casa.",
+    slow:1,
+    cls:"eventBad"
+  },
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Encontro com grupo de ciclistas.",
+    effect:"Recua 1 casa.",
+    move:-1,
+    cls:"eventBad"
+  },
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Estrada sem sinalização.",
+    effect:"Volta ao município anterior.",
+    backMunicipio:true,
+    cls:"eventBad"
+  },
+
+  {
+    title:"Nem tudo na viagem corre bem…",
+    text:"Estrada em obras.",
+    effect:"Na próxima jogada avanças só 1 casa.",
+    slow:1,
+    cls:"eventBad"
+  },
 
   {
     title:"Nem tudo na viagem corre bem…",
@@ -524,25 +579,15 @@ const EVENTS = [
   },
 
   {
-    title:"Bons momentos!",
-    text:"Trânsito fluido em toda a EN2.",
-    effect:"Todos os jogadores avançam 1 casa.",
-    move:1,
-    all:true,
-    cls:"eventGood"
-  },
-
-  {
     title:"Nem tudo na viagem corre bem…",
     text:"Arrastão da Grande Pedra em Vila Pouca de Aguiar.",
-    effect:"Todos os jogadores vão para Vila Pouca de Aguiar (Km 35).",
+    effect:"Todos vão para Vila Pouca de Aguiar (Km 35).",
     goKm:35,
     all:true,
     cls:"eventBad"
   }
 
 ];
-
 
 /* ================= PERGUNTAS ================= */
 const QUESTIONS = [
@@ -765,17 +810,20 @@ startBtn.onclick = ()=>{
       b.onclick = ()=>{
         used.push(p.id);
         players.push({
-          name: input.value || ("Jogador "+(i+1)),
-          pawn: p.id,
-          pos: 0,
-          done: {},
-          extra: [],
-          municipiosVisitados: 0,
-          questionsCorrect: 0,
-          questionsWrong: 0,
-          finished: false,
-          order: 0
-        });
+  name: input.value || ("Jogador "+(i+1)),
+  pawn: p.id,
+  pos: 0,
+  done: {},
+  extra: [],
+  municipiosVisitados: 0,
+  questionsCorrect: 0,
+  questionsWrong: 0,
+  finished: false,
+  order: 0,
+
+  skipTurns: 0,   // vezes sem jogar
+  slowNext: 0     // jogada lenta
+});
         pawns[p.id].style.display = "block";
         placePawn(pawns[p.id],0);
         i++;
@@ -928,7 +976,19 @@ function doEvent(){
 
         for(const p of movers){
           let target = p.pos;
+if(ev.skip){
+  p.skipTurns += ev.skip;
+}
 
+if(ev.slow){
+  p.slowNext += ev.slow;
+}
+if(ev.backMunicipio){
+  const kms = Object.values(KM_BY_INDEX).filter(k => k < (KM_BY_INDEX[p.pos] ?? 0));
+  const prevKm = Math.max(...kms);
+  p.pos = KM_TO_INDEX[prevKm];
+  placePawn(pawns[p.pawn], p.pos);
+}
           if(ev.move){
             target = p.pos + ev.move;
             if(target < 0) target = 0;
@@ -956,7 +1016,20 @@ function doEvent(){
 
 /* ================= JOGAR ================= */
 rollBtn.onclick = async ()=>{
-  const r = Math.floor(Math.random()*6)+1;
+const p = players[current];
+
+if(p.skipTurns > 0){
+  p.skipTurns--;
+  current = (current + 1) % players.length;
+  updateTurn();
+  return;
+}
+  let r = Math.floor(Math.random()*6)+1;
+
+if(p.slowNext > 0){
+  r = 1;
+  p.slowNext = 0;
+}
   dice.textContent = r;
 
   const p = players[current];
