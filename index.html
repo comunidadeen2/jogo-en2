@@ -74,6 +74,30 @@ h1{
   display:none;
 }
 
+/* ================= FUNDO POR ESTAÇÃO ================= */
+
+body.spring {
+  background: linear-gradient(180deg, #e9f5ec, #f4faf6);
+}
+
+body.summer {
+  background: linear-gradient(180deg, #fff4cc, #fffbe6);
+}
+
+body.autumn {
+  background: linear-gradient(180deg, #f6e7d8, #fdf6ef);
+}
+
+body.winter {
+  background: linear-gradient(180deg, #eef2f5, #dfe6ec);
+}
+
+/* tabuleiro destacado */
+.board-frame {
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  background: #000;
+}
+
 /* CONTROLOS */
 .controls{
   text-align:center;
@@ -283,7 +307,13 @@ button:disabled{
   </div>
 
   <div id="names" class="hidden"></div>
-
+<div id="seasonSelect" class="hidden" style="text-align:center;margin-top:12px">
+  <p>Escolhe a estação do ano</p>
+  <button onclick="setSeason('spring')">🌸 Primavera</button>
+  <button onclick="setSeason('summer')">☀️ Verão</button>
+  <button onclick="setSeason('autumn')">🍂 Outono</button>
+  <button onclick="setSeason('winter')">❄️ Inverno</button>
+</div>
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
@@ -1020,11 +1050,11 @@ rollBtn.disabled = false;
       const deck = [...OBJECTIVES].sort(()=>Math.random()-0.5);
       players.forEach(p=>p.objective = deck.pop());
       names.classList.add("hidden");
-      game.classList.remove("hidden");
-      objectivePanel.classList.remove("hidden");
-      updateTurn();
-      return;
-    }
+seasonSelect.classList.remove("hidden");
+game.classList.remove("hidden");
+objectivePanel.classList.remove("hidden");
+updateTurn();
+return;
 
     const input = document.createElement("input");
     input.placeholder = "Nome do Jogador";
@@ -1284,6 +1314,12 @@ function getNextMunicipioIndex(pos){
     }
   }
   return pos;
+}
+
+/* ================= ESTAÇÃO DO ANO ================= */
+function setSeason(season){
+  document.body.className = season;
+  seasonSelect.classList.add("hidden");
 }
 
 function doEvent(){
