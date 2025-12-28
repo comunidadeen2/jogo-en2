@@ -733,15 +733,6 @@ const EVENTS = [
 },
 
 {
-  title:"Espírito EN2!",
-  text:"O entusiasmo contagia todos os viajantes.",
-  effect:"Todos jogam novamente quando lhes tocar.",
-  extraTurn:true,
-  all:true,
-  cls:"eventGood"
-},
-
-{
   title:"Momento simbólico!",
   text:"Decisão estratégica ousada.",
   effect:"Avança até ao Km 369 (Meio da EN2).",
@@ -1001,8 +992,7 @@ startBtn.onclick = ()=>{
 
   skipTurns: 0,
   limitNextRoll: null,
-  extraTurns: 0
-});
+  });
 
         pawns[p.id].style.display = "block";
         placePawn(pawns[p.id],0);
@@ -1231,20 +1221,6 @@ updateTurn();
 if(ev.limitNextRoll){
   players[current].limitNextRoll = ev.limitNextRoll;
 }
-if(ev.extraTurn){
-  if(ev.all){
-    players.forEach(p => p.extraTurns = (p.extraTurns || 0) + 1);
-  } else {
-    players[current].extraTurns = (players[current].extraTurns || 0) + 1;
-  }
-}
-if(ev.extraTurn){
-  if(ev.all){
-    players.forEach(p => p.extraTurns++);
-  } else {
-    players[current].extraTurns++;
-  }
-}
         const movers = ev.all ? players : [players[current]];
 
         for(const p of movers){
@@ -1327,11 +1303,7 @@ rollBtn.onclick = async ()=>{
   else if(idx < 85){
     doEvent();
   }
-  else{
-    if(players[current].extraTurns && players[current].extraTurns > 0){
-  players[current].extraTurns--;
-  updateTurn();
-} else {
+  else {
   current = (current+1) % players.length;
   updateTurn();
 }
