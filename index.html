@@ -1171,9 +1171,7 @@ function getPreviousMunicipioIndex(pos){
   }
   return prev;
 }
-  return KM_TO_INDEX[prevKm] ?? 0;
-}
-
+  
 function getNextMunicipioIndex(pos){
   const indices = Object.values(KM_TO_INDEX)
     .map(Number)
