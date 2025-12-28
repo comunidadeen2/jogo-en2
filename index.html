@@ -1221,6 +1221,8 @@ function doEvent(){
       text:"OK",
       cls:ev.cls,
       action: async ()=>{
+current = (current+1) % players.length;
+updateTurn();
         closeModal();
 
         if(ev.skip){
@@ -1285,16 +1287,7 @@ if(ev.extraTurn){
   } else {
     
   }
-}
-
-        if(players[current].extraTurn){
-  players[current].extraTurn = false;
-  updateTurn();
-} else {
-  current = (current+1) % players.length;
-    updateTurn();
-  }
-  ],
+}],
   ev.effect
 );
 }
