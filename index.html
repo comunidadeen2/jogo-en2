@@ -1285,12 +1285,12 @@ if(ev.extraTurn){
   updateTurn();
 } else {
   current = (current+1) % players.length;
-  updateTurn();
+    updateTurn();
+  }
+  ],
+  ev.effect
+);
 }
-      }
-    }],
-    ev.effect
-  );
 if(ev.extraTurn){
   if(ev.all){
     players.forEach(p => p.extraTurns++);
