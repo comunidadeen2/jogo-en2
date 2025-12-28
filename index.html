@@ -463,129 +463,143 @@ Object.keys(KM_BY_INDEX).forEach(i=>{
 });
 
 /* ================= EVENTOS ================= */
-const EVENTS_NORTE = [
+const EVENTS = [
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Furo no pneu em Santa Marta de Penaguião.",
-    effect:"Volta 1 casa.",
-    move:-1,
-    cls:"eventBad"
-  },
+/* ================= NEGATIVOS ================= */
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"A tua mota ficou sem gasolina.",
-    effect:"Volta 2 casas.",
-    move:-2,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Caravana emperrou na subida.",
+  effect:"Ficas 1 vez sem jogar.",
+  skip:1,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Caravana emperrou na subida.",
-    effect:"Fica 1 vez sem jogar.",
-    skip:1,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"O GPS perdeu-se no meio da serra.",
+  effect:"Ficas 2 vezes sem jogar.",
+  skip:2,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"O GPS perdeu-se no meio da serra.",
-    effect:"Fica 2 vezes sem jogar.",
-    skip:2,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Saltou a corrente da bicicleta.",
+  effect:"Ficas 1 vez sem jogar.",
+  skip:1,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Selfie em Chaves no Km 0.",
-    effect:"Recua até Chaves (Km 0).",
-    goKm:0,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Ui… sol de frente.",
+  effect:"Ficas 1 vez sem jogar.",
+  skip:1,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Termas em Carvalhal: relax total!",
-    effect:"Fica 1 vez sem jogar.",
-    skip:1,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Ir carimbar Mortágua é um grande desvio.",
+  effect:"Ficas 1 vez sem jogar.",
+  skip:1,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Saltou a corrente da bicicleta.",
-    effect:"Fica 1 vez sem jogar.",
-    skip:1,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Foste apanhado no radar.",
+  effect:"Na próxima jogada só podes avançar 1 casa.",
+  limitNextRoll:1,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Ui… sol de frente.",
-    effect:"Fica 1 vez sem jogar.",
-    skip:1,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Estrada em obras.",
+  effect:"Na próxima jogada só podes avançar 1 casa.",
+  limitNextRoll:1,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Ir carimbar Mortágua é um grande desvio.",
-    effect:"Fica 1 vez sem jogar.",
-    skip:1,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Estrada sem sinalização.",
+  effect:"Voltas ao município anterior.",
+  backToPreviousMunicipio:true,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Foste apanhado no radar.",
-    effect:"Na próxima jogada avanças só 1 casa.",
-    slow:1,
-    cls:"eventBad"
-  },
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Selfie em Chaves no Km 0.",
+  effect:"Vai até Chaves (Km 0).",
+  goKm:0,
+  cls:"eventBad"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Encontro com grupo de ciclistas.",
-    effect:"Recua 1 casa.",
-    move:-1,
-    cls:"eventBad"
-  },
+/* ================= POSITIVOS ================= */
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Estrada sem sinalização.",
-    effect:"Volta ao município anterior.",
-    backMunicipio:true,
-    cls:"eventBad"
-  },
+{
+  title:"Bons momentos!",
+  text:"Estrada livre e excelente ritmo.",
+  effect:"Avança 1 casa.",
+  move:1,
+  cls:"eventGood"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Estrada em obras.",
-    effect:"Na próxima jogada avanças só 1 casa.",
-    slow:1,
-    cls:"eventBad"
-  },
+{
+  title:"Bons momentos!",
+  text:"Encontraste o trajeto certo.",
+  effect:"Avança 2 casas.",
+  move:2,
+  cls:"eventGood"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Mau tempo em todo o país.",
-    effect:"Todos os jogadores recuam 1 casa.",
-    move:-1,
-    all:true,
-    cls:"eventBad"
-  },
+{
+  title:"Bons momentos!",
+  text:"Boa energia na viagem.",
+  effect:"Avança 3 casas.",
+  move:3,
+  cls:"eventGood"
+},
 
-  {
-    title:"Nem tudo na viagem corre bem…",
-    text:"Arrastão da Grande Pedra em Vila Pouca de Aguiar.",
-    effect:"Todos vão para Vila Pouca de Aguiar (Km 35).",
-    goKm:35,
-    all:true,
-    cls:"eventBad"
-  }
+{
+  title:"Bons momentos!",
+  text:"Seguiste pela rota certa.",
+  effect:"Avança até ao Km 200 (Tondela).",
+  goKm:200,
+  cls:"eventGood"
+},
+
+{
+  title:"Momento simbólico!",
+  text:"Chegaste ao coração da viagem.",
+  effect:"Avança até ao Km 369 (Meio da EN2).",
+  goKm:369,
+  cls:"eventGood"
+},
+
+/* ================= GLOBAIS ================= */
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Mau tempo em todo o país.",
+  effect:"Todos os jogadores recuam 1 casa.",
+  move:-1,
+  all:true,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Arrastão da Grande Pedra em Vila Pouca de Aguiar.",
+  effect:"Todos os jogadores vão para Vila Pouca de Aguiar (Km 35).",
+  goKm:35,
+  all:true,
+  cls:"eventBad"
+}
 
 ];
 
@@ -1128,4 +1142,3 @@ function showPodium(){
 </script>
 </body>
 </html>
-
