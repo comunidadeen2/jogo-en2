@@ -539,7 +539,53 @@ const EVENTS = [
   cls:"eventBad"
 },
 
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Paraste demasiadas vezes para fotos.",
+  effect:"Recua 1 casa.",
+  move:-1,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Confundiste uma saída.",
+  effect:"Recua 2 casas.",
+  move:-2,
+  cls:"eventBad"
+},
+
+{
+  title:"Nem tudo na viagem corre bem…",
+  text:"Paragem técnica demorada.",
+  effect:"Ficas 1 vez sem jogar.",
+  skip:1,
+  cls:"eventBad"
+}
+
 /* ================= POSITIVOS ================= */
+
+{
+  title:"Bons momentos!",
+  text:"Estrada tranquila e sem trânsito.",
+  effect:"Avança 1 casa.",
+  move:1,
+  cls:"eventGood"
+},
+{
+  title:"Bons momentos!",
+  text:"Boa dica de um local.",
+  effect:"Avança 2 casas.",
+  move:2,
+  cls:"eventGood"
+},
+{
+  title:"Bons momentos!",
+  text:"Encontraste um atalho simples.",
+  effect:"Avança 3 casas.",
+  move:3,
+  cls:"eventGood"
+}
 
 {
   title:"Bons momentos!",
@@ -627,6 +673,14 @@ const EVENTS = [
 
 {
   title:"Nem tudo na viagem corre bem…",
+  text:"Decisão errada no mapa.",
+  effect:"Recua 5 casas.",
+  move:-5,
+  cls:"eventBad"
+}, 
+
+{
+  title:"Nem tudo na viagem corre bem…",
   text:"Chuva intensa obrigou a reduzir velocidade.",
   effect:"Ficas 1 vez sem jogar.",
   skip:1,
@@ -650,14 +704,6 @@ const EVENTS = [
   cls:"eventBad"
 },
 
-{
-  title:"Nem tudo na viagem corre bem…",
-  text:"Calor extremo em todo o país.",
-  effect:"Na próxima jogada todos só podem avançar 1 casa.",
-  limitNextRoll:1,
-  all:true,
-  cls:"eventBad"
-},
 
 {
   title:"Bons momentos!",
@@ -689,7 +735,18 @@ const EVENTS = [
   move:2,
   cls:"eventGood"
 },
-
+{
+  title:"Momento EN2 😄",
+  text:"Paraste só para apreciar a paisagem.",
+  effect:"Nada acontece.",
+  cls:"eventGood"
+},
+{
+  title:"Momento EN2 😄",
+  text:"Conversa longa com outro viajante.",
+  effect:"Nada acontece.",
+  cls:"eventGood"
+},
 {
   title:"Bons momentos!",
   text:"Estrada vazia e ritmo perfeito.",
@@ -760,11 +817,21 @@ const EVENTS = [
 
 /* ================= PERGUNTAS ================= */
 const QUESTIONS = [
-  "Qual é o prato típico mais famoso de Portugal?",
-  "Em que ano foi inaugurada a EN2?",
-  "Qual é o rio mais longo de Portugal?",
-  "Portugal tem quantos distritos?",
-  "Qual é a capital do Algarve?"
+  {
+    q: "A EN2 liga que duas cidades?",
+    a: ["Chaves e Faro", "Lisboa e Porto", "Braga e Évora"],
+    c: 0
+  },
+  {
+    q: "Qual é o ponto simbólico da EN2?",
+    a: ["Km 369", "Km 500", "Km 666"],
+    c: 0
+  },
+  {
+    q: "Em que distrito fica Castro Verde?",
+    a: ["Beja", "Faro", "Évora"],
+    c: 0
+  }
 ];
 
 /* ================= OBJETIVOS (13 TOTAIS) ================= */
@@ -1076,30 +1143,27 @@ function renderObjective(p){
 
 /* ================= PERGUNTA ================= */
 function askQuestion(cell){
+  const q = QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+
   showModal(
-    QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)],
-    [
-      {
-        text:"Resposta Certa",
-        cls:"accept",
-        action:()=>{
+    "❓ Pergunta EN2",
+    q.q,
+    q.a.map((txt, i)=>({
+      text: txt,
+      cls: "accept",
+      action: ()=>{
+        closeModal();
+
+        if(i === q.c){
           players[current].questionsCorrect++;
-          closeModal();
-          askFicha(cell); // 🔹 CONTINUA SEMPRE
-        }
-      },
-      {
-        text:"Resposta Errada",
-        cls:"decline",
-        action:()=>{
+          askFicha(cell); // continua a jogar
+        } else {
           players[current].questionsWrong++;
-          closeModal();
           current = (current + 1) % players.length;
-rollBtn.disabled = false;
-updateTurn();
+          updateTurn();
         }
       }
-    ]
+    }))
   );
 }
 
