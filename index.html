@@ -1154,23 +1154,24 @@ function askQuestion(cell){
     "❓ Pergunta EN2",
     q.q,
     q.a.map((txt, i)=>({
-  text: txt,
-  cls:"accept",
-  action: ()=>{
-    if(i === q.c){
-      players[current].questionsCorrect++;
-      closeModal();
-      askFicha(cell);
-    } else {
-      players[current].questionsWrong++;
-      closeModal();
-      current = (current + 1) % players.length;
-      rollBtn.disabled = false;
-      updateTurn();
-    }
-  }
-}))
-    );
+      text: txt,
+      cls:"accept",
+      action: ()=>{
+        if(i === q.c){
+          players[current].questionsCorrect++;
+          closeModal();
+          askFicha(cell);
+        } else {
+          players[current].questionsWrong++;
+          closeModal();
+          current = (current + 1) % players.length;
+          rollBtn.disabled = false;
+          updateTurn();
+        }
+      }
+    }))
+  );
+}
 
 /* ================= FICHA (CORRIGIDO) ================= */
 function askFicha(cell){
@@ -1438,4 +1439,3 @@ function showPodium(){
 </script>
 </body>
 </html>
-
