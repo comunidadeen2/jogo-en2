@@ -678,6 +678,10 @@ function placePawn(pawn, i){
 
 /* ================= MODAL ================= */
 function showModal(a, b, c, d = ""){
+function closeModal(){
+  modal.style.display = "none";
+  rollBtn.disabled = false;
+}
   let title = "";
   let text = "";
   let buttons = [];
