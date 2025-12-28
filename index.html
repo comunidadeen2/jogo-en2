@@ -1210,61 +1210,49 @@ function doEvent(){
       text:"OK",
       cls:ev.cls,
       action: async ()=>{
-current = (current+1) % players.length;
-updateTurn();
         closeModal();
 
         if(ev.skip){
-  players[current].skipTurns = ev.skip;
-}
-if(ev.limitNextRoll){
-  players[current].limitNextRoll = ev.limitNextRoll;
-}
+          players[current].skipTurns = ev.skip;
+        }
+        if(ev.limitNextRoll){
+          players[current].limitNextRoll = ev.limitNextRoll;
+        }
+
         const movers = ev.all ? players : [players[current]];
 
         for(const p of movers){
           let target = p.pos;
-if(ev.skip){
-  players[current].skipTurns = ev.skip;
-}
 
-if(ev.backMunicipio){
-  const kms = Object.values(KM_BY_INDEX).filter(k => k < (KM_BY_INDEX[p.pos] ?? 0));
-  const prevKm = Math.max(...kms);
-  p.pos = KM_TO_INDEX[prevKm];
-  placePawn(pawns[p.pawn], p.pos);
-}
           if(ev.move){
-            target = p.pos + ev.move;
-            if(target < 0) target = 0;
-            if(target > SPACES.length-1) target = SPACES.length-1;
+            target = Math.max(0, Math.min(SPACES.length-1, p.pos + ev.move));
           }
 
           if(ev.goKm !== undefined){
             target = KM_TO_INDEX[ev.goKm];
           }
 
-if(ev.backToPreviousMunicipio){
-  target = getPreviousMunicipioIndex(target);
-}
+          if(ev.backToPreviousMunicipio){
+            target = getPreviousMunicipioIndex(target);
+          }
 
-if(ev.goNextMunicipio){
-  target = getNextMunicipioIndex(target);
-}
+          if(ev.goNextMunicipio){
+            target = getNextMunicipioIndex(target);
+          }
 
           while(p.pos !== target){
-  p.pos += p.pos < target ? 1 : -1;
-  placePawn(pawns[p.pawn], p.pos);
-  await new Promise(r=>setTimeout(r,200));
-}
-}
+            p.pos += p.pos < target ? 1 : -1;
+            placePawn(pawns[p.pawn], p.pos);
+            await new Promise(r=>setTimeout(r,200));
+          }
+        }
 
-current = (current + 1) % players.length;
-updateTurn();
-}
-}],
-ev.effect
-);
+        current = (current + 1) % players.length;
+        updateTurn();
+      }
+    }],
+    ev.effect
+  );
 }
 
 /* ================= JOGAR ================= */
