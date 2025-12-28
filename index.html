@@ -1157,20 +1157,20 @@ function askFicha(cell){
 }
 
 function getPreviousMunicipioIndex(pos){
-  const kms = Object.keys(KM_TO_INDEX)
+  const indices = Object.values(KM_TO_INDEX)
     .map(Number)
     .sort((a,b)=>a-b);
 
-  let prevKm = 0;
-
-  for(const km of kms){
-    if(KM_TO_INDEX[km] < pos){
-      prevKm = km;
+  let prev = pos;
+  for(const idx of indices){
+    if(idx < pos){
+      prev = idx;
     } else {
       break;
     }
   }
-
+  return prev;
+}
   return KM_TO_INDEX[prevKm] ?? 0;
 }
 
@@ -1246,11 +1246,13 @@ if(ev.backMunicipio){
           }
 
 if(ev.backToPreviousMunicipio){
-  target = getPreviousMunicipioIndex(p.pos);
+  target = getPreviousMunicipioIndex(target);
 }
+
 if(ev.goNextMunicipio){
-  target = getNextMunicipioIndex(p.pos);
+  target = getNextMunicipioIndex(target);
 }
+
           while(p.pos !== target){
   p.pos += p.pos < target ? 1 : -1;
   placePawn(pawns[p.pawn], p.pos);
