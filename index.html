@@ -1280,14 +1280,7 @@ if(ev.goNextMunicipio){
             placePawn(pawns[p.pawn], p.pos);
             await new Promise(r=>setTimeout(r,200));
           }
-        }
-if(ev.extraTurn){
-  if(ev.all){
-    players.forEach(p => p.extraTurn = true);
-  } else {
-    
-  }
-}],
+        }],
   ev.effect
 );
 }
