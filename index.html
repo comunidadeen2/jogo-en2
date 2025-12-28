@@ -1236,6 +1236,13 @@ if(ev.extraTurn){
     players[current].extraTurns = (players[current].extraTurns || 0) + 1;
   }
 }
+if(ev.extraTurn){
+  if(ev.all){
+    players.forEach(p => p.extraTurns++);
+  } else {
+    players[current].extraTurns++;
+  }
+}
         const movers = ev.all ? players : [players[current]];
 
         for(const p of movers){
@@ -1290,14 +1297,6 @@ if(ev.extraTurn){
   ],
   ev.effect
 );
-}
-if(ev.extraTurn){
-  if(ev.all){
-    players.forEach(p => p.extraTurns++);
-  } else {
-    players[current].extraTurns++;
-  }
-}
 }
 
 /* ================= JOGAR ================= */
