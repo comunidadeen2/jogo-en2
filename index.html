@@ -1037,9 +1037,6 @@ if(ev.skip){
   p.skipTurns += ev.skip;
 }
 
-if(ev.slow){
-  p.slowNext += ev.slow;
-}
 if(ev.backMunicipio){
   const kms = Object.values(KM_BY_INDEX).filter(k => k < (KM_BY_INDEX[p.pos] ?? 0));
   const prevKm = Math.max(...kms);
@@ -1076,28 +1073,14 @@ if(ev.backToPreviousMunicipio){
 
 /* ================= JOGAR ================= */
 rollBtn.onclick = async ()=>{
-let r = Math.floor(Math.random()*6)+1;
-const p = players[current];
-
-if(p.limitNextRoll){
-  r = Math.min(r, p.limitNextRoll);
-  p.limitNextRoll = null; // usa só uma vez
-}
-
-dice.textContent = r;
-
-if(p.skipTurns > 0){
-  p.skipTurns--;
-  current = (current + 1) % players.length;
-  updateTurn();
-  return;
-}
   let r = Math.floor(Math.random()*6)+1;
+  const p = players[current];
 
-if(p.slowNext > 0){
-  r = 1;
-  p.slowNext = 0;
-}
+  if(p.limitNextRoll){
+    r = Math.min(r, p.limitNextRoll);
+    p.limitNextRoll = null;
+  }
+
   dice.textContent = r;
 
   let target = p.pos + r;
@@ -1196,4 +1179,3 @@ function showPodium(){
 </script>
 </body>
 </html>
-
