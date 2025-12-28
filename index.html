@@ -1094,8 +1094,8 @@ function askQuestion(cell){
         action:()=>{
           players[current].questionsWrong++;
           closeModal();
-          current = (current+1) % players.length;
-          updateTurn();
+          current = (current + 1) % players.length;
+updateTurn();
         }
       }
     ]
@@ -1296,19 +1296,19 @@ rollBtn.onclick = async ()=>{
   const cell = SPECIAL_CELLS[idx];
 
   if(idx < 3){
-    updateTurn();
-  }
-  else if(cell){
-    askQuestion(cell);
-  }
-  else if(idx < 85){
-    doEvent();
-  }
-  else {
   current = (current+1) % players.length;
   updateTurn();
 }
-
+else if(cell){
+  askQuestion(cell);
+}
+else if(idx < 85){
+  doEvent();
+}
+else{
+  current = (current+1) % players.length;
+  updateTurn();
+}
  };
 
 /* ================= PÓDIO FINAL ================= */
