@@ -861,23 +861,22 @@ function updateTurn(){
   const p = players[current];
 
   if(p.skipTurns && p.skipTurns > 0){
-    p.skipTurns--;
-
-    showModal(
-  "⏭️ Turno Saltado",
-  `${p.name} perde esta vez.`,
-  [{
-    text:"OK",
-    cls:"accept",
-    action:()=>{
-      closeModal();
-      current = (current+1) % players.length;
-      updateTurn();
-    }
-  }]
-);
-    return;
-  }
+  showModal(
+    "⏭️ Turno Saltado",
+    `${p.name} perde esta vez.`,
+    [{
+      text:"OK",
+      cls:"accept",
+      action:()=>{
+        p.skipTurns--;
+        closeModal();
+        current = (current+1) % players.length;
+        updateTurn();
+      }
+    }]
+  );
+  return;
+}
 
   while(players[current].finished){
     current = (current+1) % players.length;
