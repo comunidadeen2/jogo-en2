@@ -1033,12 +1033,22 @@ function closeModal(){
   modal.style.display = "none";
 }
 
+let seasonChosen = false;
+
+function setSeason(season){
+  document.body.className = season;
+  seasonChosen = true;
+}
+
 /* ================= SETUP ================= */
 startBtn.onclick = ()=>{
-rollBtn.disabled = false;
+  if(!seasonChosen){
+    alert("Escolhe primeiro a estação do ano 🌦️");
+    return;
+  }
+
   setup.classList.add("hidden");
   names.classList.remove("hidden");
-
   let total = Number(playerCount.value);
   let i = 0;
   let used = [];
@@ -1047,14 +1057,16 @@ rollBtn.disabled = false;
     names.innerHTML = "";
 
     if(i >= total){
-      const deck = [...OBJECTIVES].sort(()=>Math.random()-0.5);
-      players.forEach(p=>p.objective = deck.pop());
-      names.classList.add("hidden");
-seasonSelect.classList.remove("hidden");
-game.classList.remove("hidden");
-objectivePanel.classList.remove("hidden");
-updateTurn();
-return;
+  const deck = [...OBJECTIVES].sort(()=>Math.random()-0.5);
+  players.forEach(p=>p.objective = deck.pop());
+
+  names.classList.add("hidden");
+  game.classList.remove("hidden");
+  objectivePanel.classList.remove("hidden");
+
+  updateTurn();
+  return;
+}
 
     const input = document.createElement("input");
     input.placeholder = "Nome do Jogador";
@@ -1489,8 +1501,7 @@ function showPodium(){
   `).join("")}
   </div>`;
 }
-  }
+}
 </script>
 </body>
 </html>
-
