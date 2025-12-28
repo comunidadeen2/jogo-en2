@@ -810,37 +810,20 @@ startBtn.onclick = ()=>{
 
 /* ================= TURNO ================= */
 function updateTurn(){
+  // 🔓 GARANTE QUE O JOGO NUNCA FICA BLOQUEADO
+  rollBtn.disabled = false;
+
   if(players.every(p=>p.finished)){
     showPodium();
     return;
   }
 
-  const p = players[current];
-
-  if(p.skipTurns > 0){
-    p.skipTurns--;
-
-    showModal(
-      "Turno perdido",
-      `${p.name}, este turno não jogas.`,
-      [{
-        text:"OK",
-        cls:"decline",
-        action:()=>{
-  players[current].questionsWrong++;
-  closeModal();
-  rollBtn.disabled = false;   // 🔴 ESTA LINHA É OBRIGATÓRIA
-  current = (current+1) % players.length;
-  updateTurn();
-}
-      }],
-      "Ficaste sem jogar este turno."
-    );
-    return;
+  while(players[current].finished){
+    current = (current+1) % players.length;
   }
 
-  turn.textContent = "Vez de " + p.name;
-  renderObjective(p);
+  turn.textContent = "Vez de " + players[current].name;
+  renderObjective(players[current]);
 }
 
 /* ================= OBJETIVO ================= */
