@@ -321,12 +321,11 @@ body.fade{
   filter: drop-shadow(0 0 6px var(--accent));
 }
 
-/* ===== BOTÃO REGRAS (ALINHADO COM CARTA) ===== */
+/* ===== BOTÃO REGRAS (POSIÇÃO FINAL CORRETA) ===== */
 .rules-btn{
   position:fixed;
   bottom:40px;
-  left:50%;
-  transform:translateX(260px); /* ajusta para alinhar com a carta */
+  right:360px; /* controla alinhamento com a carta */
 
   background:var(--accent);
   color:#000;
@@ -341,10 +340,6 @@ body.fade{
   cursor:pointer;
   z-index:999;
   box-shadow:0 6px 18px rgba(0,0,0,.4);
-}
-
-.rules-btn:hover{
-  transform:translateX(220px) scale(1.05);
 }
 
 </style>
@@ -1609,4 +1604,3 @@ O jogo termina quando todos chegarem a Faro(Km738,5).
 
 </body>
 </html>
-
