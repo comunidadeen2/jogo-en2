@@ -280,20 +280,16 @@ button:disabled{
 
 #rulesBtn{
   position:absolute;
-  bottom:540px;
+  bottom:540px;   /* mantém o valor que já afinaste */
   right:20px;
-  background:#c76b2b; /* laranja fogo */
-  color:#111;
-  padding:10px 16px;
-  border-radius:10px;
-  font-weight:bold;
+  width:140px;    /* controla o tamanho do pergaminho */
   cursor:pointer;
   z-index:10;
-  box-shadow:0 4px 8px rgba(0,0,0,.4);
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));
 }
 
 #rulesBtn:hover{
-  filter:brightness(1.1);
+  transform:scale(1.05);
 }
 
 </style>
@@ -316,7 +312,7 @@ button:disabled{
     <div class="board-img"></div>
 
 <!-- BOTÃO REGRAS DO JOGO -->
-<div id="rulesBtn">📜 Regras do Jogo</div>
+<img src="pregaminho.png" id="rulesBtn" alt="Regras do Jogo">
     <div class="pawn" id="pawn0">🚗</div>
     <div class="pawn" id="pawn1">🚴</div>
     <div class="pawn" id="pawn2">🏍️</div>
@@ -1526,8 +1522,3 @@ rulesBtn.onclick = ()=>{
 </script>
 </body>
 </html>
-
-
-
-
-
