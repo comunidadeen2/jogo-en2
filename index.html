@@ -291,6 +291,22 @@ body.fade{
   100%{opacity:1}
 }
 
+/* ===== ANIMAÇÃO DO DADO ===== */
+#dice.roll{
+  animation: dicePop .4s ease;
+}
+
+@keyframes dicePop{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.4)}
+  100%{transform:scale(1)}
+}
+
+/* ===== PEÃO ATIVO ===== */
+.pawn.active{
+  filter: drop-shadow(0 0 6px var(--accent));
+}
+
 </style>
 </head>
 
@@ -1140,7 +1156,9 @@ rollBtn.disabled = false;
 
 /* ================= TURNO ================= */
 function updateTurn(){
-  if(players.every(p=>p.finished)){
+pawns.forEach(p=>p.classList.remove("active"));
+pawns[players[current].pawn].classList.add("active");  
+if(players.every(p=>p.finished)){
     showPodium();
     return;
   }
@@ -1413,6 +1431,8 @@ rollBtn.disabled = true;
   }
 
   dice.textContent = r;
+dice.classList.add("roll");
+setTimeout(()=>dice.classList.remove("roll"),400);
 
   let target = p.pos + r;
   const LAST = SPACES.length-1;
