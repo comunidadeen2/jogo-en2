@@ -315,6 +315,12 @@ button:disabled{
   display:inline-block;
 }
 
+.pawn.active{
+  filter: drop-shadow(0 0 8px rgba(255,180,60,.9))
+          drop-shadow(0 0 16px rgba(255,120,0,.6));
+  transition: filter 0.25s ease;
+}
+
 </style>
 </head>
 
@@ -1161,6 +1167,8 @@ rollBtn.disabled = false;
 
 /* ================= TURNO ================= */
 function updateTurn(){
+pawns.forEach(p=>p.classList.remove("active"));
+pawns[players[current].pawn].classList.add("active");
   if(players.every(p=>p.finished)){
     showPodium();
     return;
