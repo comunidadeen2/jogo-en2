@@ -1040,20 +1040,10 @@ function closeModal(){
   modal.style.display = "none";
 }
 
-let seasonChosen = false;
-
-function setSeason(season){
-  document.body.className = season;
-  seasonChosen = true;
-}
 
 /* ================= SETUP ================= */
 startBtn.onclick = ()=>{
-  if(!seasonChosen){
-    alert("Escolhe primeiro a estação do ano 🌦️");
-    return;
-  }
-
+  
   setup.classList.add("hidden");
   names.classList.remove("hidden");
   let total = Number(playerCount.value);
