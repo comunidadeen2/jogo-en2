@@ -321,6 +321,25 @@ body.fade{
   filter: drop-shadow(0 0 6px var(--accent));
 }
 
+/* ===== BOTÃO REGRAS ===== */
+.rules-btn{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid var(--accent);
+  border-radius:10px;
+  padding:10px 14px;
+  font-weight:bold;
+  cursor:pointer;
+  opacity:.85;
+}
+
+.rules-btn:hover{
+  opacity:1;
+}
+
 </style>
 </head>
 
@@ -1543,6 +1562,38 @@ function showPodium(){
   `).join("")}
   </div>`;
 }
+
+/* ===== REGRAS DO JOGO ===== */
+rulesBtn.onclick = ()=>{
+  showModal(
+    "📜 Regras do Jogo da EN2",
+    `
+Cada jogador lança o dado na sua vez e avança no tabuleiro.
+
+Ao cair numa casa especial:
+• Pode surgir um evento (bom ou mau)
+• Pode haver uma pergunta
+• Pode ganhar uma ficha de município
+
+Objetivo:
+Cumprir o objetivo secreto atribuído no início do jogo.
+
+Notas importantes:
+• Em caso de empate, ganha quem chegou primeiro ao fim
+• Alguns eventos fazem perder jogadas ou recuar
+• O jogo termina quando todos chegarem a Faro
+    `,
+    [{
+      text:"OK",
+      cls:"accept",
+      action: closeModal
+    }]
+  );
+};
+
 </script>
+
+<button id="rulesBtn" class="rules-btn">📜 Regras</button>
+
 </body>
 </html>
