@@ -293,10 +293,18 @@ button:disabled{
 }
 
 @keyframes dicePop {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.25); }
-  70%  { transform: scale(0.95); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  35% {
+    transform: scale(1.4) translateY(-6px);
+  }
+  65% {
+    transform: scale(0.95) translateY(2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
 }
 
 #dice.pop {
