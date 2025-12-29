@@ -321,25 +321,31 @@ body.fade{
   filter: drop-shadow(0 0 6px var(--accent));
 }
 
-/* ===== BOTÃO REGRAS (POSIÇÃO FINAL CORRETA) ===== */
+/* ===== BOTÃO REGRAS — POSIÇÃO FINAL ===== */
 .rules-btn{
   position:fixed;
-  bottom:40px;
-  right:360px; /* controla alinhamento com a carta */
+  left:40px;
+  top:50%;
+  transform:translateY(-50%);
 
-  background:var(--accent);
+  background:#ff6a00; /* laranja fogo */
   color:#000;
 
   border:none;
-  border-radius:16px;
-  padding:14px 22px;
+  border-radius:18px;
+  padding:16px 26px;
 
-  font-size:15px;
+  font-size:16px;
   font-weight:bold;
 
   cursor:pointer;
   z-index:999;
-  box-shadow:0 6px 18px rgba(0,0,0,.4);
+  box-shadow:0 8px 22px rgba(0,0,0,.45);
+}
+
+/* feedback sem mexer */
+.rules-btn:hover{
+  filter:brightness(1.1);
 }
 
 </style>
@@ -1600,7 +1606,7 @@ O jogo termina quando todos chegarem a Faro(Km738,5).
 
 </script>
 
-<button id="rulesBtn" class="rules-btn">📜 Regras</button>
+<button id="rulesBtn" class="rules-btn">📜 Regras do Jogo</button>
 
 </body>
 </html>
