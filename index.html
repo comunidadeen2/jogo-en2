@@ -292,14 +292,28 @@ body.fade{
 }
 
 /* ===== ANIMAÇÃO DO DADO ===== */
+/* ===== DADO A ROLAR (VISÍVEL) ===== */
 #dice.roll{
-  animation: dicePop .4s ease;
+  display:inline-block;
+  animation: diceRoll .45s ease;
 }
 
-@keyframes dicePop{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.4)}
-  100%{transform:scale(1)}
+@keyframes diceRoll{
+  0%{
+    transform: scale(1) rotate(0deg);
+  }
+  25%{
+    transform: scale(1.3) rotate(15deg);
+  }
+  50%{
+    transform: scale(1.4) rotate(-15deg);
+  }
+  75%{
+    transform: scale(1.2) rotate(10deg);
+  }
+  100%{
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 /* ===== PEÃO ATIVO ===== */
@@ -1431,8 +1445,9 @@ rollBtn.disabled = true;
   }
 
   dice.textContent = r;
+dice.classList.remove("roll"); // reset
+void dice.offsetWidth;        // força reinício da animação
 dice.classList.add("roll");
-setTimeout(()=>dice.classList.remove("roll"),400);
 
   let target = p.pos + r;
   const LAST = SPACES.length-1;
