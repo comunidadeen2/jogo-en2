@@ -16,6 +16,28 @@
   --red:#e53935;
 }
 
+/* ===== ESTAÇÕES DO ANO (APENAS VISUAL) ===== */
+
+body[data-estacao="primavera"]{
+  --bg:#0f2a1c;
+  --accent:#7bcf9a;
+}
+
+body[data-estacao="verao"]{
+  --bg:#2a1f0f;
+  --accent:#f4c430;
+}
+
+body[data-estacao="outono"]{
+  --bg:#2a1a0f;
+  --accent:#c76b2b;
+}
+
+body[data-estacao="inverno"]{
+  --bg:#0f1a2a;
+  --accent:#9ecae1;
+}
+
 #modalTitle{
   font-weight:bold;
   font-size:16px;
@@ -262,6 +284,14 @@ button:disabled{
 
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
+<div class="controls">
+  <p><strong>Escolhe a estação do ano</strong></p>
+  <button onclick="mudarEstacao('primavera')">🌸 Primavera</button>
+  <button onclick="mudarEstacao('verao')">🌞 Verão</button>
+  <button onclick="mudarEstacao('outono')">🍂 Outono</button>
+  <button onclick="mudarEstacao('inverno')">❄️ Inverno</button>
+</div>
+
 <div class="main">
   <div class="board-frame" id="board">
     <div class="board-img"></div>
@@ -303,6 +333,13 @@ button:disabled{
 <div id="podium"></div>
 
 <script>
+
+/* ===== ESTAÇÃO DO ANO (VISUAL) ===== */
+function mudarEstacao(estacao){
+  document.body.setAttribute("data-estacao", estacao);
+}
+// estação por defeito
+mudarEstacao("verao");
 
 /* ================= SPACES ================= */
 const SPACES = [
