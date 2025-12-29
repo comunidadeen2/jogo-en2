@@ -362,6 +362,27 @@ body.fade{
   filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));
 }
 
+/* overlays sobre o tabuleiro */
+.board-overlay{
+  position:absolute;
+  z-index:5;
+  pointer-events:none; /* não interfere com o jogo */
+}
+
+/* EVENTO — quadrado da esquerda */
+#eventoOverlay{
+  width:180px;
+  left:60px;
+  top:420px;
+}
+
+/* PERGUNTA EN2 — quadrado do meio */
+#perguntaOverlay{
+  width:200px;
+  left:300px;
+  top:420px;
+}
+
 </style>
 </head>
 
@@ -378,6 +399,11 @@ body.fade{
 </div>
 
 <div class="main">
+<!-- IMAGEM EVENTO -->
+<img src="evento.png" id="eventoOverlay" class="board-overlay">
+
+<!-- IMAGEM PERGUNTA EN2 -->
+<img src="pergunta-en2.png" id="perguntaOverlay" class="board-overlay">
   <div class="board-frame" id="board">
   <div class="board-img"></div>
 
@@ -1632,5 +1658,3 @@ O jogo termina quando todos chegarem a Faro(Km738,5).
 
 </body>
 </html>
-
-
