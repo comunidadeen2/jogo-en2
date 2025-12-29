@@ -292,6 +292,17 @@ button:disabled{
   transform:scale(1.05);
 }
 
+@keyframes dicePop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+#dice.pop {
+  animation: dicePop 0.25s ease-out;
+}
+
 </style>
 </head>
 
@@ -1411,6 +1422,9 @@ rollBtn.disabled = true;
   }
 
   dice.textContent = r;
+  dice.classList.remove("pop");
+  void dice.offsetWidth; // força reset da animação
+  dice.classList.add("pop");
 
   let target = p.pos + r;
   const LAST = SPACES.length-1;
@@ -1522,4 +1536,3 @@ rulesBtn.onclick = ()=>{
 </script>
 </body>
 </html>
-
