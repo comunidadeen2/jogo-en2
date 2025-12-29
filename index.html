@@ -348,6 +348,25 @@ body.fade{
   filter:brightness(1.1);
 }
 
+/* ===== PERGAMINHO DAS REGRAS ===== */
+.rules-scroll{
+  position:fixed;
+  left:30px;
+  top:50%;
+  transform:translateY(-50%);
+
+  width:180px;       /* ajusta conforme o pergaminho */
+  cursor:pointer;
+
+  z-index:999;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.45));
+}
+
+/* feedback subtil */
+.rules-scroll:hover{
+  transform:translateY(-50%) scale(1.04);
+}
+
 </style>
 </head>
 
@@ -1606,7 +1625,12 @@ O jogo termina quando todos chegarem a Faro(Km738,5).
 
 </script>
 
-<button id="rulesBtn" class="rules-btn">📜 Regras do Jogo</button>
+<img
+  src="pregaminho.png"
+  id="rulesBtn"
+  class="rules-scroll"
+  alt="Regras do Jogo"
+/>
 
 </body>
 </html>
