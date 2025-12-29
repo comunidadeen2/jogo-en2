@@ -284,8 +284,8 @@ button:disabled{
 
 <h1>Jogo da EN2 — A Grande Travessia de Portugal</h1>
 
-<div class="controls">
-  <p><strong>Escolhe a estação do ano</strong></p>
+<div class="controls" id="seasonPicker">
+  <p><strong>Em que altura do ano queres fazer a EN2?</strong></p>
   <button onclick="mudarEstacao('primavera')">🌸 Primavera</button>
   <button onclick="mudarEstacao('verao')">🌞 Verão</button>
   <button onclick="mudarEstacao('outono')">🍂 Outono</button>
@@ -1042,6 +1042,8 @@ function closeModal(){
 
 /* ================= SETUP ================= */
 startBtn.onclick = ()=>{
+seasonPicker.classList.add("hidden");
+
 rollBtn.disabled = false;
   setup.classList.add("hidden");
   names.classList.remove("hidden");
