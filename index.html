@@ -306,7 +306,7 @@ button:disabled{
   </select>
 
   <div id="seasonSelect" style="margin-top:12px">
-    Estação do ano:
+    Em que altura do ano queres fazer a EN2?:
     <br><br>
     <button onclick="setSeason('spring')">🌸 Primavera</button>
     <button onclick="setSeason('summer')">☀️ Verão</button>
@@ -1045,12 +1045,6 @@ let seasonChosen = false;
 function setSeason(season){
   document.body.className = season;
   seasonChosen = true;
-
-  // feedback visual opcional
-  document.querySelectorAll("#seasonSelect button").forEach(b=>{
-    b.style.opacity = "0.6";
-  });
-  event.target.style.opacity = "1";
 }
 
 /* ================= SETUP ================= */
