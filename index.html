@@ -321,18 +321,19 @@ body.fade{
   filter: drop-shadow(0 0 6px var(--accent));
 }
 
-/* ===== BOTÃO REGRAS (VISÍVEL E CONFORTÁVEL) ===== */
+/* ===== BOTÃO REGRAS (ALINHADO COM CARTA) ===== */
 .rules-btn{
   position:fixed;
   bottom:40px;
-  right:40px;
+  left:50%;
+  transform:translateX(220px); /* ajusta para alinhar com a carta */
 
   background:var(--accent);
   color:#000;
 
   border:none;
-  border-radius:14px;
-  padding:14px 20px;
+  border-radius:16px;
+  padding:14px 22px;
 
   font-size:15px;
   font-weight:bold;
@@ -343,7 +344,7 @@ body.fade{
 }
 
 .rules-btn:hover{
-  transform:scale(1.05);
+  transform:translateX(220px) scale(1.05);
 }
 
 </style>
@@ -1569,11 +1570,15 @@ function showPodium(){
   </div>`;
 }
 
-/* ===== REGRAS DO JOGO ===== */
-document.getElementById("rulesBtn").onclick = ()=>{
-  showModal(
-    "📜 Regras de Jogo",
-    `
+/* ===== BOTÃO REGRAS (BLINDADO) ===== */
+window.addEventListener("load", ()=>{
+  const rulesBtn = document.getElementById("rulesBtn");
+  if(!rulesBtn) return;
+
+  rulesBtn.onclick = ()=>{
+    showModal(
+      "📜 Regras do Jogo",
+      `
 Cada jogador lança o dado na sua vez e avança no tabuleiro.
 
 • Casas especiais podem gerar eventos ou perguntas;
@@ -1583,19 +1588,20 @@ Cada jogador lança o dado na sua vez e avança no tabuleiro.
 Objetivo:
 Cumprir o objetivo secreto atribuído no início do jogo.
 
-Regra importante:
+Regra de desempate:
 Em caso de empate no número de objetivos cumpridos,
-ganha quem chegou primeiro ao Km 738,5.
+ganha quem chegou primeiro a Faro(Km 738,5).
 
-O jogo termina quando todos chegarem a Faro (Km 738,5).
-    `,
-    [{
-      text:"OK",
-      cls:"accept",
-      action: closeModal
-    }]
-  );
-};
+O jogo termina quando todos chegarem a Faro(Km738,5).
+      `,
+      [{
+        text:"OK",
+        cls:"accept",
+        action: closeModal
+      }]
+    );
+  };
+});
 
 </script>
 
