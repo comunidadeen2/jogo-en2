@@ -348,15 +348,15 @@ body.fade{
   filter:brightness(1.1);
 }
 
-/* ===== PERGAMINHO DAS REGRAS — DENTRO DO TABULEIRO ===== */
+/* ===== PERGAMINHO DAS REGRAS — ABAIXO DO TÍTULO ===== */
 .rules-scroll{
   position:absolute;
 
-  /* canto inferior esquerdo do tabuleiro */
-  left:40px;
-  bottom:40px;
+  top:120px;          /* distância abaixo do título */
+  left:50%;
+  transform:translateX(-50%);
 
-  width:160px;
+  width:170px;
   cursor:pointer;
 
   z-index:15;
@@ -1633,4 +1633,3 @@ O jogo termina quando todos chegarem a Faro(Km738,5).
 
 </body>
 </html>
-
