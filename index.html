@@ -6,12 +6,6 @@
 <title>Jogo da EN2 — A Grande Travessia de Portugal</title>
 
 <style>
-#names{
-  width:900px;
-  margin:20px auto;
-  text-align:center;
-}
-
 :root{
   --bg:#111;
   --text:#eee;
@@ -67,9 +61,7 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:Arial, Helvetica, sans-serif;
-  transition: background-color 1.2s ease, color 1.2s ease;
 }
-
 h1{
   text-align:center;
   margin:20px 0;
@@ -85,11 +77,12 @@ h1{
 
 /* TABULEIRO */
 .board-frame{
-  position: relative;
-  width: 900px;
-  margin: 0 auto;
+  width:1000px;
+  height:750px;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
 }
-
 .board-img{
   position:absolute;
   inset:0;
@@ -105,12 +98,9 @@ h1{
 
 /* CONTROLOS */
 .controls{
-  position: relative;
-  margin: 20px auto;
-  width: 900px;
-  text-align: right;
+  text-align:center;
+  margin:20px;
 }
-
 button{
   border:none;
   padding:10px 18px;
@@ -288,109 +278,6 @@ button:disabled{
   color:#ccc;
 }
 
-/* ===== FADE SUAVE AO MUDAR ESTAÇÃO ===== */
-body.fade{
-  animation: fadeSeason .8s ease;
-}
-
-@keyframes fadeSeason{
-  0%{opacity:1}
-  50%{opacity:.85}
-  100%{opacity:1}
-}
-
-/* ===== ANIMAÇÃO DO DADO ===== */
-/* ===== DADO A ROLAR (VISÍVEL) ===== */
-#dice.roll{
-  display:inline-block;
-  animation: diceRoll .45s ease;
-}
-
-@keyframes diceRoll{
-  0%{
-    transform: scale(1) rotate(0deg);
-  }
-  25%{
-    transform: scale(1.3) rotate(15deg);
-  }
-  50%{
-    transform: scale(1.4) rotate(-15deg);
-  }
-  75%{
-    transform: scale(1.2) rotate(10deg);
-  }
-  100%{
-    transform: scale(1) rotate(0deg);
-  }
-}
-
-/* ===== PEÃO ATIVO ===== */
-.pawn.active{
-  filter: drop-shadow(0 0 6px var(--accent));
-}
-
-/* ===== BOTÃO REGRAS — POSIÇÃO FINAL ===== */
-.rules-btn{
-  position:fixed;
-  left:40px;
-  top:50%;
-  transform:translateY(-50%);
-
-  background:#ff6a00; /* laranja fogo */
-  color:#000;
-
-  border:none;
-  border-radius:18px;
-  padding:16px 26px;
-
-  font-size:16px;
-  font-weight:bold;
-
-  cursor:pointer;
-  z-index:999;
-  box-shadow:0 8px 22px rgba(0,0,0,.45);
-}
-
-/* feedback sem mexer */
-.rules-btn:hover{
-  filter:brightness(1.1);
-}
-
-/* ===== PERGAMINHO DAS REGRAS — POSIÇÃO FINAL ===== */
-.rules-scroll{
-  position:absolute;
-
-  top:170px;          /* abaixo do título */
-  left:795px;         /* empurra claramente para a direita */
-
-  width:160px;
-  cursor:pointer;
-
-  z-index:15;
-  filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));
-}
-
-/* overlays sobre o tabuleiro */
-.board-overlay{
-  position:absolute;
-  z-index:5;
-  pointer-events:none; /* não interfere com o jogo */
-}
-
-/* EVENTO — quadrado da esquerda */
-#eventoOverlay{
-  width:210px;
-  left:80px;
-  top:430px;
-}
-
-/* PERGUNTA EN2 — quadrado do meio */
-#perguntaOverlay{
-  width:230px;
-  left:310px;
-  top:430px;
-}
-
 #rulesBtn{
   position:absolute;
   bottom:20px;
@@ -425,64 +312,34 @@ body.fade{
 </div>
 
 <div class="main">
-<!-- IMAGEM EVENTO -->
-<img src="Eventos.png" id="eventoOverlay" class="board-overlay">
-
-<!-- IMAGEM PERGUNTA EN2 -->
   <div class="board-frame" id="board">
-
-  <!-- IMAGEM DO TABULEIRO -->
-  <div class="board-img"></div>
+    <div class="board-img"></div>
 
 <!-- BOTÃO REGRAS DO JOGO -->
 <div id="rulesBtn">📜 Regras do Jogo</div>
-
-  <!-- PERGAMINHO DAS REGRAS -->
-  <img
-    src="pregaminho.png"
-    id="rulesBtn"
-    class="rules-scroll"
-    alt="Regras do Jogo"
-  />
-
-  <!-- IMAGEM EVENTO -->
-  <img
-    src="evento.png"
-    id="eventoOverlay"
-    class="board-overlay"
-    alt="Evento"
-  />
-
-  <!-- IMAGEM PERGUNTA EN2 -->
-  <img
-    src="perguntas.png"
-    id="perguntaOverlay"
-    class="board-overlay"
-    alt="Pergunta EN2"
-  />
-
-  <!-- PEÕES -->
-  <div class="pawn" id="pawn0">🚗</div>
-  <div class="pawn" id="pawn1">🚴</div>
-  <div class="pawn" id="pawn2">🏍️</div>
-  <div class="pawn" id="pawn3">🚶</div>
-
+    <div class="pawn" id="pawn0">🚗</div>
+    <div class="pawn" id="pawn1">🚴</div>
+    <div class="pawn" id="pawn2">🏍️</div>
+    <div class="pawn" id="pawn3">🚶</div>
+  </div>
+  <div id="objectivePanel" class="hidden"></div>
 </div>
 
-<!-- PAINEL DE OBJETIVO (fora do tabuleiro) -->
-<div id="objectivePanel" class="hidden"></div>
-
-<!-- CONTROLOS DO JOGO -->
 <div class="controls">
   <div id="setup">
     Jogadores:
     <select id="playerCount">
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
+      <option>1</option><option>2</option><option>3</option><option>4</option>
     </select>
     <button id="startBtn">COMEÇAR</button>
+  </div>
+
+  <div id="names" class="hidden"></div>
+
+  <div id="game" class="hidden">
+    <button id="rollBtn">JOGAR</button>
+    🎲 <span id="dice">—</span>
+    <p id="turn"></p>
   </div>
 </div>
 
@@ -501,14 +358,8 @@ body.fade{
 
 /* ===== ESTAÇÃO DO ANO (VISUAL) ===== */
 function mudarEstacao(estacao){
-  document.body.classList.add("fade");
   document.body.setAttribute("data-estacao", estacao);
-
-  setTimeout(()=>{
-    document.body.classList.remove("fade");
-  },800);
 }
-
 // estação por defeito
 mudarEstacao("verao");
 
@@ -1291,9 +1142,7 @@ rollBtn.disabled = false;
 
 /* ================= TURNO ================= */
 function updateTurn(){
-pawns.forEach(p=>p.classList.remove("active"));
-pawns[players[current].pawn].classList.add("active");  
-if(players.every(p=>p.finished)){
+  if(players.every(p=>p.finished)){
     showPodium();
     return;
   }
@@ -1566,9 +1415,6 @@ rollBtn.disabled = true;
   }
 
   dice.textContent = r;
-dice.classList.remove("roll"); // reset
-void dice.offsetWidth;        // força reinício da animação
-dice.classList.add("roll");
 
   let target = p.pos + r;
   const LAST = SPACES.length-1;
@@ -1665,39 +1511,6 @@ function showPodium(){
   </div>`;
 }
 
-/* ===== BOTÃO REGRAS (BLINDADO) ===== */
-window.addEventListener("load", ()=>{
-  const rulesBtn = document.getElementById("rulesBtn");
-  if(!rulesBtn) return;
-
-  rulesBtn.onclick = ()=>{
-    showModal(
-      "📜 Regras do Jogo",
-      `
-Cada jogador lança o dado na sua vez e avança no tabuleiro.
-
-• Casas especiais podem gerar eventos ou perguntas;
-• Responder corretamente pode dar fichas;
-• Eventos podem fazer avançar, recuar ou perder jogadas.
-
-Objetivo:
-Cumprir o objetivo secreto atribuído no início do jogo.
-
-Regra de desempate:
-Em caso de empate no número de objetivos cumpridos,
-ganha quem chegou primeiro a Faro(Km 738,5).
-
-O jogo termina quando todos chegarem a Faro(Km738,5).
-      `,
-      [{
-        text:"OK",
-        cls:"accept",
-        action: closeModal
-      }]
-    );
-  };
-});
-
 rulesBtn.onclick = ()=>{
   showModal(
     "📜 Regras do Jogo",
@@ -1711,6 +1524,5 @@ rulesBtn.onclick = ()=>{
 };
 
 </script>
-
 </body>
 </html>
