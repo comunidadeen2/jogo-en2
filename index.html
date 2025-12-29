@@ -60,7 +60,6 @@ h1{
   position:relative;
   overflow:hidden;
   border-radius:10px;
-  pointer-events:none;
 }
 .board-img{
   position:absolute;
@@ -73,40 +72,6 @@ h1{
   font-size:22px;
   pointer-events:none;
   display:none;
-}
-#modal{
-    pointer-events: auto;
-  }
-
-  #names input{
-    pointer-events: auto;
-    z-index: 10;
-    position: relative;
-  }
-</style>
-
-/* ================= FUNDO POR ESTAÇÃO ================= */
-
-body.spring {
-  background: radial-gradient(circle at center, #1b1b1b 0%, #223326 100%);
-}
-
-body.summer {
-  background: radial-gradient(circle at center, #1b1b1b 0%, #3a2f1f 100%);
-}
-
-body.autumn {
-  background: radial-gradient(circle at center, #1b1b1b 0%, #3a2418 100%);
-}
-
-body.winter {
-  background: radial-gradient(circle at center, #1b1b1b 0%, #1f283a 100%);
-}
-
-/* tabuleiro destacado */
-.board-frame {
-  box-shadow: 0 12px 30px rgba(0,0,0,.35);
-  background: #000;
 }
 
 /* CONTROLOS */
@@ -310,27 +275,15 @@ button:disabled{
 
 <div class="controls">
   <div id="setup">
-  Jogadores:
-  <select id="playerCount">
-    <option>1</option><option>2</option><option>3</option><option>4</option>
-  </select>
-
-  <div id="seasonSelect" style="margin-top:12px">
-    Em que altura do ano queres fazer a EN2?:
-    <br><br>
-    <button onclick="setSeason('spring')">🌸 Primavera</button>
-    <button onclick="setSeason('summer')">☀️ Verão</button>
-    <button onclick="setSeason('autumn')">🍂 Outono</button>
-    <button onclick="setSeason('winter')">❄️ Inverno</button>
+    Jogadores:
+    <select id="playerCount">
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+    </select>
+    <button id="startBtn">COMEÇAR</button>
   </div>
 
-  <br>
-  <button id="startBtn">COMEÇAR</button>
-</div>
-
   <div id="names" class="hidden"></div>
-<div id="seasonSelect" class="hidden" style="text-align:center;margin-top:12px">
-  
+
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
@@ -350,7 +303,6 @@ button:disabled{
 <div id="podium"></div>
 
 <script>
-let selectedSeason = "summer"; // default
 
 /* ================= SPACES ================= */
 const SPACES = [
@@ -1051,12 +1003,12 @@ function closeModal(){
   modal.style.display = "none";
 }
 
-
 /* ================= SETUP ================= */
 startBtn.onclick = ()=>{
-  
+rollBtn.disabled = false;
   setup.classList.add("hidden");
   names.classList.remove("hidden");
+
   let total = Number(playerCount.value);
   let i = 0;
   let used = [];
@@ -1065,16 +1017,14 @@ startBtn.onclick = ()=>{
     names.innerHTML = "";
 
     if(i >= total){
-  const deck = [...OBJECTIVES].sort(()=>Math.random()-0.5);
-  players.forEach(p=>p.objective = deck.pop());
-
-  names.classList.add("hidden");
-  game.classList.remove("hidden");
-  objectivePanel.classList.remove("hidden");
-
-  updateTurn();
-  return;
-}
+      const deck = [...OBJECTIVES].sort(()=>Math.random()-0.5);
+      players.forEach(p=>p.objective = deck.pop());
+      names.classList.add("hidden");
+      game.classList.remove("hidden");
+      objectivePanel.classList.remove("hidden");
+      updateTurn();
+      return;
+    }
 
     const input = document.createElement("input");
     input.placeholder = "Nome do Jogador";
@@ -1336,13 +1286,6 @@ function getNextMunicipioIndex(pos){
   return pos;
 }
 
-/* ================= ESTAÇÃO DO ANO ================= */
-
-function setSeason(season){
-  document.body.className = season;
-  seasonSelect.classList.add("hidden");
-}
-
 function doEvent(){
   const ev = EVENTS[Math.floor(Math.random()*EVENTS.length)];
 
@@ -1355,23 +1298,20 @@ function doEvent(){
       action: async ()=>{
         closeModal();
 
+        if(ev.skip){
+          players[current].skipTurns = ev.skip;
+        }
+        if(ev.limitNextRoll){
+          players[current].limitNextRoll = ev.limitNextRoll;
+        }
+
         const movers = ev.all ? players : [players[current]];
 
         for(const p of movers){
           let target = p.pos;
 
-          if(ev.skip){
-            p.skipTurns += ev.skip;
-          }
-
-          if(ev.limitNextRoll){
-            p.limitNextRoll = ev.limitNextRoll;
-          }
-
           if(ev.move){
-            target = p.pos + ev.move;
-            if(target < 0) target = 0;
-            if(target > SPACES.length-1) target = SPACES.length-1;
+            target = Math.max(0, Math.min(SPACES.length-1, p.pos + ev.move));
           }
 
           if(ev.goKm !== undefined){
@@ -1379,11 +1319,11 @@ function doEvent(){
           }
 
           if(ev.backToPreviousMunicipio){
-            target = getPreviousMunicipioIndex(p.pos);
+            target = getPreviousMunicipioIndex(target);
           }
 
           if(ev.goNextMunicipio){
-            target = getNextMunicipioIndex(p.pos);
+            target = getNextMunicipioIndex(target);
           }
 
           while(p.pos !== target){
@@ -1394,8 +1334,8 @@ function doEvent(){
         }
 
         current = (current + 1) % players.length;
-        rollBtn.disabled = false;
-        updateTurn();
+rollBtn.disabled = false;
+updateTurn();
       }
     }],
     ev.effect
