@@ -321,6 +321,26 @@ button:disabled{
   transition: filter 0.25s ease;
 }
 
+.board-overlay{
+  position:absolute;
+  pointer-events:none; /* não interfere com o jogo */
+  z-index:3;
+}
+
+/* EVENTOS (quadrados brancos de eventos) */
+.eventos-overlay{
+  width:320px;
+  left:60px;
+  top:520px;
+}
+
+/* PERGUNTA EN2 (quadrado branco das perguntas) */
+.perguntas-overlay{
+  width:320px;
+  right:60px;
+  top:520px;
+}
+
 </style>
 </head>
 
@@ -339,6 +359,11 @@ button:disabled{
 <div class="main">
   <div class="board-frame" id="board">
     <div class="board-img"></div>
+<!-- OVERLAY EVENTOS -->
+<img src="eventos.png" class="board-overlay eventos-overlay" alt="Eventos">
+
+<!-- OVERLAY PERGUNTA EN2 -->
+<img src="perguntas.png" class="board-overlay perguntas-overlay" alt="Pergunta EN2">
 
 <!-- BOTÃO REGRAS DO JOGO -->
 <img src="pregaminho.png" id="rulesBtn" alt="Regras do Jogo">
