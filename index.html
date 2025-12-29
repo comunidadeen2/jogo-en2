@@ -279,6 +279,18 @@ button:disabled{
   font-size:13px;
   color:#ccc;
 }
+
+/* ===== FADE SUAVE AO MUDAR ESTAÇÃO ===== */
+body.fade{
+  animation: fadeSeason .8s ease;
+}
+
+@keyframes fadeSeason{
+  0%{opacity:1}
+  50%{opacity:.85}
+  100%{opacity:1}
+}
+
 </style>
 </head>
 
@@ -338,8 +350,14 @@ button:disabled{
 
 /* ===== ESTAÇÃO DO ANO (VISUAL) ===== */
 function mudarEstacao(estacao){
+  document.body.classList.add("fade");
   document.body.setAttribute("data-estacao", estacao);
+
+  setTimeout(()=>{
+    document.body.classList.remove("fade");
+  },800);
 }
+
 // estação por defeito
 mudarEstacao("verao");
 
