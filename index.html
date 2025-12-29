@@ -348,23 +348,19 @@ body.fade{
   filter:brightness(1.1);
 }
 
-/* ===== PERGAMINHO DAS REGRAS ===== */
+/* ===== PERGAMINHO DAS REGRAS — DENTRO DO TABULEIRO ===== */
 .rules-scroll{
-  position:fixed;
-  left:30px;
-  top:50%;
-  transform:translateY(-50%);
+  position:absolute;
 
-  width:180px;       /* ajusta conforme o pergaminho */
+  /* canto inferior esquerdo do tabuleiro */
+  left:40px;
+  bottom:40px;
+
+  width:160px;
   cursor:pointer;
 
-  z-index:999;
-  filter:drop-shadow(0 6px 14px rgba(0,0,0,.45));
-}
-
-/* feedback subtil */
-.rules-scroll:hover{
-  transform:translateY(-50%) scale(1.04);
+  z-index:15;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));
 }
 
 </style>
@@ -384,12 +380,22 @@ body.fade{
 
 <div class="main">
   <div class="board-frame" id="board">
-    <div class="board-img"></div>
-    <div class="pawn" id="pawn0">🚗</div>
-    <div class="pawn" id="pawn1">🚴</div>
-    <div class="pawn" id="pawn2">🏍️</div>
-    <div class="pawn" id="pawn3">🚶</div>
-  </div>
+  <div class="board-img"></div>
+
+  <!-- PERGAMINHO DAS REGRAS -->
+  <img
+    src="pergaminho-regras.png"
+    id="rulesBtn"
+    class="rules-scroll"
+    alt="Regras do Jogo"
+  />
+
+  <div class="pawn" id="pawn0">🚗</div>
+  <div class="pawn" id="pawn1">🚴</div>
+  <div class="pawn" id="pawn2">🏍️</div>
+  <div class="pawn" id="pawn3">🚶</div>
+</div>
+
   <div id="objectivePanel" class="hidden"></div>
 </div>
 
@@ -1624,13 +1630,6 @@ O jogo termina quando todos chegarem a Faro(Km738,5).
 });
 
 </script>
-
-<img
-  src="pregaminho.png"
-  id="rulesBtn"
-  class="rules-scroll"
-  alt="Regras do Jogo"
-/>
 
 </body>
 </html>
