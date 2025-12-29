@@ -299,21 +299,27 @@ button:disabled{
 
 <div class="controls">
   <div id="setup">
-    Jogadores:
-    <select id="playerCount">
-      <option>1</option><option>2</option><option>3</option><option>4</option>
-    </select>
-    <button id="startBtn">COMEÇAR</button>
+  Jogadores:
+  <select id="playerCount">
+    <option>1</option><option>2</option><option>3</option><option>4</option>
+  </select>
+
+  <div id="seasonSelect" style="margin-top:12px">
+    Estação do ano:
+    <br><br>
+    <button onclick="setSeason('spring')">🌸 Primavera</button>
+    <button onclick="setSeason('summer')">☀️ Verão</button>
+    <button onclick="setSeason('autumn')">🍂 Outono</button>
+    <button onclick="setSeason('winter')">❄️ Inverno</button>
   </div>
+
+  <br>
+  <button id="startBtn">COMEÇAR</button>
+</div>
 
   <div id="names" class="hidden"></div>
 <div id="seasonSelect" class="hidden" style="text-align:center;margin-top:12px">
-  <p>Escolhe a estação do ano</p>
-  <button onclick="setSeason('spring')">🌸 Primavera</button>
-  <button onclick="setSeason('summer')">☀️ Verão</button>
-  <button onclick="setSeason('autumn')">🍂 Outono</button>
-  <button onclick="setSeason('winter')">❄️ Inverno</button>
-</div>
+  
   <div id="game" class="hidden">
     <button id="rollBtn">JOGAR</button>
     🎲 <span id="dice">—</span>
@@ -1501,7 +1507,7 @@ function showPodium(){
   `).join("")}
   </div>`;
 }
+}
 </script>
 </body>
 </html>
-
