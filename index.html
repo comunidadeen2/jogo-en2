@@ -78,19 +78,19 @@ h1{
 /* ================= FUNDO POR ESTAÇÃO ================= */
 
 body.spring {
-  background: linear-gradient(180deg, #e9f5ec, #f4faf6);
+  background: radial-gradient(circle at center, #1b1b1b 0%, #223326 100%);
 }
 
 body.summer {
-  background: linear-gradient(180deg, #fff4cc, #fffbe6);
+  background: radial-gradient(circle at center, #1b1b1b 0%, #3a2f1f 100%);
 }
 
 body.autumn {
-  background: linear-gradient(180deg, #f6e7d8, #fdf6ef);
+  background: radial-gradient(circle at center, #1b1b1b 0%, #3a2418 100%);
 }
 
 body.winter {
-  background: linear-gradient(180deg, #eef2f5, #dfe6ec);
+  background: radial-gradient(circle at center, #1b1b1b 0%, #1f283a 100%);
 }
 
 /* tabuleiro destacado */
@@ -1045,6 +1045,12 @@ let seasonChosen = false;
 function setSeason(season){
   document.body.className = season;
   seasonChosen = true;
+
+  // feedback visual opcional
+  document.querySelectorAll("#seasonSelect button").forEach(b=>{
+    b.style.opacity = "0.6";
+  });
+  event.target.style.opacity = "1";
 }
 
 /* ================= SETUP ================= */
