@@ -56,6 +56,34 @@ body[data-estacao="inverno"]{
   font-weight:bold;
 }
 
+/* Respostas neutras (Perguntas EN2) */
+.answer-btn{
+  background:#333;
+  color:#fff;
+  border-radius:10px;
+  padding:10px 14px;
+  margin:6px;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+  transition:all .2s ease;
+}
+
+.answer-btn:hover{
+  background:#444;
+}
+
+/* Feedback após clique */
+.answer-btn.correct{
+  background:#2ecc71 !important;
+  color:#000;
+}
+
+.answer-btn.wrong{
+  background:#e53935 !important;
+  color:#fff;
+}
+
 body{
   margin:0;
   background:var(--bg);
@@ -332,19 +360,17 @@ button:disabled{
   width:225px;         /* mantém proporção */
   left:57px;
   top:545px;
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
-
+filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
 }
 .perguntas-overlay{
   height:140px;
   width:225px;
   left:310px;
   top:568px;
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
-
+filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
 }
 
-  .eventos-overlay,
+.eventos-overlay,
 .perguntas-overlay{
   animation: cartaEntrada .3s ease-out;
 }
@@ -359,7 +385,7 @@ button:disabled{
     transform: translateY(0);
   }
 }
-  
+
 </style>
 </head>
 
@@ -1287,22 +1313,39 @@ function askQuestion(cell){
     "❓ Vamos testar o teu conhecimento da EN2",
     q.q,
     q.a.map((txt, i)=>({
-      text: txt,
-      cls:"accept",
-      action: ()=>{
-        if(i === q.c){
-          players[current].questionsCorrect++;
-          closeModal();
-          askFicha(cell);
-        } else {
-          players[current].questionsWrong++;
-          closeModal();
-          current = (current + 1) % players.length;
-          rollBtn.disabled = false;
-          updateTurn();
-        }
-      }
-    }))
+  text: txt,
+  cls:"answer-btn",
+  action: (e)=>{
+    const buttons = modalButtons.querySelectorAll("button");
+
+    // bloquear cliques múltiplos
+    buttons.forEach(b=>b.disabled = true);
+
+    if(i === q.c){
+      e.target.classList.add("correct");
+      players[current].questionsCorrect++;
+
+      setTimeout(()=>{
+        closeModal();
+        askFicha(cell);
+      }, 700);
+
+    } else {
+      e.target.classList.add("wrong");
+      players[current].questionsWrong++;
+
+      // mostrar a resposta correta
+      buttons[q.c].classList.add("correct");
+
+      setTimeout(()=>{
+        closeModal();
+        current = (current + 1) % players.length;
+        rollBtn.disabled = false;
+        updateTurn();
+      }, 900);
+    }
+  }
+}))
   );
 }
 
@@ -1601,20 +1644,3 @@ rulesBtn.onclick = ()=>{
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
