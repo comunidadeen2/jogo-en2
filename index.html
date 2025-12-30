@@ -1791,13 +1791,13 @@ const rulesIcon  = document.getElementById("rulesIcon");
 const rulesModal = document.getElementById("rulesModal");
 const closeRules = document.getElementById("closeRules");
 
-if(rulesIcon){
+if(rulesIcon && rulesModal){
   rulesIcon.onclick = () => {
-  console.log("rulesModal =", rulesModal);
-};
+    rulesModal.classList.remove("hidden");
+  };
 }
 
-if(closeRules){
+if(closeRules && rulesModal){
   closeRules.onclick = () => {
     rulesModal.classList.add("hidden");
   };
