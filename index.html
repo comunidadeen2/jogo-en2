@@ -609,17 +609,6 @@ filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
   </div>
 </div>
 
-<div id="modal">
-  <div id="modalBox" class="rules">
-    
-      <div class="rules-content">
-      <!-- TEXTO DAS REGRAS AQUI -->
-    </div>
-
-    <button class="closeRules">Fechar</button>
-  </div>
-</div>
-
 <div id="podium"></div>
 
 <script>
@@ -1804,8 +1793,8 @@ const closeRules = document.getElementById("closeRules");
 
 if(rulesIcon){
   rulesIcon.onclick = () => {
-    rulesModal.classList.remove("hidden");
-  };
+  console.log("rulesModal =", rulesModal);
+};
 }
 
 if(closeRules){
@@ -1816,62 +1805,12 @@ if(closeRules){
 
 </script>
 
-<!-- MODAL REGRAS -->
 <div id="rulesModal" class="hidden">
   <div class="rules-wrapper">
-
-    <img src="pregaminho.png" class="rules-img">
-
-    <div class="rules-content">
-      <h2>📜 Jogo da EN2 — A Grande Travessia</h2>
-
-      <p><strong>Preparar a viagem</strong><br>
-      Todos os jogadores começam antes da estrada, no símbolo da Comunidade EN2.
-      Este momento representa a preparação da viagem.</p>
-
-      <p><strong>O turno</strong><br>
-      Na tua vez, lança o dado 🎲 e avança no tabuleiro.</p>
-
-      <p><strong>Perguntas EN2</strong><br>
-      Responde corretamente para ganhar a ficha do local.</p>
-
-      <p><strong>Eventos</strong><br>
-      Podem acontecer bons momentos ou contratempos.</p>
-
-      <p><strong>Objetivo final</strong><br>
-      Ganha quem cumprir mais objetivos.
-      Em caso de empate, vence quem chegou primeiro a Faro.</p>
-    </div>
-
-    <button id="closeRules">Fechar</button>
-
-  </div>
-</div>
-
-<!-- MODAL REGRAS -->
-<div id="rulesModal" class="hidden">
-  <div class="rules-wrapper">
-
-    <img src="pregaminho.png" class="rules-bg" alt="Regras">
+    <img src="pregaminho.png" class="rules-bg">
 
     <div class="rules-content">
-      <h2>📜 Jogo da EN2 — A Grande Travessia</h2>
-
-      <p><strong>Preparar a viagem</strong><br>
-      Todos os jogadores começam antes da estrada, no símbolo da Comunidade EN2.</p>
-
-      <p><strong>O turno</strong><br>
-      Na tua vez, lança o dado 🎲 e avança no tabuleiro.</p>
-
-      <p><strong>Perguntas EN2</strong><br>
-      Responde corretamente para ganhar a ficha do local.</p>
-
-      <p><strong>Eventos</strong><br>
-      Podem ser bons momentos ou contratempos.</p>
-
-      <p><strong>Objetivo final</strong><br>
-      Ganha quem cumprir mais objetivos.
-      Em caso de empate, vence quem chegar primeiro a Faro.</p>
+      TEXTO DAS REGRAS
     </div>
 
     <button id="closeRules">Fechar</button>
