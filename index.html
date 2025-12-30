@@ -572,8 +572,9 @@ filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
   <img
   src="pregaminho.png"
   id="rulesIcon"
+  class="rules-scroll"
   alt="Regras do Jogo"
->
+/>
 
 <!-- OVERLAY EVENTOS -->
 <img src="eventos.png?v=2" class="board-overlay eventos-overlay" alt="Eventos">
@@ -1798,12 +1799,11 @@ function showPodium(){
   </div>`;
 }
 
+const rulesIcon = document.getElementById("rulesIcon");
 const rulesModal = document.getElementById("rulesModal");
-const rulesIcon  = document.getElementById("rulesIcon");
 const closeRules = document.getElementById("closeRules");
 
-rulesIcon.onclick = (e)=>{
-  e.stopPropagation();
+rulesIcon.onclick = ()=>{
   rulesModal.classList.remove("hidden");
 };
 
@@ -1814,7 +1814,6 @@ closeRules.onclick = ()=>{
 </script>
 
 <!-- PERGAMINHO DAS REGRAS -->
-<div id="rulesModal" class="hidden">
   <div class="rules-box">
     <img src="pregaminho.png" alt="Regras do Jogo" class="rules-img">
 
