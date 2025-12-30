@@ -18,19 +18,17 @@
 
 #rulesIcon{
   position:absolute;
-  right:20px;
-  bottom:120px;          /* ajusta se quiseres */
-  width:90px;
+  top:40px;        /* SOBE para a zona do título */
+  right:40px;      /* encosta à direita do tabuleiro */
+  width:90px;      /* tamanho equilibrado */
   cursor:pointer;
-
-  z-index:50;            /* MUITO IMPORTANTE */
-  pointer-events:auto;   /* GARANTE QUE RECEBE CLIQUE */
-
-  transition:transform .2s ease;
+  z-index:50;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.6));
+  transition: transform .2s ease;
 }
 
 #rulesIcon:hover{
-  transform:scale(1.05);
+  transform: scale(1.08);
 }
 
 /* ===== ESTAÇÕES DO ANO (APENAS VISUAL) ===== */
