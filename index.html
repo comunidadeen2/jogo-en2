@@ -56,6 +56,55 @@ body[data-estacao="inverno"]{
   font-weight:bold;
 }
 
+#rulesModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+#rulesModal.hidden{
+  display:none;
+}
+
+.rules-box{
+  position:relative;
+  width:700px;
+  max-height:85vh;
+}
+
+.rules-img{
+  width:100%;
+  display:block;
+}
+
+.rules-text{
+  position:absolute;
+  top:90px;
+  left:80px;
+  right:80px;
+  bottom:90px;
+  overflow-y:auto;
+  color:#111;
+  font-size:15px;
+  line-height:1.5;
+}
+
+.rules-close{
+  position:absolute;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:8px 18px;
+  border-radius:10px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+
 /* Respostas neutras (Perguntas EN2) */
 .answer-btn{
   background:#333;
@@ -1627,18 +1676,51 @@ function showPodium(){
 }
 
 rulesBtn.onclick = ()=>{
-  showModal(
-    "📜 Regras do Jogo",
-    "Avança pela EN2 lançando o dado.\nCumpre objetivos, responde a perguntas e lida com bons momentos e contratempos.\nGanha quem cumprir mais objetivos — em caso de empate, vence quem chegar primeiro a Faro.",
-    [{
-      text:"Fechar",
-      cls:"accept",
-      action:closeModal
-    }]
-  );
+  document.getElementById("rulesModal").classList.remove("hidden");
+};
+
+document.querySelector(".rules-close").onclick = ()=>{
+  document.getElementById("rulesModal").classList.add("hidden");
 };
 
 </script>
+
+<!-- PERGAMINHO DAS REGRAS -->
+<div id="rulesModal" class="hidden">
+  <div class="rules-box">
+    <img src="pregaminho.png" alt="Regras do Jogo" class="rules-img">
+
+    <div class="rules-text">
+      <h3>📜 Jogo da EN2 — A Grande Travessia</h3>
+
+      <p>
+        Todos os jogadores começam antes da estrada,
+        no símbolo da Comunidade EN2 — é o momento de preparar a viagem.
+      </p>
+
+      <p>
+        Em cada turno, lança o dado 🎲 e avança no tabuleiro.
+      </p>
+
+      <h4>🎴 Casas do Jogo</h4>
+
+      <p><strong>Pergunta EN2</strong><br>
+      Responde corretamente para ganhar a ficha do local.</p>
+
+      <p><strong>Evento</strong><br>
+      Pode ser um bom momento ou um contratempo.</p>
+
+      <h4>🏁 Final do Jogo</h4>
+
+      <p>
+        Ganha quem cumprir mais objetivos.
+        Em caso de empate, vence quem chegou primeiro a Faro.
+      </p>
+    </div>
+
+    <button class="rules-close">Fechar</button>
+  </div>
+</div>
+
 </body>
 </html>
-
