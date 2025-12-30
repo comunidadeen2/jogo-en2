@@ -571,6 +571,13 @@ filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
   <div class="board-frame" id="board">
     <div class="board-img"></div>
 
+<!-- BOTÃO REGRAS (PERGAMINHO PEQUENO) -->
+  <img
+    src="pregaminho.png"
+    id="rules-bg"
+    onclick="document.getElementById('rulesModal').style.display='flex'"
+  >
+
 <!-- OVERLAY EVENTOS -->
 <img src="eventos.png?v=2" class="board-overlay eventos-overlay" alt="Eventos">
 
@@ -608,9 +615,7 @@ filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
 <div id="modal">
   <div id="modalBox" class="rules">
     
-    <img src="pregaminho.png" id="rules-bg">
-
-    <div class="rules-content">
+      <div class="rules-content">
       <!-- TEXTO DAS REGRAS AQUI -->
     </div>
 
@@ -1851,7 +1856,7 @@ closeRules.onclick = function(){
 <div id="rulesModal">
   <div class="rules-wrapper">
 
-    <img src="pregaminho.png" id="rules-bg">
+    <img src="pregaminho.png" class="rules-img">
 
     <div class="rules-content">
       <h2>📜 Jogo da EN2 — A Grande Travessia</h2>
