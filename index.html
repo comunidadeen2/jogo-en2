@@ -344,6 +344,22 @@ button:disabled{
 
 }
 
+  .eventos-overlay,
+.perguntas-overlay{
+  animation: cartaEntrada .3s ease-out;
+}
+
+@keyframes cartaEntrada{
+  from{
+    opacity:0;
+    transform: translateY(6px);
+  }
+  to{
+    opacity:1;
+    transform: translateY(0);
+  }
+}
+  
 </style>
 </head>
 
@@ -1585,6 +1601,7 @@ rulesBtn.onclick = ()=>{
 </script>
 </body>
 </html>
+
 
 
 
