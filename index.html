@@ -492,6 +492,63 @@ filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
   }
 }
 
+/* MODAL DAS REGRAS */
+#rulesModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+}
+
+/* CAIXA */
+.rules-wrapper{
+  position:relative;
+  width:90vw;
+  max-width:900px;
+  height:85vh;
+  max-height:700px;
+}
+
+/* IMAGEM DO PERGAMINHO */
+.rules-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  pointer-events:none;
+}
+
+/* TEXTO */
+.rules-content{
+  position:relative;
+  z-index:2;
+  padding:80px 90px;
+  height:100%;
+  overflow-y:auto;
+
+  color:#111;
+  font-size:16px;
+  line-height:1.5;
+}
+
+/* BOTÃO */
+#closeRules{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:3;
+  padding:8px 20px;
+  border-radius:10px;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+
 </style>
 </head>
 
@@ -548,7 +605,7 @@ filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
 <div id="modal">
   <div id="modalBox" class="rules">
     
-    <img src="pregaminho.png" class="rules-bg">
+    <img src="pregaminho.png" id="rules-bg">
 
     <div class="rules-content">
       <!-- TEXTO DAS REGRAS AQUI -->
@@ -1737,12 +1794,12 @@ function showPodium(){
 }
 
 rulesBtn.onclick = ()=>{
-  document.getElementById("rulesModal").classList.remove("hidden");
-};
+    rulesModal.style.display = "flex";
+  };
 
-document.querySelector(".rules-close").onclick = ()=>{
-  document.getElementById("rulesModal").classList.add("hidden");
-};
+  closeRules.onclick = ()=>{
+    rulesModal.style.display = "none";
+  };
 
 </script>
 
@@ -1780,6 +1837,37 @@ document.querySelector(".rules-close").onclick = ()=>{
     </div>
 
     <button class="rules-close">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL REGRAS -->
+<div id="rulesModal">
+  <div class="rules-wrapper">
+
+    <img src="pregaminho.png" id="rules-bg">
+
+    <div class="rules-content">
+      <h2>📜 Jogo da EN2 — A Grande Travessia</h2>
+
+      <p><strong>Preparar a viagem</strong><br>
+      Todos os jogadores começam antes da estrada, no símbolo da Comunidade EN2.
+      Este momento representa a preparação da viagem.</p>
+
+      <p><strong>O turno</strong><br>
+      Na tua vez, lança o dado 🎲 e avança no tabuleiro.</p>
+
+      <p><strong>Perguntas EN2</strong><br>
+      Responde corretamente para ganhar a ficha do local.</p>
+
+      <p><strong>Eventos</strong><br>
+      Podem acontecer bons momentos ou contratempos.</p>
+
+      <p><strong>Objetivo final</strong><br>
+      Ganha quem cumprir mais objetivos.
+      Em caso de empate, vence quem chegar primeiro a Faro.</p>
+    </div>
+
+    <button id="closeRules">Fechar</button>
   </div>
 </div>
 
