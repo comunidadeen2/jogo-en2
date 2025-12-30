@@ -16,6 +16,23 @@
   --red:#e53935;
 }
 
+#rulesIcon{
+  position:absolute;
+  right:20px;
+  bottom:120px;          /* ajusta se quiseres */
+  width:90px;
+  cursor:pointer;
+
+  z-index:50;            /* MUITO IMPORTANTE */
+  pointer-events:auto;   /* GARANTE QUE RECEBE CLIQUE */
+
+  transition:transform .2s ease;
+}
+
+#rulesIcon:hover{
+  transform:scale(1.05);
+}
+
 /* ===== ESTAÇÕES DO ANO (APENAS VISUAL) ===== */
 
 body[data-estacao="primavera"]{
@@ -116,21 +133,20 @@ body[data-estacao="inverno"]{
 #rulesModal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.7);
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:999;
+  z-index:100;
 }
 
 #rulesModal.hidden{
   display:none;
 }
 
-.rules-box{
+.rules-wrapper{
   position:relative;
-  width:700px;
-  max-height:85vh;
+  max-width:700px;
 }
 
 .rules-img{
@@ -138,28 +154,11 @@ body[data-estacao="inverno"]{
   display:block;
 }
 
-.rules-text{
+.rules-content{
   position:absolute;
-  top:90px;
-  left:80px;
-  right:80px;
-  bottom:90px;
+  inset:80px 60px 100px 60px;
   overflow-y:auto;
   color:#111;
-  font-size:15px;
-  line-height:1.5;
-}
-
-.rules-close{
-  position:absolute;
-  bottom:30px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:8px 18px;
-  border-radius:10px;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
 }
 
 /* Respostas neutras (Perguntas EN2) */
@@ -570,13 +569,11 @@ filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
 <div class="main">
   <div class="board-frame" id="board">
     <div class="board-img"></div>
-
-<!-- BOTÃO REGRAS (PERGAMINHO PEQUENO) -->
   <img
-    src="pregaminho.png"
-    id="rules-bg"
-    onclick="document.getElementById('rulesModal').style.display='flex'"
-  >
+  src="pregaminho.png"
+  id="rulesIcon"
+  alt="Regras do Jogo"
+>
 
 <!-- OVERLAY EVENTOS -->
 <img src="eventos.png?v=2" class="board-overlay eventos-overlay" alt="Eventos">
@@ -1801,16 +1798,17 @@ function showPodium(){
   </div>`;
 }
 
-const rulesBtn = document.getElementById("rulesBtn");
 const rulesModal = document.getElementById("rulesModal");
-const closeRules = document.querySelector(".rules-close");
+const rulesIcon  = document.getElementById("rulesIcon");
+const closeRules = document.getElementById("closeRules");
 
-rulesBtn.onclick = function(){
-  rulesModal.style.display = "flex";
+rulesIcon.onclick = (e)=>{
+  e.stopPropagation();
+  rulesModal.classList.remove("hidden");
 };
 
-closeRules.onclick = function(){
-  rulesModal.style.display = "none";
+closeRules.onclick = ()=>{
+  rulesModal.classList.add("hidden");
 };
 
 </script>
@@ -1853,7 +1851,7 @@ closeRules.onclick = function(){
 </div>
 
 <!-- MODAL REGRAS -->
-<div id="rulesModal">
+<div id="rulesModal" class="hidden">
   <div class="rules-wrapper">
 
     <img src="pregaminho.png" class="rules-img">
@@ -1876,10 +1874,11 @@ closeRules.onclick = function(){
 
       <p><strong>Objetivo final</strong><br>
       Ganha quem cumprir mais objetivos.
-      Em caso de empate, vence quem chegar primeiro a Faro.</p>
+      Em caso de empate, vence quem chegou primeiro a Faro.</p>
     </div>
 
     <button id="closeRules">Fechar</button>
+
   </div>
 </div>
 
