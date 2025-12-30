@@ -5,6 +5,31 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Jogo da EN2 — A Grande Travessia de Portugal</title>
 
+/* ===== BOTÃO REGRAS (PERGAMINHO + TEXTO) ===== */
+
+#rulesWrapper{
+  position:absolute;
+  top:90px;          /* ajusta a altura geral */
+  right:40px;        /* afasta da margem direita */
+  width:100px;
+  cursor:pointer;
+  z-index:50;
+}
+
+#rulesIcon{
+  width:100%;
+  display:block;
+}
+
+#rulesTitle{
+  position:absolute;
+  top:18px;          /* 👈 sobe/desce o "REGRAS" */
+  left:50%;
+  transform:translateX(-50%);
+  width:85%;
+  pointer-events:none; /* clique passa para o pergaminho */
+}
+
 <style>
 :root{
   --bg:#111;
@@ -583,7 +608,12 @@ filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
 <!-- OVERLAY PERGUNTA EN2 -->
 <img src="perguntas.png" class="board-overlay perguntas-overlay" alt="Pergunta EN2">
 
+
 <!-- BOTÃO REGRAS DO JOGO -->
+<div id="rulesWrapper">
+  <img src="pregaminho.png" id="rulesIcon" alt="Regras do Jogo">
+  <img src="regras.png" id="rulesTitle" alt="Regras">
+</div>
     <div class="pawn" id="pawn0">🚗</div>
     <div class="pawn" id="pawn1">🚴</div>
     <div class="pawn" id="pawn2">🏍️</div>
@@ -1820,4 +1850,3 @@ if(closeRules && rulesModal){
 
 </body>
 </html>
-
