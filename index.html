@@ -1793,13 +1793,17 @@ function showPodium(){
   </div>`;
 }
 
-rulesBtn.onclick = ()=>{
-    rulesModal.style.display = "flex";
-  };
+const rulesBtn = document.getElementById("rulesBtn");
+const rulesModal = document.getElementById("rulesModal");
+const closeRules = document.querySelector(".rules-close");
 
-  closeRules.onclick = ()=>{
-    rulesModal.style.display = "none";
-  };
+rulesBtn.onclick = function(){
+  rulesModal.style.display = "flex";
+};
+
+closeRules.onclick = function(){
+  rulesModal.style.display = "none";
+};
 
 </script>
 
