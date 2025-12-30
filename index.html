@@ -1334,10 +1334,7 @@ function askQuestion(cell){
       e.target.classList.add("wrong");
       players[current].questionsWrong++;
 
-      // mostrar a resposta correta
-      buttons[q.c].classList.add("correct");
-
-      setTimeout(()=>{
+        setTimeout(()=>{
         closeModal();
         current = (current + 1) % players.length;
         rollBtn.disabled = false;
@@ -1644,3 +1641,4 @@ rulesBtn.onclick = ()=>{
 </script>
 </body>
 </html>
+
