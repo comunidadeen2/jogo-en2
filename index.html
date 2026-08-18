@@ -1753,11 +1753,11 @@ rollBtn.onclick = async ()=>{
    * Qualquer casa existente em SPECIAL_CELLS
    * dá uma pergunta ALEATÓRIA.
    */
-  if(cell){
-
+  else if(cell){
+    console.log("MARCO ENCONTRADO - posição:", idx, "km:", cell.km);
     askQuestion(cell);
     return;
-  }
+}
 
   /*
    * CASA EM BRANCO
