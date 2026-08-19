@@ -1913,48 +1913,132 @@ function renderObjective(p){
   }
 }
 
-/* ================= PERGUNTA ================= */
-function askQuestion(cell){
-  const q = QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+/* ================= BARALHO DE PERGUNTAS ================= */
 
-  showModal(
-    "❓ Vamos testar o teu conhecimento da EN2",
-    q.q,
-    q.a.map((txt, i)=>({
-  text: txt,
-  cls:"answer-btn",
-  action: (e)=>{
-    const buttons = modalButtons.querySelectorAll("button");
+let questionDeck = [];
 
-    // bloquear cliques múltiplos
-    buttons.forEach(b=>b.disabled = true);
-
-    if(i === q.c){
-      e.target.classList.add("correct");
-      players[current].questionsCorrect++;
-
-      setTimeout(()=>{
-        closeModal();
-        askFicha(cell);
-      }, 700);
-
-    } else {
-      e.target.classList.add("wrong");
-      players[current].questionsWrong++;
-
-        setTimeout(()=>{
-        closeModal();
-        current = (current + 1) % players.length;
-        rollBtn.disabled = false;
-        updateTurn();
-      }, 900);
-    }
+/* Baralhar um array sem criar padrões */
+function shuffleArray(array){
+  for(let i = array.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-}))
-  );
+  return array;
 }
 
-/* ================= FICHA (CORRIGIDO) ================= */
+/* Criar novamente o baralho com todas as perguntas */
+function refillQuestionDeck(){
+
+  questionDeck = QUESTIONS.map((_, index) => index);
+
+  shuffleArray(questionDeck);
+}
+
+
+/* ================= PERGUNTA ================= */
+
+function askQuestion(cell){
+
+  /* Se já saíram todas as perguntas,
+     cria um novo baralho com as 70 */
+  if(questionDeck.length === 0){
+    refillQuestionDeck();
+  }
+
+  /* Retirar uma pergunta do baralho */
+  const questionIndex = questionDeck.pop();
+  const q = QUESTIONS[questionIndex];
+
+
+  /* ================= BARALHAR RESPOSTAS ================= */
+
+  /*
+    Transformamos cada resposta num objeto.
+    Assim sabemos qual continua a ser a correta
+    mesmo depois de alterar a ordem.
+  */
+
+  const respostas = q.a.map((texto, index) => ({
+    texto: texto,
+    correta: index === q.c
+  }));
+
+  shuffleArray(respostas);
+
+
+  /* ================= MOSTRAR PERGUNTA ================= */
+
+  showModal(
+
+    "❓ Vamos testar o teu conhecimento da EN2",
+
+    q.q,
+
+    respostas.map(resposta => ({
+
+      text: resposta.texto,
+
+      cls: "answer-btn",
+
+      action: (e)=>{
+
+        const buttons =
+          modalButtons.querySelectorAll("button");
+
+        /* Evitar dois cliques na mesma pergunta */
+        buttons.forEach(b => b.disabled = true);
+
+
+        /* ===== RESPOSTA CERTA ===== */
+
+        if(resposta.correta){
+
+          e.target.classList.add("correct");
+
+          players[current].questionsCorrect++;
+
+          setTimeout(()=>{
+
+            closeModal();
+
+            askFicha(cell);
+
+          },700);
+
+        }
+
+
+        /* ===== RESPOSTA ERRADA ===== */
+
+        else{
+
+          e.target.classList.add("wrong");
+
+          players[current].questionsWrong++;
+
+          setTimeout(()=>{
+
+            closeModal();
+
+            current =
+              (current + 1) % players.length;
+
+            rollBtn.disabled = false;
+
+            updateTurn();
+
+          },900);
+
+        }
+
+      }
+
+    }))
+
+  );
+
+}
+  
 function askFicha(cell){
   const nome = MUNICIPIO_NOME[cell.km] || `Km ${cell.km}`;
 const p = players[current];
