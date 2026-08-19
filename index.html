@@ -1680,7 +1680,9 @@ function doEvent(){
           players[current].limitNextRoll = ev.limitNextRoll;
         }
 
-        const movers = ev.all ? players : [players[current]];
+       const movers = ev.all
+  ? players.filter(p => !p.finished)
+  : [players[current]];
 
         for(const p of movers){
           let target = p.pos;
