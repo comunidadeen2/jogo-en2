@@ -1178,21 +1178,427 @@ const EVENTS = [
 
 /* ================= PERGUNTAS ================= */
 const QUESTIONS = [
+
+  // ===== CHAVES =====
   {
-    q: "A EN2 liga que duas cidades?",
-    a: ["Chaves e Faro", "Lisboa e Porto", "Braga e Évora"],
-    c: 0
+    q:"Onde começa a travessia da EN2 de norte para sul?",
+    a:["Chaves","Bragança","Vila Real"],
+    c:0
   },
   {
-    q: "Qual é o ponto simbólico da EN2?",
-    a: ["Km 369", "Km 500", "Km 666"],
-    c: 0
+    q:"A Ponte Romana de Trajano, um dos símbolos de Chaves, atravessa que rio?",
+    a:["Douro","Tâmega","Corgo"],
+    c:1
+  },
+
+  // ===== VILA POUCA DE AGUIAR =====
+  {
+    q:"Qual destas localidades termais encontramos no concelho de Vila Pouca de Aguiar?",
+    a:["Pedras Salgadas","Curia","Luso"],
+    c:0
   },
   {
-    q: "Em que distrito fica Castro Verde?",
-    a: ["Beja", "Faro", "Évora"],
-    c: 0
+    q:"O Castelo de Aguiar da Pena está assente sobre quê?",
+    a:["Uma enorme fraga granítica","Uma ilha no meio de um rio","Uma duna de areia"],
+    c:0
+  },
+
+  // ===== VILA REAL / KM 69 =====
+  {
+    q:"Qual destes monumentos é uma das grandes referências turísticas de Vila Real?",
+    a:["Casa de Mateus","Palácio da Pena","Torre de Belém"],
+    c:0
+  },
+  {
+    q:"Vais pela EN2 na zona de Vila Real e aparece o famoso número que costuma provocar fotografias e sorrisos. Qual é?",
+    a:["Km 13","Km 69","Km 404"],
+    c:1
+  },
+
+  // ===== SANTA MARTA DE PENAGUIÃO =====
+  {
+    q:"Santa Marta de Penaguião encontra-se no coração de que região vitivinícola?",
+    a:["Região Demarcada do Douro","Região dos Vinhos Verdes","Região da Bairrada"],
+    c:0
+  },
+  {
+    q:"Em que ano foi fundada a Adega Cooperativa de Santa Marta?",
+    a:["1756","1959","1987"],
+    c:1
+  },
+
+  // ===== PESO DA RÉGUA =====
+  {
+    q:"Que rio domina a paisagem de Peso da Régua?",
+    a:["Douro","Guadiana","Mondego"],
+    c:0
+  },
+  {
+    q:"Estás na Régua e alguém diz: «Vamos ao museu com o nome da região por onde estamos a viajar.» Onde vais?",
+    a:["Museu do Douro","Museu do Guadiana","Museu do Ainda Falta Muito para Faro"],
+    c:0
+  },
+
+  // ===== LAMEGO =====
+  {
+    q:"Qual é o famoso santuário associado a Lamego?",
+    a:["Nossa Senhora dos Remédios","Nossa Senhora do Sameiro","Nossa Senhora da Nazaré"],
+    c:0
+  },
+  {
+    q:"Qual destas localidades do concelho de Lamego é famosa pelo seu Entrudo tradicional?",
+    a:["Lazarim","Podence","Monsanto"],
+    c:0
+  },
+
+  // ===== CASTRO DAIRE =====
+  {
+    q:"A promoção turística de Castro Daire associa fortemente o território a que serra e rio?",
+    a:["Montemuro e Paiva","Estrela e Zêzere","Monchique e Arade"],
+    c:0
+  },
+  {
+    q:"Que tradição ancestral ligada aos pastores continua a ser celebrada em Castro Daire?",
+    a:["Transumância","Pesca do bacalhau","Apanha da amêijoa"],
+    c:0
+  },
+
+  // ===== SÃO PEDRO DO SUL =====
+  {
+    q:"Que importante património antigo pode ser visitado em São Pedro do Sul?",
+    a:["Termas Romanas","Minas de sal romanas","Um farol romano"],
+    c:0
+  },
+  {
+    q:"Que atividade está especialmente associada a São Pedro do Sul?",
+    a:["Termalismo","Surf","Esqui alpino"],
+    c:0
+  },
+
+  // ===== VISEU =====
+  {
+    q:"Que guerreiro lusitano está fortemente associado a Viseu?",
+    a:["Viriato","Sertório","Aníbal"],
+    c:0
+  },
+  {
+    q:"Até o bolo «Viriato» presta homenagem ao herói de Viseu. Que forma tem?",
+    a:["Um V","Uma rotunda","Um marco da EN2"],
+    c:0
+  },
+
+  // ===== TONDELA =====
+  {
+    q:"Que tradição artesanal de Molelos é uma referência do concelho de Tondela?",
+    a:["Barro Negro","Renda de bilros","Vidro soprado"],
+    c:0
+  },
+  {
+    q:"O Cabrito do Caramulo vai ao forno — mas tradicionalmente em quê?",
+    a:["Numa assadeira de Barro Negro de Molelos","Numa cataplana algarvia","Numa panela de pressão presa à mota"],
+    c:0
+  },
+
+  // ===== SANTA COMBA DÃO =====
+  {
+    q:"A Ecopista do Dão aproveita o traçado de quê?",
+    a:["Uma antiga linha ferroviária","Um aqueduto romano","Uma antiga autoestrada"],
+    c:0
+  },
+  {
+    q:"Aproximadamente quantos quilómetros tem a Ecopista do Dão entre Santa Comba Dão e Viseu?",
+    a:["19 km","49 km","89 km"],
+    c:1
+  },
+
+  // ===== MORTÁGUA =====
+  {
+    q:"Mortágua juntou-se a Mealhada e Penacova numa marca turística chamada...",
+    a:["Mondego-Bussaco","Douro-Montemuro","Tejo-Almourol"],
+    c:0
+  },
+  {
+    q:"Qual destas albufeiras é uma referência na zona de Mortágua?",
+    a:["Aguieira","Alqueva","Bravura"],
+    c:0
+  },
+
+  // ===== PENACOVA =====
+  {
+    q:"Que formação natural de Penacova tem um nome que faz pensar numa estante cheia de livros?",
+    a:["Livraria do Mondego","Biblioteca do Alvão","Estante do Tejo"],
+    c:0
+  },
+  {
+    q:"Que construções tradicionais encontramos na Serra da Atalhada?",
+    a:["Moinhos","Faróis","Salinas"],
+    c:0
+  },
+
+  // ===== VILA NOVA DE POIARES =====
+  {
+    q:"Vila Nova de Poiares é conhecida como «Capital Universal» de que prato?",
+    a:["Chanfana","Cataplana","Tripas"],
+    c:0
+  },
+  {
+    q:"Qual destes produtos artesanais é referido entre as tradições de Vila Nova de Poiares?",
+    a:["Barro preto","Filigrana de ouro","Tapetes de Arraiolos"],
+    c:0
+  },
+
+  // ===== LOUSÃ =====
+  {
+    q:"Como também é conhecido o Castelo da Lousã?",
+    a:["Castelo de Arouce","Castelo de Almourol","Castelo de Marvão"],
+    c:0
+  },
+  {
+    q:"Qual destas é uma Aldeia do Xisto da Serra da Lousã?",
+    a:["Talasnal","Monsanto","Monsaraz"],
+    c:0
+  },
+
+  // ===== GÓIS =====
+  {
+    q:"Na EN2, Góis tem um daqueles números redondos que pede fotografia. Qual?",
+    a:["Km 100","Km 300","Km 700"],
+    c:1
+  },
+  {
+    q:"Quantas praias fluviais são identificadas no concelho de Góis?",
+    a:["4","8","14"],
+    c:1
+  },
+
+  // ===== PEDRÓGÃO GRANDE =====
+  {
+    q:"Em que período foi construída a Ponte Filipina de Pedrógão Grande?",
+    a:["1607–1610","1207–1210","1807–1810"],
+    c:0
+  },
+  {
+    q:"Qual destas praias fluviais de Pedrógão Grande fica junto à EN2?",
+    a:["Praia Fluvial da Mega","Praia do Guincho","Praia da Rocha"],
+    c:0
+  },
+
+  // ===== SERTÃ =====
+  {
+    q:"Qual é o grande ex-líbris gastronómico da Sertã?",
+    a:["Maranho","Leitão","Arroz de marisco"],
+    c:0
+  },
+  {
+    q:"Qual destes é outro prato tradicional muito associado à Sertã?",
+    a:["Bucho Recheado","Francesinha","Cataplana"],
+    c:0
+  },
+
+  // ===== VILA DE REI / KM 369 =====
+  {
+    q:"Que museu encontramos junto ao Centro Geodésico de Portugal, em Vila de Rei?",
+    a:["Museu da Geodesia","Museu da Cortiça","Museu Ferroviário"],
+    c:0
+  },
+  {
+    q:"Chegaste ao Km 369,6 da EN2 em Vila de Rei. O GPS devia dizer-te o quê?",
+    a:["Estás aproximadamente a meio da viagem","Bem-vindo a Espanha","Volta a Chaves, enganaste-te"],
+    c:0
+  },
+
+  // ===== SARDOAL =====
+  {
+    q:"Como é conhecida uma das mais emblemáticas procissões da Semana Santa do Sardoal?",
+    a:["Procissão dos Fogaréus","Procissão das Barcas","Procissão dos Pescadores"],
+    c:0
+  },
+  {
+    q:"Com que materiais naturais são tradicionalmente feitos os tapetes que decoram igrejas e capelas na Semana Santa?",
+    a:["Flores e verduras","Areia e conchas","Cortiça e carvão"],
+    c:0
+  },
+
+  // ===== ABRANTES =====
+  {
+    q:"Sobre que grande rio ocupa Abrantes uma posição historicamente estratégica?",
+    a:["Tejo","Douro","Minho"],
+    c:0
+  },
+  {
+    q:"O que significa a sigla MIAA, em Abrantes?",
+    a:["Museu Ibérico de Arqueologia e Arte","Museu Internacional de Automóveis Antigos","Memorial Ibérico de Arquitetura Alentejana"],
+    c:0
+  },
+
+  // ===== PONTE DE SOR =====
+  {
+    q:"Que setor está hoje especialmente associado a Ponte de Sor?",
+    a:["Aeronáutica e aeroespacial","Construção naval oceânica","Indústria conserveira"],
+    c:0
+  },
+  {
+    q:"Em que ano foi inaugurado o primeiro Campo de Aviação de Ponte de Sor?",
+    a:["1919","1969","2009"],
+    c:0
+  },
+
+  // ===== AVIS =====
+  {
+    q:"A que importante ordem militar portuguesa está ligada a vila de Avis?",
+    a:["Ordem de Avis","Ordem dos Cartuxos","Ordem de Cristo de Tomar"],
+    c:0
+  },
+  {
+    q:"Quantas torres tinha originalmente a cerca do Castelo de Avis?",
+    a:["3","6","12"],
+    c:1
+  },
+
+  // ===== MORA =====
+  {
+    q:"A que tipo de ecossistemas é dedicado o Fluviário de Mora?",
+    a:["Água doce","Oceano profundo","Deserto"],
+    c:0
+  },
+  {
+    q:"O Museu Interativo do Megalitismo de Mora ocupa um espaço ligado originalmente a quê?",
+    a:["À antiga estação ferroviária","A uma fábrica de cortiça","A um quartel romano"],
+    c:0
+  },
+
+  // ===== CORUCHE =====
+  {
+    q:"Que título é usado por Coruche devido à importância deste setor?",
+    a:["Capital Mundial da Cortiça","Capital Europeia do Mármore","Capital Nacional do Granito"],
+    c:0
+  },
+  {
+    q:"O Observatório de Coruche é dedicado principalmente a quê?",
+    a:["Sobreiro e cortiça","Oliveiras e azeite","Videiras e vinho do Porto"],
+    c:0
+  },
+
+  // ===== CIBORRO / MONTEMOR-O-NOVO =====
+  {
+    q:"Chegaste ao Ciborro e o conta-quilómetros parece gostar de números redondos. Que marco da EN2 encontras aqui?",
+    a:["Km 250","Km 500","Km 750"],
+    c:1
+  },
+  {
+    q:"Seguindo a EN2 pela zona de Escoural, que importante monumento subterrâneo podes visitar?",
+    a:["Gruta do Escoural","Grutas de Mira de Aire","Algar do Carvão"],
+    c:0
+  },
+
+  // ===== ALCÁÇOVAS =====
+  {
+    q:"Em que ano foi assinado o Tratado de Alcáçovas?",
+    a:["1385","1479","1640"],
+    c:1
+  },
+  {
+    q:"Que arte tradicional tornou Alcáçovas especialmente conhecida e está associada à classificação da UNESCO?",
+    a:["Fabrico de chocalhos","Construção de barcos","Produção de vidro"],
+    c:0
+  },
+
+  // ===== TORRÃO =====
+  {
+    q:"Qual é a principal estrada nacional de acesso ao Torrão referida pelo município?",
+    a:["EN2","EN125","EN13"],
+    c:0
+  },
+  {
+    q:"O Museu Etnográfico do Torrão está instalado num antigo quê?",
+    a:["Lagar de azeite","Apeadeiro ferroviário","Quartel de bombeiros"],
+    c:0
+  },
+
+  // ===== FERREIRA DO ALENTEJO / ODIVELAS =====
+  {
+    q:"Que grande barragem encontramos na zona de Odivelas, no concelho de Ferreira do Alentejo?",
+    a:["Barragem de Odivelas","Barragem da Aguieira","Barragem de Montargil"],
+    c:0
+  },
+  {
+    q:"Sobre que curso de água foi construída a Barragem de Odivelas?",
+    a:["Ribeira de Odivelas","Rio Tâmega","Rio Corgo"],
+    c:0
+  },
+
+  // ===== ALJUSTREL =====
+  {
+    q:"Qual era o nome romano associado a Aljustrel e às suas minas?",
+    a:["Vipasca","Ossónoba","Conímbriga"],
+    c:0
+  },
+  {
+    q:"Que atividade marcou profundamente a história de Aljustrel?",
+    a:["Mineração","Pesca marítima","Construção naval"],
+    c:0
+  },
+
+  // ===== CASTRO VERDE =====
+  {
+    q:"Castro Verde integra desde 2017 uma rede internacional reconhecida por que organização?",
+    a:["UNESCO","FIFA","NATO"],
+    c:0
+  },
+  {
+    q:"Que batalha histórica é evocada nos azulejos da Basílica Real de Castro Verde?",
+    a:["Batalha de Ourique","Batalha de Aljubarrota","Batalha de São Mamede"],
+    c:0
+  },
+
+  // ===== ALMODÔVAR / KM 666 =====
+  {
+    q:"O que significa MESA, o nome de um dos museus de Almodôvar?",
+    a:["Museu da Escrita do Sudoeste","Museu Etnográfico do Sul Alentejano","Memorial da Estrada Sul-Algarve"],
+    c:0
+  },
+  {
+    q:"O teu GPS mostra «666» pouco depois de Almodôvar. Antes de chamar um exorcista, o que encontraste?",
+    a:["O famoso marco Km 666 da EN2","A saída 666 da autoestrada","O código secreto para chegar a Faro"],
+    c:0
+  },
+
+  // ===== AMEIXIAL =====
+  {
+    q:"O Ameixial encontra-se em plena...",
+    a:["Serra do Caldeirão","Serra da Estrela","Serra do Gerês"],
+    c:0
+  },
+  {
+    q:"Que tipo de património pré-histórico existe na freguesia do Ameixial?",
+    a:["Antas / monumentos megalíticos","Pirâmides","Cidades lacustres"],
+    c:0
+  },
+
+  // ===== SÃO BRÁS DE ALPORTEL =====
+  {
+    q:"Que material natural marcou profundamente a indústria de São Brás de Alportel?",
+    a:["Cortiça","Carvão","Sal-gema"],
+    c:0
+  },
+  {
+    q:"Em que quilómetro da EN2 se encontra a Casa Memória da EN2 de São Brás de Alportel?",
+    a:["Km 500","Km 666","Km 722"],
+    c:2
+  },
+
+  // ===== FARO =====
+  {
+    q:"Como era conhecida a antiga cidade de Faro na Antiguidade?",
+    a:["Ossónoba","Balsa","Olisipo"],
+    c:0
+  },
+  {
+    q:"Chegaste a Faro pela EN2 e o GPS diz «continue sempre em frente pela N2». O que fazes?",
+    a:["Celebras — chegaste ao fim da travessia","Procuras o Km 900","Perguntas se Chaves fica já na próxima rotunda"],
+    c:0
   }
+
 ];
 
 /* ================= OBJETIVOS (13 TOTAIS) ================= */
